@@ -1,0 +1,3 @@
+# Commands directory
+# Slash commands are .md files in this directory
+# Example: commands/sdd-begin.md -> /foundry:sdd-begin

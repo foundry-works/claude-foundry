@@ -1,0 +1,3 @@
+# Agents directory
+# Subagent definitions are .md files in this directory
+# These are spawned via the Task tool with subagent_type
