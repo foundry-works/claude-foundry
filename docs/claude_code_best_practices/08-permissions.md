@@ -1,4 +1,4 @@
-# 7. Permissions
+# 8. Permissions
 
 > The security model that controls tool access, file operations, and command execution.
 
@@ -438,10 +438,10 @@ All patterns support gitignore-style globs with `**` for recursive matching.
 
 ## Related Documents
 
-- [04-hooks.md](./04-hooks.md) - Hook-based permission control
-- [05-mcp-servers.md](./05-mcp-servers.md) - MCP server permissions
-- [06-plugin-manifest.md](./06-plugin-manifest.md) - Plugin configuration
+- [05-hooks.md](./05-hooks.md) - Hook-based permission control
+- [06-mcp-servers.md](./06-mcp-servers.md) - MCP server permissions
+- [07-plugin-manifest.md](./07-plugin-manifest.md) - Plugin configuration
 
 ---
 
-**Navigation:** [← Previous: Plugin Manifest](./06-plugin-manifest.md) | [Index](./README.md) | [Next: File Structure →](./08-file-structure.md)
+**Navigation:** [← Previous: Plugin Manifest](./07-plugin-manifest.md) | [Index](./README.md) | [Next: File Structure →](./09-file-structure.md)

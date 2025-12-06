@@ -1,4 +1,4 @@
-# 11. CLAUDE.md
+# 12. CLAUDE.md
 
 > Project and user instructions that persist across sessions and guide Claude's behavior.
 
@@ -426,10 +426,11 @@ Deny file access to .env
 
 ## Related Documents
 
-- [07-permissions.md](./07-permissions.md) - Permission configuration (settings.json)
-- [08-file-structure.md](./08-file-structure.md) - Project structure
-- [06-plugin-manifest.md](./06-plugin-manifest.md) - Plugin configuration
+- [08-permissions.md](./08-permissions.md) - Permission configuration (settings.json)
+- [09-file-structure.md](./09-file-structure.md) - Project structure
+- [07-plugin-manifest.md](./07-plugin-manifest.md) - Plugin configuration
+- [18-context-management.md](./18-context-management.md) - Token budgets and context optimization
 
 ---
 
-**Navigation:** [← Previous: MCP Consumption](./10-mcp-consumption.md) | [Index](./README.md)
+**Navigation:** [← Previous: MCP Consumption](./11-mcp-consumption.md) | [Index](./README.md) | [Next: Testing →](./13-testing.md)

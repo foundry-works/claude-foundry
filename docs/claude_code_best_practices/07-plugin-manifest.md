@@ -1,4 +1,4 @@
-# 6. Plugin Manifest
+# 7. Plugin Manifest
 
 > The plugin.json file that defines plugin metadata, components, and configuration.
 
@@ -14,6 +14,8 @@ The `plugin.json` manifest is the required configuration file for Claude Code pl
 - Component paths (commands, agents, skills)
 - Hook and MCP server configurations
 - Distribution information
+
+> **Beta Status:** Claude Code plugins are in public beta (October 2025). Features, schemas, and best practices may evolve. Check official documentation for the latest specifications.
 
 ---
 
@@ -124,6 +126,8 @@ plugin-root/
 
 ### Author
 
+The author field MUST be an object (not a string) with the following structure:
+
 ```json
 {
   "author": {
@@ -134,11 +138,13 @@ plugin-root/
 }
 ```
 
-| Field | Required |
-|-------|----------|
-| `name` | MUST (if author object used) |
-| `email` | MAY |
-| `url` | MAY |
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | MUST | Creator or team name |
+| `email` | SHOULD | Contact email for support |
+| `url` | MAY | Homepage or GitHub profile |
+
+> **Note:** Unlike npm's package.json which accepts strings like `"Author Name <email>"`, plugin.json requires the object format.
 
 ### License
 
@@ -148,6 +154,44 @@ plugin-root/
 | SHOULD | Include LICENSE file in repo |
 
 Common values: `MIT`, `Apache-2.0`, `GPL-3.0`, `BSD-3-Clause`
+
+---
+
+## Marketplace Fields
+
+For plugins distributed via marketplaces, additional fields can be included:
+
+```json
+{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "description": "Plugin description",
+  "source": "github:username/repo",
+  "category": "development",
+  "tags": ["code-review", "testing", "automation"]
+}
+```
+
+### Field Reference
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `source` | string | MAY | Repository source (e.g., `github:user/repo`) |
+| `category` | string | MAY | Marketplace category for discovery |
+| `tags` | array | MAY | Additional tags beyond keywords |
+
+### Categories
+
+Common marketplace categories:
+
+| Category | Use For |
+|----------|---------|
+| `development` | Code editing, generation, review |
+| `devops` | CI/CD, deployment, infrastructure |
+| `testing` | Test automation, coverage, QA |
+| `documentation` | Doc generation, API docs |
+| `security` | Security scanning, vulnerability detection |
+| `productivity` | Workflow automation, utilities |
 
 ---
 
@@ -410,13 +454,13 @@ plugin/
 
 ## Related Documents
 
-- [01-commands.md](./01-commands.md) - Slash commands
-- [02-agents.md](./02-agents.md) - Subagents
-- [03-skills.md](./03-skills.md) - Skills
-- [04-hooks.md](./04-hooks.md) - Hooks
-- [05-mcp-servers.md](./05-mcp-servers.md) - MCP servers
-- [08-file-structure.md](./08-file-structure.md) - Directory layout
+- [02-commands.md](./02-commands.md) - Slash commands
+- [03-agents.md](./03-agents.md) - Subagents
+- [04-skills.md](./04-skills.md) - Skills
+- [05-hooks.md](./05-hooks.md) - Hooks
+- [06-mcp-servers.md](./06-mcp-servers.md) - MCP servers
+- [09-file-structure.md](./09-file-structure.md) - Directory layout
 
 ---
 
-**Navigation:** [← Previous: MCP Servers](./05-mcp-servers.md) | [Index](./README.md) | [Next: Permissions →](./07-permissions.md)
+**Navigation:** [← Previous: MCP Servers](./06-mcp-servers.md) | [Index](./README.md) | [Next: Permissions →](./08-permissions.md)

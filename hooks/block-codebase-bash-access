@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# PreToolUse hook to block Bash commands that directly access codebase.json files
+# Prevents bypassing the Read() hook by using any file I/O method
+
+set -euo pipefail
+
+# Read JSON input from stdin
+input=$(cat)
+
+# Extract command from tool_input using jq (or fall back to grep/sed if jq unavailable)
+if command -v jq &> /dev/null; then
+    bash_command=$(echo "$input" | jq -r '.tool_input.command // empty')
+else
+    # Fallback: simple extraction using grep/sed
+    bash_command=$(echo "$input" | grep -o '"command"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*"command"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' | head -1)
+fi
+
+# If no command found, allow
+if [ -z "$bash_command" ]; then
+    exit 0
+fi
+
+# Check for any pattern that indicates direct codebase.json file access
+# Patterns cover: Python (json.load/open), bash tools (cat/head/tail/etc), jq, and other file I/O
+if echo "$bash_command" | grep -qE "(python.*json\.load.*codebase\.json)|(python.*open\(['\"].*codebase\.json)|((cat|head|tail|less|more|sed|awk|grep).*codebase\.json)|(jq.*codebase\.json)"; then
+    cat >&2 <<'EOF'
+
+╔════════════════════════════════════════════════════════════════════════╗
+║                ⛔ CODEBASE.JSON ACCESS BLOCKED                         ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+WHAT: You attempted to directly access a codebase.json file via Bash command.
+
+WHY: This bypasses the Read() hook and wastes massive amounts of context tokens.
+     codebase.json files are extremely large (often 5-10+ MB). The doc-query
+     skill provides optimized tools for querying codebase documentation efficiently.
+
+HOW TO FIX:
+  Since you're in Claude Code, use Skills or MCP tools instead of Bash commands on codebase.json.
+
+  PRIMARY: Use doc-query Skill (recommended)
+  ──────────────────────────────────────────
+  Skill(doc-query) provides high-level workflows:
+    - "find class ClassName"
+    - "find function function_name"
+    - "scope module=src/path.py mode=implement"
+    - "trace entry function=process_request depth=3"
+    - "impact entity=UserService depth=2"
+
+  ALTERNATIVE: MCP tools (for granular operations)
+  ────────────────────────────────────────────────
+  mcp__foundry-mcp__code-find-class name="..." exact=false
+  mcp__foundry-mcp__code-find-function name="..." exact=false
+  mcp__foundry-mcp__code-get-callers function_name="..."
+  mcp__foundry-mcp__code-get-callees function_name="..."
+  mcp__foundry-mcp__code-trace-calls function_name="..." direction="both"
+  mcp__foundry-mcp__code-impact-analysis target="..." target_type="class"
+  mcp__foundry-mcp__doc-stats
+
+EXAMPLES:
+  Instead of: cat docs/codebase.json | jq '.classes'
+    Use: Skill(doc-query) OR mcp__foundry-mcp__code-find-class name="" exact=false
+
+  Instead of: python -c "import json; ..." with codebase.json
+    Use: Skill(doc-query) OR mcp__foundry-mcp__code-find-function name="my_function"
+
+  Instead of: grep "some_class" docs/codebase.json
+    Use: Skill(doc-query) OR mcp__foundry-mcp__code-find-class name="some_class"
+
+⚠️  CRITICAL: ALL codebase.json access must go through Skills or MCP tools.
+   If Read() is blocked, Bash file I/O is also blocked. Use the tools above.
+
+This hook enforces efficient codebase querying and prevents token waste.
+
+EOF
+    exit 2
+fi
+
+# Allow all other bash commands
+exit 0

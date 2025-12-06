@@ -1,4 +1,4 @@
-# 2. Subagents
+# 3. Subagents
 
 > Autonomous task handlers that execute complex workflows with isolated context and specialized capabilities.
 
@@ -69,9 +69,29 @@ You are an expert code reviewer specializing in security and performance...
 | `name` | string | MUST | Unique identifier (lowercase, hyphens) |
 | `description` | string | MUST | When this agent should be invoked |
 | `tools` | string | SHOULD | Comma-separated tool whitelist |
-| `model` | string | MAY | Model alias: `sonnet`, `opus`, `haiku`, `inherit` |
-| `permissionMode` | string | MAY | Permission request handling |
+| `model` | string | MAY | Model alias: `sonnet`, `opus`, `haiku`, or `inherit` |
+| `permissionMode` | string | MAY | Permission mode: `default`, `acceptEdits`, `bypassPermissions`, `plan` |
 | `skills` | string | MAY | Pre-loaded skill names |
+
+### Model Configuration
+
+| Value | Behavior |
+|-------|----------|
+| `sonnet` | Use Claude Sonnet |
+| `opus` | Use Claude Opus |
+| `haiku` | Use Claude Haiku (fast, lightweight) |
+| `inherit` | Use same model as parent conversation |
+
+> **Note:** If omitted, the model defaults to the configured subagent model in settings, which can be customized.
+
+### Permission Mode
+
+| Value | Behavior |
+|-------|----------|
+| `default` | Normal permission handling |
+| `acceptEdits` | Auto-approve file edits |
+| `bypassPermissions` | Skip all permission prompts |
+| `plan` | Read-only research mode |
 
 ### Requirements
 
@@ -160,6 +180,43 @@ Use the Explore agent to find all API endpoints in the codebase
 | Mode | Full capability |
 | Tools | All available tools |
 | Use cases | Multi-step operations, code modifications |
+
+---
+
+## Agent Management
+
+### Interactive Management
+
+Use the `/agents` command (recommended) for interactive agent management:
+
+| Command | Action |
+|---------|--------|
+| `/agents` | List all available agents |
+| `/agents create` | Create new agent interactively |
+| `/agents edit <name>` | Edit existing agent |
+| `/agents delete <name>` | Remove an agent |
+
+Changes take effect on next session start.
+
+### CLI Configuration
+
+Agents can also be defined via command line:
+
+```bash
+# Load agents from a specific directory
+claude --agents /path/to/agents/
+
+# Combine with other options
+claude --agents ./custom-agents/ --verbose
+```
+
+### Direct File Management
+
+Alternatively, manage agent files directly:
+- Create/edit `.md` files in `.claude/agents/` or `~/.claude/agents/`
+- Use any text editor
+- Validate frontmatter YAML syntax
+- Restart Claude Code to load changes
 
 ---
 
@@ -319,9 +376,56 @@ perf-expert.md     → Performance optimization
 | SHOULD | Parallelize independent tasks |
 | MUST NOT | Dump verbose logs to orchestrator |
 
+### Token Discipline
+
+- Keep system prompts under control—factor reusable doctrine into skills or CLAUDE.md, and link to specs instead of pasting them inline.
+- Scope tool usage carefully (e.g., `rg` over whole repo vs. target directories) so transcripts stay readable when relayed back to the main agent.
+- When returning results, lead with a compact summary plus optional “expand” sections so the orchestrator can choose whether to pull more detail.
+
 ---
 
 ## Examples
+
+### Starter Template
+
+```yaml
+---
+name: <agent-name>
+description: <When to delegate to this agent>
+tools: Read, Grep, Glob
+model: sonnet
+skills: security-review, performance-analysis
+---
+
+# Role
+You are <persona>. Own this task end-to-end inside your isolated context.
+
+## Responsibilities
+1. <Gather context>
+2. <Perform analysis>
+3. <Summarize results>
+
+## Workflow
+- **Prep:** Run `<command>` if recent changes are unclear.
+- **Analysis:** Use `skills/security-review` for security checks. Load `docs/architecture.md` only if the feature touches integrations.
+- **Decision Matrix:**
+  | Severity | Criteria |
+  |----------|----------|
+  | Critical | ... |
+  | High | ... |
+
+## Output Format
+1. **Summary** – 2 sentences.
+2. **Findings** – table with Severity / File / Detail.
+3. **Next Steps** – ordered list of actions for the orchestrator.
+
+## Constraints
+- Do **not** modify files outside `src/`.
+- Keep logs concise; link to files instead of pasting long diffs.
+- If you need additional help, stop and explain what’s blocking you.
+```
+
+This scaffold shows how to combine responsibilities, progressive disclosure cues, and explicit output requirements in one agent prompt.
 
 ### Code Review Agent
 
@@ -491,11 +595,13 @@ Return results to orchestrator.
 
 ## Related Documents
 
-- [01-commands.md](./01-commands.md) - User-invoked slash commands
-- [03-skills.md](./03-skills.md) - Reusable expertise
-- [06-plugin-manifest.md](./06-plugin-manifest.md) - Plugin configuration
-- [07-permissions.md](./07-permissions.md) - Permission model
+- [02-commands.md](./02-commands.md) - User-invoked slash commands
+- [04-skills.md](./04-skills.md) - Reusable expertise
+- [07-plugin-manifest.md](./07-plugin-manifest.md) - Plugin configuration
+- [08-permissions.md](./08-permissions.md) - Permission model
+- [16-description-writing.md](./16-description-writing.md) - Writing effective agent descriptions
+- [17-system-prompts.md](./17-system-prompts.md) - System prompt design patterns
 
 ---
 
-**Navigation:** [← Previous: Commands](./01-commands.md) | [Index](./README.md) | [Next: Skills →](./03-skills.md)
+**Navigation:** [← Previous: Commands](./02-commands.md) | [Index](./README.md) | [Next: Skills →](./04-skills.md)

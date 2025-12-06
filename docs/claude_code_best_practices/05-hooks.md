@@ -1,4 +1,4 @@
-# 4. Hooks
+# 5. Hooks
 
 > Event-driven automation that executes shell commands or LLM evaluations in response to Claude Code lifecycle events.
 
@@ -140,11 +140,13 @@ Available for: PreToolUse, PermissionRequest, Stop, SubagentStop, UserPromptSubm
 
 ### Exit Code Behavior
 
-| Exit Code | Behavior |
-|-----------|----------|
-| 0 | Success - execution continues |
-| 2 | Blocking error - operation prevented |
-| 1, 3+ | Non-blocking error - logged, continues |
+| Exit Code | Behavior | Output Handling |
+|-----------|----------|-----------------|
+| 0 | Success - execution continues | stdout parsed as JSON for structured control |
+| 2 | Blocking error - operation prevented | **Only stderr used as message; JSON in stdout ignored** |
+| 1, 3+ | Non-blocking error - logged, continues | stderr displayed in verbose mode only |
+
+> **Important:** When exit code 2 is returned, the hook output is formatted as `[command]: {stderr}`. Any JSON in stdout is completely ignored. Use stderr to provide the blocking reason.
 
 ### Structured Output
 
@@ -167,7 +169,9 @@ Hooks can output JSON to control behavior:
   "hookSpecificOutput": {
     "hookEventName": "PreToolUse",
     "permissionDecision": "allow|deny|ask",
-    "updatedInput": { }
+    "permissionDecisionReason": "Explanation for the decision",
+    "updatedInput": { "field": "modified_value" },
+    "additionalContext": "Context string injected into conversation"
   }
 }
 ```
@@ -178,10 +182,39 @@ Hooks can output JSON to control behavior:
   "hookSpecificOutput": {
     "hookEventName": "PermissionRequest",
     "permissionDecision": "allow|deny",
-    "message": "user message"
+    "permissionDecisionReason": "Reason for automatic approval/denial",
+    "message": "Custom message shown to user"
   }
 }
 ```
+
+**PostToolUse:**
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PostToolUse",
+    "additionalContext": "Feedback or context for Claude after tool execution"
+  }
+}
+```
+
+### Tool Input Modification (v2.0.10+)
+
+PreToolUse hooks can modify tool inputs before execution using the `updatedInput` field:
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "allow",
+    "updatedInput": {
+      "command": "npm test --coverage"
+    }
+  }
+}
+```
+
+This intercepts the tool call, modifies the JSON input, and lets execution proceed with corrected parameters—avoiding the need to block and force retry.
 
 ---
 
@@ -192,6 +225,7 @@ Hooks can output JSON to control behavior:
 | `$CLAUDE_PROJECT_DIR` | Project directory (absolute) |
 | `$CLAUDE_PLUGIN_ROOT` | Plugin root (for plugin hooks) |
 | `$CLAUDE_ENV_FILE` | Environment persistence file (SessionStart) |
+| `$CLAUDE_CODE_REMOTE` | Set to `"true"` when running in remote/SSH context; absent for local execution |
 
 ---
 
@@ -483,19 +517,28 @@ echo "Processing request (credentials redacted)"
 | Tool | Purpose |
 |------|---------|
 | `/hooks` | View hook configuration |
-| Verbose mode | Review hook output and exit codes |
+| `claude --debug` | Launch with debug output for hook execution details |
+| Verbose mode (Ctrl+O) | Review hook output, exit codes, and matched matchers |
 | `transcript_path` | Check conversation context |
-| Manual testing | Test scripts independently |
+| Manual testing | Test scripts independently with stdin JSON |
+
+### Debug Output
+
+When running with `--debug`, you'll see:
+- Hook matcher evaluation
+- Command execution status
+- stdout/stderr content
+- Exit codes and timing
 
 ---
 
 ## Related Documents
 
-- [01-commands.md](./01-commands.md) - Slash commands
-- [02-agents.md](./02-agents.md) - Subagents
-- [06-plugin-manifest.md](./06-plugin-manifest.md) - Plugin configuration
-- [07-permissions.md](./07-permissions.md) - Permission model
+- [02-commands.md](./02-commands.md) - Slash commands
+- [03-agents.md](./03-agents.md) - Subagents
+- [07-plugin-manifest.md](./07-plugin-manifest.md) - Plugin configuration
+- [08-permissions.md](./08-permissions.md) - Permission model
 
 ---
 
-**Navigation:** [← Previous: Skills](./03-skills.md) | [Index](./README.md) | [Next: MCP Servers →](./05-mcp-servers.md)
+**Navigation:** [← Previous: Skills](./04-skills.md) | [Index](./README.md) | [Next: MCP Servers →](./06-mcp-servers.md)

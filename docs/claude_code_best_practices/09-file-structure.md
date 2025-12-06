@@ -1,4 +1,4 @@
-# 8. File Structure
+# 9. File Structure
 
 > Directory layout and naming conventions for Claude Code plugins.
 
@@ -437,12 +437,12 @@ agents/                  ✓ (at plugin root)
 
 ## Related Documents
 
-- [01-commands.md](./01-commands.md) - Command file format
-- [02-agents.md](./02-agents.md) - Agent file format
-- [03-skills.md](./03-skills.md) - Skill directory format
-- [06-plugin-manifest.md](./06-plugin-manifest.md) - Plugin configuration
-- [09-frontmatter.md](./09-frontmatter.md) - Frontmatter schemas
+- [02-commands.md](./02-commands.md) - Command file format
+- [03-agents.md](./03-agents.md) - Agent file format
+- [04-skills.md](./04-skills.md) - Skill directory format
+- [07-plugin-manifest.md](./07-plugin-manifest.md) - Plugin configuration
+- [10-frontmatter.md](./10-frontmatter.md) - Frontmatter schemas
 
 ---
 
-**Navigation:** [← Previous: Permissions](./07-permissions.md) | [Index](./README.md) | [Next: Frontmatter →](./09-frontmatter.md)
+**Navigation:** [← Previous: Permissions](./08-permissions.md) | [Index](./README.md) | [Next: Frontmatter →](./10-frontmatter.md)

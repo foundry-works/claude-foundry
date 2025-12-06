@@ -1,4 +1,4 @@
-# 9. Frontmatter Schemas
+# 10. Frontmatter Schemas
 
 > YAML frontmatter specifications for commands, agents, and skills.
 
@@ -381,11 +381,11 @@ allowed-tools: Bash(npm run test:*), Bash(npm run lint:*)
 
 ## Related Documents
 
-- [01-commands.md](./01-commands.md) - Command details
-- [02-agents.md](./02-agents.md) - Agent details
-- [03-skills.md](./03-skills.md) - Skill details
-- [08-file-structure.md](./08-file-structure.md) - File organization
+- [02-commands.md](./02-commands.md) - Command details
+- [03-agents.md](./03-agents.md) - Agent details
+- [04-skills.md](./04-skills.md) - Skill details
+- [09-file-structure.md](./09-file-structure.md) - File organization
 
 ---
 
-**Navigation:** [← Previous: File Structure](./08-file-structure.md) | [Index](./README.md) | [Next: MCP Consumption →](./10-mcp-consumption.md)
+**Navigation:** [← Previous: File Structure](./09-file-structure.md) | [Index](./README.md) | [Next: MCP Consumption →](./11-mcp-consumption.md)

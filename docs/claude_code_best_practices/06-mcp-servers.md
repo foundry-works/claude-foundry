@@ -1,4 +1,4 @@
-# 5. MCP Servers
+# 6. MCP Servers
 
 > External tool integrations via Model Context Protocol that extend Claude's capabilities with custom tools and data sources.
 
@@ -529,10 +529,10 @@ secrets/
 
 ## Related Documents
 
-- [06-plugin-manifest.md](./06-plugin-manifest.md) - Plugin configuration
-- [07-permissions.md](./07-permissions.md) - Permission model
-- [10-mcp-consumption.md](./10-mcp-consumption.md) - How Claude uses MCPs
+- [07-plugin-manifest.md](./07-plugin-manifest.md) - Plugin configuration
+- [08-permissions.md](./08-permissions.md) - Permission model
+- [11-mcp-consumption.md](./11-mcp-consumption.md) - How Claude uses MCPs
 
 ---
 
-**Navigation:** [← Previous: Hooks](./04-hooks.md) | [Index](./README.md) | [Next: Plugin Manifest →](./06-plugin-manifest.md)
+**Navigation:** [← Previous: Hooks](./05-hooks.md) | [Index](./README.md) | [Next: Plugin Manifest →](./07-plugin-manifest.md)

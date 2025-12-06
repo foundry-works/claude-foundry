@@ -1,4 +1,4 @@
-# 1. Slash Commands
+# 2. Slash Commands
 
 > User-invoked prompts that provide templated workflows and quick access to common operations.
 
@@ -225,6 +225,13 @@ Or multiple paths:
 
 ---
 
+## Context Management & Token Hygiene
+
+- **Keep templates lean.** Put only the instructions needed to guide Claude; link or `@` attach larger specs instead of embedding them inline.
+- **Validate before dumping.** Run bash pre-checks to scope file lists or diffs so you don’t paste entire repositories into the prompt.
+- **Summarize command output.** Use bash to trim logs (e.g., `tail -n 200`) and prefer statistics over raw dumps.
+- **Guide follow-up.** Ask Claude to confirm whether more context is needed rather than automatically inlining additional files.
+
 ## Examples
 
 ### Simple Template Command
@@ -345,11 +352,13 @@ The above shows uncommitted changes. Should I create a commit with these changes
 
 ## Related Documents
 
-- [02-agents.md](./02-agents.md) - Subagents for autonomous task handling
-- [03-skills.md](./03-skills.md) - Model-invoked capabilities
-- [06-plugin-manifest.md](./06-plugin-manifest.md) - Plugin configuration
-- [09-frontmatter.md](./09-frontmatter.md) - Frontmatter schemas
+- [03-agents.md](./03-agents.md) - Subagents for autonomous task handling
+- [04-skills.md](./04-skills.md) - Model-invoked capabilities
+- [07-plugin-manifest.md](./07-plugin-manifest.md) - Plugin configuration
+- [10-frontmatter.md](./10-frontmatter.md) - Frontmatter schemas
+- [16-description-writing.md](./16-description-writing.md) - Writing effective command descriptions
+- [17-system-prompts.md](./17-system-prompts.md) - System prompt design patterns
 
 ---
 
-**Navigation:** [← Previous: Choosing Features](./00-choosing-features.md) | [Index](./README.md) | [Next: Agents →](./02-agents.md)
+**Navigation:** [← Previous: Choosing Features](./01-choosing-features.md) | [Index](./README.md) | [Next: Agents →](./03-agents.md)

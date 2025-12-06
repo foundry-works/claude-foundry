@@ -1,4 +1,4 @@
-# 10. MCP Consumption
+# 11. MCP Consumption
 
 > How Claude Code discovers, connects to, and uses MCP (Model Context Protocol) servers.
 
@@ -168,6 +168,10 @@ export MAX_MCP_OUTPUT_TOKENS=50000
 |-------------|---------|
 | SHOULD | Monitor output sizes for large data servers |
 | MAY | Increase limit for data-intensive operations |
+| SHOULD | Stream or paginate large payloads and summarize before returning to the main conversation |
+| SHOULD | Fail fast with actionable errors when a tool would exceed limits, rather than dumping partial data |
+
+**Chunking playbook:** when a server needs to return thousands of lines, page the results, ask Claude whether more chunks are necessary, and log the retrieval range so users know how much data was consumed. Keep raw payloads in MCP resources and send lightweight summaries plus resource references back to the orchestrator.
 
 ---
 
@@ -355,10 +359,10 @@ Enterprise can deploy centralized MCP configurations:
 
 ## Related Documents
 
-- [05-mcp-servers.md](./05-mcp-servers.md) - MCP server configuration
-- [07-permissions.md](./07-permissions.md) - MCP tool permissions
-- [06-plugin-manifest.md](./06-plugin-manifest.md) - Plugin MCP configuration
+- [06-mcp-servers.md](./06-mcp-servers.md) - MCP server configuration
+- [08-permissions.md](./08-permissions.md) - MCP tool permissions
+- [07-plugin-manifest.md](./07-plugin-manifest.md) - Plugin MCP configuration
 
 ---
 
-**Navigation:** [← Previous: Frontmatter](./09-frontmatter.md) | [Index](./README.md) | [Next: CLAUDE.md →](./11-claude-md.md)
+**Navigation:** [← Previous: Frontmatter](./10-frontmatter.md) | [Index](./README.md) | [Next: CLAUDE.md →](./12-claude-md.md)

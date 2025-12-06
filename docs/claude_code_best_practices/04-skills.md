@@ -1,4 +1,4 @@
-# 3. Skills
+# 4. Skills
 
 > Model-invoked capabilities that Claude automatically activates based on task context and skill descriptions.
 
@@ -14,6 +14,19 @@ Skills are directory-based capabilities that Claude autonomously discovers and u
 - **Directory-structured** with a required SKILL.md and optional supporting files
 - **Progressive** - Claude reads supporting files only when needed
 - **Portable** - Reusable knowledge that any agent can apply
+
+### Platform Availability
+
+Skills work across multiple Claude platforms:
+
+| Platform | Access Method |
+|----------|---------------|
+| **Claude Code** | File-based (`~/.claude/skills/`, `.claude/skills/`, plugins) |
+| **Claude Apps** | Available to Pro, Max, Team, and Enterprise users |
+| **Claude API** | Messages API and `/v1/skills` endpoint |
+| **Claude Agent SDK** | Native support for custom agent development |
+
+Skills use consistent formatting across all platforms for portability.
 
 ---
 
@@ -83,8 +96,11 @@ The description is critical - it determines when Claude activates the skill.
 |-------------|---------|
 | MUST | Explain what the skill does |
 | MUST | Explain when/why to use it |
+| MUST | Write descriptions in **third person** (discovery reliability) |
 | SHOULD | Name specific file types, formats, or tools |
 | SHOULD | Include trigger contexts |
+
+> **Important:** Always write skill descriptions in third person. Inconsistent point-of-view (mixing "I" and "Claude" or "you") can cause discovery problems because descriptions are injected into system prompts.
 
 ### Examples
 
@@ -146,6 +162,10 @@ Claude reads skill files progressively to manage context:
 | SHOULD | Move detailed specs to reference.md |
 | SHOULD | Include examples.md for concrete use cases |
 | MUST NOT | Put entire technical guides in SKILL.md |
+
+**Token tip:** Treat SKILL.md as the “business card” for the capability—keep it under ~2k characters so it can load frequently without blowing token budgets, and offload detailed procedures, code snippets, or matrices to referenced files Claude can pull only when necessary.
+
+**Explicit reference cues:** Give Claude clear instructions about when to load each supporting file, e.g., “If the user requests severity definitions, read `reference.md#Severity Matrix`” or “Load `examples.md` when you need a sample remediation plan.” This ensures the model reaches for deeper material only when the task requires it.
 
 ---
 
@@ -232,6 +252,46 @@ security-scanner/
 ---
 
 ## Examples
+
+### Starter Template
+
+```
+my-skill/
+├── SKILL.md
+├── reference.md        # Deep specs, matrices, large tables
+└── examples.md         # Sample outputs or walkthroughs
+```
+
+**SKILL.md template:**
+```yaml
+---
+name: <skill-name>
+description: <What it does>. Use when <trigger conditions, file types, goals>.
+allowed-tools: Read, Grep
+---
+
+# <Skill Title>
+
+## Triggers
+- Activate when you see <keywords> or files matching <patterns>.
+- If the user explicitly asks for <topic>, load this skill.
+
+## Responsibilities
+1. <Step 1>
+2. <Step 2>
+3. <Step 3>
+
+## Reference Cues
+- Need detailed severity criteria? Read `reference.md#Severity Matrix`.
+- Need sample wording? Read `examples.md#Report Template`.
+
+## Output Format
+- **Summary:** 2–3 sentences.
+- **Findings:** Table with Severity / Description / File.
+- **Next Steps:** Bullet list of recommended follow-up.
+```
+
+This template keeps `SKILL.md` focused while instructing Claude exactly when to fetch additional files.
 
 ### PDF Extraction Skill
 
@@ -426,20 +486,79 @@ See examples.md for usage examples.
 
 | Requirement | Details |
 |-------------|---------|
+| MUST | Keep SKILL.md body **under 500 lines** for optimal performance |
 | SHOULD | Keep SKILL.md under 2000 characters |
 | SHOULD | Use supporting files for detailed content |
 | SHOULD | Cache heavy computation in templates/ |
 | MAY | Use scripts/ for reusable utilities |
 
+> **500-Line Limit:** If your SKILL.md content exceeds 500 lines, split it into separate files using progressive disclosure patterns. Long skill files degrade activation performance and consume excessive tokens.
+
+---
+
+## Version Documentation
+
+Track changes to your skills with version history sections:
+
+```yaml
+---
+name: security-scanner
+description: ...
+---
+
+# Security Scanner
+
+## Version History
+- **v1.2.0** (2025-10): Added CSRF detection
+- **v1.1.0** (2025-08): Added SQL injection patterns
+- **v1.0.0** (2025-06): Initial release
+
+## Instructions
+...
+```
+
+| Requirement | Details |
+|-------------|---------|
+| SHOULD | Include version history in SKILL.md for significant skills |
+| SHOULD | Document breaking changes |
+| MAY | Use semantic versioning |
+
+---
+
+## Team Collaboration
+
+### Testing Skills Before Deployment
+
+| Requirement | Details |
+|-------------|---------|
+| SHOULD | Validate activation with teammates before deployment |
+| SHOULD | Test with various task phrasings to verify discovery |
+| SHOULD | Check for conflicts with other skills |
+| MAY | Use `/skills` command to verify skill registration |
+
+### Debugging Skill Activation
+
+Common issues and solutions:
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Skill not activating | Vague description | Add specific trigger contexts |
+| Wrong skill activating | Overlapping descriptions | Differentiate with distinct keywords |
+| Skill partially loading | YAML syntax error | Validate frontmatter |
+| Missing from `/skills` | Wrong directory or filename | Check location and SKILL.md naming |
+
 ---
 
 ## Related Documents
 
-- [01-commands.md](./01-commands.md) - User-invoked slash commands
-- [02-agents.md](./02-agents.md) - Autonomous task handlers
-- [06-plugin-manifest.md](./06-plugin-manifest.md) - Plugin configuration
-- [08-file-structure.md](./08-file-structure.md) - Directory conventions
+- [02-commands.md](./02-commands.md) - User-invoked slash commands
+- [03-agents.md](./03-agents.md) - Autonomous task handlers
+- [07-plugin-manifest.md](./07-plugin-manifest.md) - Plugin configuration
+- [09-file-structure.md](./09-file-structure.md) - Directory conventions
+- [16-description-writing.md](./16-description-writing.md) - Writing effective skill descriptions
+- [17-system-prompts.md](./17-system-prompts.md) - SKILL.md prompt design patterns
+- [18-context-management.md](./18-context-management.md) - Progressive disclosure and token budgets
 
 ---
 
-**Navigation:** [← Previous: Agents](./02-agents.md) | [Index](./README.md) | [Next: Hooks →](./04-hooks.md)
+**Navigation:** [← Previous: Agents](./03-agents.md) | [Index](./README.md) | [Next: Hooks →](./05-hooks.md)

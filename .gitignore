@@ -51,3 +51,9 @@ specs/.reviews/
 specs/.backups/
 specs/.human-readable/
 specs/.fidelity-reviews/
+
+# MCP config
+#.mcp.json
+#foundry-mcp.toml
+
+.foundry/

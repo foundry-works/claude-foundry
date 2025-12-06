@@ -1,4 +1,4 @@
-# 0. Choosing the Right Feature
+# 1. Choosing the Right Feature
 
 > A comprehensive guide to selecting between commands, agents, skills, hooks, CLAUDE.md, and MCP servers.
 
@@ -106,6 +106,28 @@ What kind of integration?
 ```
 
 ---
+
+## Layered Disclosure Strategies
+
+Not every piece of information should be always-on. Use the mechanisms below to decide how and when Claude should surface knowledge:
+
+| Control of timing | Mechanism | Use it when | Token impact |
+|------------------|-----------|-------------|---------------|
+| Always-on, zero friction | CLAUDE.md | Standards, policies, and heuristics that must guide every response. | High – counted every turn, so keep concise and link out. |
+| Claude detects relevance | Skill | Expertise that should appear only when the task mentions certain domains, files, or goals. | Medium – SKILL.md loads when triggered; extra files load lazily. |
+| User decides when | Command | Guided workflows, prompts with arguments, or situations where human approval matters. | Medium – prompt text + referenced files apply only when invoked. |
+| Claude needs isolation | Agent system prompt | Rich, situational guidance that should not pollute the main thread (e.g., refactors, migrations, deep reviews). | Medium/High – separate context window, but still subject to model limits. Summarize results before returning. |
+| External source controls payload | MCP resource/tool | Large or dynamic datasets that you only want when requested (dashboards, databases, APIs). | Low in main convo – heavy payload stays outside until fetched or summarized. |
+| Automation enforces policy | Hook | Pre/post actions such as formatting, validation, or blocking risky operations. | None – scripts run outside the model context but should still log succinctly. |
+
+**Guiding principles**
+- Prefer **skills** over CLAUDE.md when knowledge should appear only on relevant tasks, but keep activation descriptions precise to avoid noise.
+- Reach for **commands** when humans should explicitly request the capability or provide arguments.
+- Use **agent prompts** when you need deep instructions but want to keep the main conversation clean.
+- Keep **hooks** deterministic and transparent; they should enforce policy, not surprise users.
+- Treat **MCP servers** as the boundary to external systems—design retries, auth, and failure messaging up front.
+
+These trade-offs help you pick the right component for progressive disclosure and prevent overloading CLAUDE.md with context that should live elsewhere.
 
 ## Use Case Guide
 
@@ -415,13 +437,13 @@ allowed-tools: Bash(prettier:*)
 
 ## Related Documents
 
-- [01-commands.md](./01-commands.md) - Slash commands
-- [02-agents.md](./02-agents.md) - Subagents
-- [03-skills.md](./03-skills.md) - Skills
-- [04-hooks.md](./04-hooks.md) - Hooks
-- [05-mcp-servers.md](./05-mcp-servers.md) - MCP servers
-- [11-claude-md.md](./11-claude-md.md) - CLAUDE.md
+- [02-commands.md](./02-commands.md) - Slash commands
+- [03-agents.md](./03-agents.md) - Subagents
+- [04-skills.md](./04-skills.md) - Skills
+- [05-hooks.md](./05-hooks.md) - Hooks
+- [06-mcp-servers.md](./06-mcp-servers.md) - MCP servers
+- [12-claude-md.md](./12-claude-md.md) - CLAUDE.md
 
 ---
 
-**Navigation:** [Index](./README.md) | [Next: Commands →](./01-commands.md)
+**Navigation:** [← Development Guide](./00-development-guide.md) | [Index](./README.md) | [Next: Commands →](./02-commands.md)
