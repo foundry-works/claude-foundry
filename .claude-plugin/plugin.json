@@ -12,7 +12,6 @@
   "license": "MIT",
   "keywords": ["sdd", "spec-driven", "development", "testing", "planning"],
   "commands": "./commands",
-  "agents": "./agents",
   "skills": "./skills",
   "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json"

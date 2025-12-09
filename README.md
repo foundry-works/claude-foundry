@@ -30,28 +30,72 @@ python -m foundry_mcp.server --help
 
 ## Installation
 
-### Easiest method (script)
+### Interactive install script
 
-Run from command line. Requires `jq`. Adds marketplace, pre-enables the plugin.
+Run from command line. Requires `jq`. Prompts for confirmation before each step. Handles both fresh installs and reinstalls.
 
 ```bash
-mkdir -p ~/.claude && \
-  touch ~/.claude/settings.json && \
-  [ ! -s ~/.claude/settings.json ] && echo '{}' > ~/.claude/settings.json; \
-  jq '. * {
-    "extraKnownMarketplaces": {
-      "claude-foundry": {
-        "source": {"source": "github", "repo": "tylerburleigh/claude-foundry"}
+bash -c '
+confirm() {
+  read -p "$1 [y/N] " response
+  [[ "$response" =~ ^[Yy]$ ]]
+}
+
+echo "=== Claude Foundry Plugin Installer ==="
+echo ""
+
+# Step 1: Check for existing installation and offer to clean
+if [ -d ~/.claude/plugins/cache/claude-foundry ]; then
+  echo "Found existing claude-foundry plugin cache."
+  if confirm "Remove ~/.claude/plugins/cache/claude-foundry for clean reinstall?"; then
+    rm -rf ~/.claude/plugins/cache/claude-foundry
+    echo "✓ Removed claude-foundry plugin cache"
+  fi
+fi
+
+if [ -d ~/.claude/plugins/marketplaces/claude-foundry ]; then
+  echo "Found existing claude-foundry marketplace clone."
+  if confirm "Remove ~/.claude/plugins/marketplaces/claude-foundry for clean reinstall?"; then
+    rm -rf ~/.claude/plugins/marketplaces/claude-foundry
+    echo "✓ Removed claude-foundry marketplace clone"
+  fi
+fi
+
+# Step 2: Create settings file if needed
+if [ ! -f ~/.claude/settings.json ] || [ ! -s ~/.claude/settings.json ]; then
+  if confirm "Create ~/.claude/settings.json?"; then
+    mkdir -p ~/.claude
+    echo "{}" > ~/.claude/settings.json
+    echo "✓ Created settings.json"
+  else
+    echo "Skipped. Cannot continue without settings.json."
+    exit 1
+  fi
+fi
+
+# Step 3: Add marketplace and enable plugin
+if confirm "Add claude-foundry marketplace and enable plugin?"; then
+  jq ". * {
+    \"extraKnownMarketplaces\": {
+      \"claude-foundry\": {
+        \"source\": {\"source\": \"github\", \"repo\": \"tylerburleigh/claude-foundry\"}
       }
     },
-    "enabledPlugins": {
-      "foundry@claude-foundry": true
+    \"enabledPlugins\": {
+      \"foundry@claude-foundry\": true
     }
-  }' ~/.claude/settings.json > ~/.claude/settings.json.tmp && \
+  }" ~/.claude/settings.json > ~/.claude/settings.json.tmp && \
   mv ~/.claude/settings.json.tmp ~/.claude/settings.json
-```
+  echo "✓ Added marketplace and enabled plugin"
+else
+  echo "Skipped marketplace setup."
+  exit 0
+fi
 
-Then restart Claude Code and trust the repository when prompted.
+echo ""
+echo "Done! Restart Claude Code and trust the repository when prompted."
+'
+```
 
 ### Alternative: Install from within Claude Code
 
