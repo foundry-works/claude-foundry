@@ -110,7 +110,7 @@ Would you like me to create this PR, or would you like me to revise it?"
 
 ### Step 6: PR Creation
 
-Once approved, the skill calls the MCP tool `mcp__foundry-mcp__pr-create`, which gathers spec context, journals, git diffs, and generates the PR description automatically (or performs a dry-run preview when requested).
+Once approved, the skill calls the MCP tool `mcp__plugin_foundry_foundry-mcp__pr action="create"`, which gathers spec context, journals, git diffs, and generates the PR description automatically (or performs a dry-run preview when requested).
 
 The skill then:
 1. Pushes the branch to the remote (if needed)
@@ -121,7 +121,7 @@ The skill then:
 
 ## Context Sources
 
-The skill analyzes several key sources (available via the MCP tool `mcp__foundry-mcp__pr-context`):
+The skill analyzes several key sources (available via the MCP tool `mcp__plugin_foundry_foundry-mcp__pr action="context"`):
 
 ### 1. Spec Metadata
 High-level information about the feature/change:
@@ -147,7 +147,7 @@ Decision logs and notes:
 - Challenges and solutions
 - Implementation rationale
 
-The MCP tool `mcp__foundry-mcp__journal-get` supplies recent entries (optionally scoped to a specific task).
+The MCP tool `mcp__plugin_foundry_foundry-mcp__journal action="list"` supplies recent entries (optionally scoped to a specific task).
 
 ### 5. Git Diff
 Actual code changes:
@@ -297,7 +297,7 @@ Skill(foundry:sdd-pr) "Create PR for spec refactor-api-2025-11-03-003"
 ### For Better PR Descriptions
 
 1. **Write Detailed Journal Entries**
-   The AI uses journal entries to explain technical decisions, so capture the rationale as you work (the skill automatically pulls entries via `mcp__foundry-mcp__journal-get`).
+   The AI uses journal entries to explain technical decisions, so capture the rationale as you work (the skill automatically pulls entries via `mcp__plugin_foundry_foundry-mcp__journal action="list"`).
 
 2. **Use Clear Commit Messages**
    Commit messages help explain the development flow:

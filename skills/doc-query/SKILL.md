@@ -7,7 +7,7 @@ description: Targeted query capabilities for machine-readable codebase documenta
 
 ## Overview
 
-`Skill(foundry:doc-query)` builds structured context from the codebase documentation artifacts produced by `mcp__foundry-mcp__llm-doc-generate`. Instead of parsing source files directly, the skill queries the generated JSON corpus (`codebase.json`) plus the sharded Markdown set under `docs/` to answer questions about classes, functions, dependencies, call graphs, and refactoring candidates. The skill never shells out to the legacy `sdd doc …` CLI—every operation flows through the Foundry MCP server.
+`Skill(foundry:doc-query)` builds structured context from the codebase documentation artifacts. Instead of parsing source files directly, the skill queries the generated JSON corpus (`codebase.json`) plus the sharded Markdown set under `docs/` to answer questions about classes, functions, dependencies, call graphs, and refactoring candidates. Every operation flows through the Foundry MCP server using the `code` router.
 
 **Core capabilities**
 - Entity lookup for classes, functions, and modules
@@ -21,27 +21,27 @@ Use the skill whenever you need a fast, structured understanding of an unfamilia
 
 ## MCP Tooling
 
-Doc-query calls the following MCP tools (canonical names shown as `mcp__foundry-mcp__<tool>`):
+Doc-query calls the `code` router with various actions (using the pattern `mcp__plugin_foundry_foundry-mcp__code action="<action>"`):
 
-| Tool | Purpose |
+| Action | Purpose |
 | --- | --- |
-| `code-find-class` | Locate class definitions by exact or fuzzy name |
-| `code-find-function` | Locate function definitions and metadata |
-| `code-get-callers` | List functions that call a given function |
-| `code-get-callees` | List functions invoked by a given function |
-| `code-trace-calls` | Build configurable call graphs (upstream/downstream/both) |
-| `code-impact-analysis` | Perform dependency-based blast-radius assessments |
+| `find-class` | Locate class definitions by exact or fuzzy name |
+| `find-function` | Locate function definitions and metadata |
+| `get-callers` | List functions that call a given function |
+| `get-callees` | List functions invoked by a given function |
+| `trace-calls` | Build configurable call graphs (upstream/downstream/both) |
+| `impact-analysis` | Perform dependency-based blast-radius assessments |
 | `doc-stats` | Inspect documentation freshness, entity counts, and complexity metrics |
 
 Higher-level workflows (scope, trace-entry, trace-data, refactor-candidates, etc.) orchestrate combinations of these base tools; you do **not** need to invoke them directly—simply describe the workflow you want when calling the skill and it issues the necessary MCP requests.
 
 ## Quick Start
 
-1. **Confirm documentation exists** – run `mcp__foundry-mcp__doc-stats`. If the response warns about missing data, generate docs via `mcp__foundry-mcp__llm-doc-generate` first.
-2. **Scope your module** – instruct the skill with something like `"scope module=src/auth/login.py mode=plan"`. The skill gathers summaries, dependencies, and complexity stats by chaining `code-find-*`, `code-trace-calls`, and `code-impact-analysis`.
-3. **Explore execution or data flow** – use the skill’s `trace-entry` or `trace-data` workflows (e.g., `"trace entry function=process_request depth=3"`). The skill builds a call tree via `code-trace-calls` plus targeted caller/callee lookups.
-4. **Estimate risk** – ask for `impact entity=UserService depth=2`. Behind the scenes the skill runs `code-impact-analysis`, call graph expansion, and dependency checks.
-5. **Dive deeper manually** – if you need raw lookups, request them explicitly ("find function calculate_score" → `code-find-function`, "callers calculate_score" → `code-get-callers`, etc.).
+1. **Confirm documentation exists** – run `mcp__plugin_foundry_foundry-mcp__code action="doc-stats"`. If the response warns about missing data, generate docs first.
+2. **Scope your module** – instruct the skill with something like `"scope module=src/auth/login.py mode=plan"`. The skill gathers summaries, dependencies, and complexity stats by chaining `code action="find-*"`, `code action="trace-calls"`, and `code action="impact-analysis"`.
+3. **Explore execution or data flow** – use the skill's `trace-entry` or `trace-data` workflows (e.g., `"trace entry function=process_request depth=3"`). The skill builds a call tree via `code action="trace-calls"` plus targeted caller/callee lookups.
+4. **Estimate risk** – ask for `impact entity=UserService depth=2`. Behind the scenes the skill runs `code action="impact-analysis"`, call graph expansion, and dependency checks.
+5. **Dive deeper manually** – if you need raw lookups, request them explicitly ("find function calculate_score" → `code action="find-function"`, "callers calculate_score" → `code action="get-callers"`, etc.).
 
 ## When to Use
 
@@ -54,19 +54,17 @@ Higher-level workflows (scope, trace-entry, trace-data, refactor-candidates, etc
 - Build call graphs or documentation excerpts for design reviews
 
 ❌ **Avoid doc-query when:**
-- Documentation has never been generated (run `mcp__foundry-mcp__llm-doc-generate` first)
+- Documentation has never been generated (generate docs first)
 - You must inspect raw source code (use `Read`/`Explore` tools)
 - You require runtime behavior or profiler data (use debugging tools instead)
 
 ## Documentation Requirements & Auto-Refresh
 
 - The skill expects `codebase.json` plus the sharded Markdown docs under `docs/`.
-- On every query, doc-query compares the documentation timestamp with the latest source commit. If stale, it transparently triggers a regeneration via `mcp__foundry-mcp__llm-doc-generate` (unless you explicitly disable refresh in your instructions).
+- On every query, doc-query compares the documentation timestamp with the latest source commit. If stale, it transparently triggers a regeneration (unless you explicitly disable refresh in your instructions).
 - Use these flags in your prompt when needed:
   - `skip_refresh=true` – still checks staleness but only warns
   - `no_staleness_check=true` – bypasses the check entirely for maximum speed
-
-You can always inspect the current state via `mcp__foundry-mcp__llm-doc-status` and clear cached artifacts with `mcp__foundry-mcp__llm-doc-cache`.
 
 ## Automated Workflows
 
@@ -93,26 +91,26 @@ Ranks high-complexity, high-dependency targets for refactoring by querying compl
 
 ## Manual Query Reference
 
-When you need granular control, ask the skill to invoke the specific MCP tools:
+When you need granular control, ask the skill to invoke the specific MCP actions:
 
-| Goal | Instruction Example | Underlying Tool |
+| Goal | Instruction Example | Underlying Action |
 | --- | --- | --- |
-| Find a class | `"find class WizardSession"` | `code-find-class` |
-| Find a function | `"find function calculate_score"` | `code-find-function` |
-| Describe callers | `"callers calculate_score"` | `code-get-callers` |
-| Describe callees | `"callees process_request"` | `code-get-callees` |
-| Build a call graph | `"trace calls process_request direction=down depth=3"` | `code-trace-calls` |
-| Impact analysis | `"impact entity=UserService depth=2"` | `code-impact-analysis` |
-| Documentation stats | `"doc stats"` | `doc-stats` |
+| Find a class | `"find class WizardSession"` | `code action="find-class"` |
+| Find a function | `"find function calculate_score"` | `code action="find-function"` |
+| Describe callers | `"callers calculate_score"` | `code action="get-callers"` |
+| Describe callees | `"callees process_request"` | `code action="get-callees"` |
+| Build a call graph | `"trace calls process_request direction=down depth=3"` | `code action="trace-calls"` |
+| Impact analysis | `"impact entity=UserService depth=2"` | `code action="impact-analysis"` |
+| Documentation stats | `"doc stats"` | `code action="doc-stats"` |
 
 The skill supports pagination for find/class/function queries; specify `limit` or ask for "next page" and it will pass the cursor returned by the tool.
 
 ## Tool Verification
 
 Before running complex workflows:
-1. Call `mcp__foundry-mcp__doc-stats` to ensure documentation is loaded (the response includes the detected docs path and freshness timestamp).
-2. If stats fail with "Documentation not loaded", regenerate via `mcp__foundry-mcp__llm-doc-generate directory="<repo>" output_dir="./docs" use_ai=false`.
-3. Optionally, request `doc stats` again to confirm freshness.
+1. Call `mcp__plugin_foundry_foundry-mcp__code action="doc-stats"` to ensure documentation is loaded (the response includes the detected docs path and freshness timestamp).
+2. If stats fail with "Documentation not loaded", regenerate documentation first.
+3. Optionally, request `code action="doc-stats"` again to confirm freshness.
 
 ## Examples
 

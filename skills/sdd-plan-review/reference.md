@@ -278,7 +278,7 @@ Use the category from the first model that flagged the issue. If models disagree
 ### Common Troubleshooting
 
 **No tools available:**
-1. Check `mcp__foundry-mcp__review-list-tools` output
+1. Check `mcp__plugin_foundry_foundry-mcp__review action="list-tools"` output
 2. Verify provider configuration
 3. Ensure API keys are set
 

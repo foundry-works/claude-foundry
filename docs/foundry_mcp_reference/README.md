@@ -8,7 +8,7 @@ This documentation uses RFC 2119 terminology. See [RFC 2119](https://datatracker
 
 ## What is foundry-mcp?
 
-**foundry-mcp** is a Python-based MCP (Model Context Protocol) server and native CLI that enables AI assistants to manage spec-driven development workflows. It provides 40+ tools for:
+**foundry-mcp** is a Python-based MCP (Model Context Protocol) server that enables AI assistants to manage spec-driven development workflows. It provides 17 routers with 80+ actions for:
 
 - **Spec Management** — Create, validate, and lifecycle specifications
 - **Task Operations** — Track progress, dependencies, and blockers
@@ -100,20 +100,20 @@ The claude-foundry plugin interfaces with foundry-mcp through MCP tool calls, pr
 
 ## Relationship to claude-foundry Skills
 
-claude-foundry provides skills that orchestrate foundry-mcp tools:
+claude-foundry provides skills that orchestrate foundry-mcp tools via the router+action pattern:
 
-| Skill | Primary Tools Used |
-|-------|-------------------|
-| `sdd-plan` | `spec-create`, `spec-validate`, `doc-scope`, `doc-stats` |
-| `sdd-next` | `task-prepare`, `task-next`, `session-work-mode` |
-| `sdd-update` | `task-update-status`, `journal-add`, `task-complete` |
-| `sdd-validate` | `spec-validate`, `spec-audit` |
-| `sdd-pr` | `pr-context`, `pr-create` |
-| `run-tests` | `test-run`, `test-discover`, `test-consult` |
-| `doc-query` | `doc-stats`, `doc-scope`, `doc-search` |
-| `sdd-fidelity-review` | `fidelity-check`, `verify-check` |
+| Skill | Primary Routers | Key Actions |
+|-------|-----------------|-------------|
+| `sdd-plan` | `authoring`, `spec`, `code` | `spec-create`, `validate`, `doc-stats` |
+| `sdd-next` | `spec`, `task` | `find`, `next`, `prepare` |
+| `sdd-update` | `task`, `journal` | `complete`, `update-status`, `add` |
+| `sdd-validate` | `spec` | `validate`, `fix`, `stats` |
+| `sdd-pr` | `pr`, `journal` | `create`, `context`, `list` |
+| `run-tests` | `test`, `provider` | `run`, `discover`, `execute` |
+| `doc-query` | `code` | `doc-stats`, `find-class`, `find-function` |
+| `sdd-fidelity-review` | `review`, `verification` | `fidelity`, `execute` |
 
-All tools follow the naming pattern `mcp__foundry-mcp__<tool-name>`.
+Tools use the pattern `mcp__plugin_foundry_foundry-mcp__<router> action="<action>"`.
 
 ---
 
@@ -144,14 +144,22 @@ All tools return a standardized JSON envelope:
 }
 ```
 
-### Tool Naming
+### Router Architecture
 
-Tools use kebab-case with domain prefixes:
-- `spec-*` — Specification operations
-- `task-*` — Task operations
-- `doc-*` — Documentation queries
-- `test-*` — Testing operations
-- `review-*` — Review operations
+Tools are organized into 17 routers with action-based invocation:
+
+| Router | Purpose |
+|--------|---------|
+| `spec` | Specification CRUD and validation |
+| `task` | Task operations and progress |
+| `journal` | Decision and completion journaling |
+| `lifecycle` | Spec state transitions |
+| `authoring` | Create specs, phases, tasks |
+| `review` | AI-powered reviews |
+| `test` | pytest integration |
+| `code` | Codebase queries |
+
+Invocation pattern: `mcp__plugin_foundry_foundry-mcp__<router> action="<action>"`
 
 ---
 

@@ -51,23 +51,23 @@ HOW TO FIX:
 
   ALTERNATIVE: MCP tools (for granular operations)
   ────────────────────────────────────────────────
-  mcp__foundry-mcp__code-find-class name="..." exact=false
-  mcp__foundry-mcp__code-find-function name="..." exact=false
-  mcp__foundry-mcp__code-get-callers function_name="..."
-  mcp__foundry-mcp__code-get-callees function_name="..."
-  mcp__foundry-mcp__code-trace-calls function_name="..." direction="both" max_depth=3
-  mcp__foundry-mcp__code-impact-analysis target="..." target_type="class"
-  mcp__foundry-mcp__doc-stats
+  mcp__plugin_foundry_foundry-mcp__code action="find-class" symbol="..."
+  mcp__plugin_foundry_foundry-mcp__code action="find-function" symbol="..."
+  mcp__plugin_foundry_foundry-mcp__code action="get-callers" symbol="..."
+  mcp__plugin_foundry_foundry-mcp__code action="get-callees" symbol="..."
+  mcp__plugin_foundry_foundry-mcp__code action="trace-calls" symbol="..." depth=3
+  mcp__plugin_foundry_foundry-mcp__code action="impact-analysis" symbol="..."
+  mcp__plugin_foundry_foundry-mcp__code action="doc-stats"
 
 EXAMPLES:
   Instead of: Read(docs/codebase.json)
-    Use: Skill(doc-query) OR mcp__foundry-mcp__code-find-class name="Validator"
+    Use: Skill(doc-query) OR mcp__plugin_foundry_foundry-mcp__code action="find-class" symbol="Validator"
 
   Instead of: Reading entire file to find a function
-    Use: Skill(doc-query) OR mcp__foundry-mcp__code-find-function name="process_spec"
+    Use: Skill(doc-query) OR mcp__plugin_foundry_foundry-mcp__code action="find-function" symbol="process_spec"
 
   Instead of: Searching for call relationships in the JSON
-    Use: Skill(doc-query) OR mcp__foundry-mcp__code-trace-calls function_name="validate_spec"
+    Use: Skill(doc-query) OR mcp__plugin_foundry_foundry-mcp__code action="trace-calls" symbol="validate_spec"
 
 ⚠️  CRITICAL: Do not use Python, cat, jq, Read(), or any other method to bypass this
    restriction. ALL codebase.json access must go through Skills or MCP tools.

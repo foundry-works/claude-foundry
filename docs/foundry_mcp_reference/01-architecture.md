@@ -169,16 +169,16 @@ The CLI:
 
 ### Tool Invocation Pattern
 
-claude-foundry skills invoke foundry-mcp tools using the MCP naming convention:
+claude-foundry skills invoke foundry-mcp tools using the router+action pattern:
 
 ```
-mcp__foundry-mcp__<tool-name>
+mcp__plugin_foundry_foundry-mcp__<router> action="<action>"
 ```
 
 **Examples:**
-- `mcp__foundry-mcp__spec-create` — Create a new specification
-- `mcp__foundry-mcp__task-next` — Get next actionable task
-- `mcp__foundry-mcp__doc-stats` — Check documentation status
+- `mcp__plugin_foundry_foundry-mcp__authoring action="spec-create"` — Create a new specification
+- `mcp__plugin_foundry_foundry-mcp__task action="next"` — Get next actionable task
+- `mcp__plugin_foundry_foundry-mcp__code action="doc-stats"` — Check documentation status
 
 ### Data Flow
 

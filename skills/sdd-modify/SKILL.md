@@ -26,23 +26,16 @@ Use `Skill(foundry:sdd-modify)` to:
 
 ## MCP Tooling
 
-This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Tool names follow the `mcp__foundry-mcp__<tool-name>` pattern.
+This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Tools use the router+action pattern: `mcp__plugin_foundry_foundry-mcp__<router>` with `action="<action>"`.
 
-| Tool | Purpose |
-|------|---------|
-| `spec-apply-plan` | Apply structured modifications from JSON file |
-| `review-parse-feedback` | Convert review markdown to modifications JSON |
-| `spec-validate` | Check spec validity after modifications |
-| `spec-validate-fix` | Auto-fix common validation issues |
-| `spec-get` | Retrieve spec data |
-| `spec-get-hierarchy` | Get spec hierarchy structure |
-| `spec-list` | List available specs |
-| `spec-update-frontmatter` | Update spec-level metadata |
-| `task-add` | Add new task/subtask/verify nodes |
-| `task-remove` | Remove nodes (optionally cascading) |
-| `task-update-metadata` | Update task metadata fields |
-| `verification-add` | Add verification results |
-| `journal-add` | Document modifications |
+| Router | Actions | Purpose |
+|--------|---------|---------|
+| `spec` | `apply-plan`, `validate`, `validate-fix`, `get`, `get-hierarchy`, `list` | Modifications and validation |
+| `review` | `parse-feedback` | Convert review markdown to modifications JSON |
+| `authoring` | `update-frontmatter`, `task-add`, `task-remove` | Add/remove nodes |
+| `task` | `update-metadata` | Update task metadata fields |
+| `verification` | `add` | Add verification results |
+| `journal` | `add` | Document modifications |
 
 **Critical Rules:**
 - **ALWAYS** use MCP tools for spec operations
@@ -93,7 +86,7 @@ Parse the input to identify:
 ### Step 2: Parse Review Feedback (if review report provided)
 
 ```bash
-mcp__foundry-mcp__review-parse-feedback spec_id="{spec-id}" review_path="{path}"
+mcp__plugin_foundry_foundry-mcp__review action="parse-feedback" spec_id="{spec-id}" review_path="{path}"
 ```
 
 This converts markdown review findings into structured modification JSON.
@@ -101,7 +94,7 @@ This converts markdown review findings into structured modification JSON.
 ### Step 3: Preview Modifications (always do this first)
 
 ```bash
-mcp__foundry-mcp__spec-apply-plan spec_id="{spec-id}" modifications_file="{path}" dry_run=true
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="{spec-id}" modifications_file="{path}" dry_run=true
 ```
 
 Review the preview output: tasks to update, verification steps to add, metadata changes, impact summary.
@@ -111,7 +104,7 @@ Review the preview output: tasks to update, verification steps to add, metadata 
 After confirming preview looks correct:
 
 ```bash
-mcp__foundry-mcp__spec-apply-plan spec_id="{spec-id}" modifications_file="{path}"
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="{spec-id}" modifications_file="{path}"
 ```
 
 The tool automatically creates backup, applies modifications, validates result, and rolls back if validation fails.
@@ -121,13 +114,13 @@ The tool automatically creates backup, applies modifications, validates result, 
 Confirm spec is valid:
 
 ```bash
-mcp__foundry-mcp__spec-validate spec_id="{spec-id}"
+mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="{spec-id}"
 ```
 
 If validation issues found, apply auto-fixes:
 
 ```bash
-mcp__foundry-mcp__spec-validate-fix spec_id="{spec-id}" auto_fix=true
+mcp__plugin_foundry_foundry-mcp__spec action="validate-fix" spec_id="{spec-id}" auto_fix=true
 ```
 
 ## Supported Operations

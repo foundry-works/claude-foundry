@@ -152,6 +152,37 @@ The plugin automatically configures the foundry-mcp MCP server when installed. T
 
 If the MCP server fails to start, verify that `foundry-mcp` is installed (see Prerequisites above).
 
+## Permissions
+
+Claude Code requires explicit permissions for plugin tools. Add the permissions from `docs/examples/settings.local.json.example` to your project's `.claude/settings.local.json`.
+
+**If you don't have a `.claude/settings.local.json` yet:**
+
+```bash
+mkdir -p .claude && curl -o .claude/settings.local.json \
+  https://raw.githubusercontent.com/tylerburleigh/claude-foundry/main/docs/examples/settings.local.json.example
+```
+
+**If you already have one:** Merge the permissions from the sample file into your existing config. See `docs/examples/settings.local.json.example` in this repo for the full list.
+
+### What's included
+
+The sample config allows:
+
+| Category | Permissions |
+|----------|-------------|
+| **MCP Tools** | All `mcp__plugin_foundry_foundry-mcp__*` tools |
+| **Git** | `status`, `diff`, `log`, `rev-parse`, `branch`, `show` |
+| **Testing** | `pytest`, `python -m pytest` |
+| **Foundry CLI** | `foundry-mcp`, `foundry-cli` |
+| **AI Providers** | `codex`, `claude`, `gemini`, `cursor-agent`, `opencode` |
+| **File Access** | Write/Edit to `specs/` directories |
+| **Denied** | Direct `Read` of spec JSON files (use MCP tools instead) |
+
+### Customizing
+
+Edit `.claude/settings.local.json` to add or remove permissions. See [Claude Code permissions docs](https://docs.anthropic.com/en/docs/claude-code) for the full syntax.
+
 ## License
 
 MIT

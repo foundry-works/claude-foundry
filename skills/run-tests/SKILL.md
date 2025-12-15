@@ -18,22 +18,22 @@ The **Skill(foundry:run-tests)** skill provides systematic pytest testing with a
 
 ## MCP Tooling
 
-This skill uses the Foundry MCP server (`foundry-mcp`). Tools follow the `mcp__foundry-mcp__<tool-name>` pattern.
+This skill uses the Foundry MCP server (`foundry-mcp`). Tools use the router+action pattern: `mcp__plugin_foundry_foundry-mcp__<router>` with `action="<action>"`.
 
 **Test execution:**
-- `mcp__foundry-mcp__test-run` - Full test run with options
-- `mcp__foundry-mcp__test-run-quick` - Quick run (fail-fast, skip slow)
-- `mcp__foundry-mcp__test-run-unit` - Unit tests only
-- `mcp__foundry-mcp__test-presets` - List available presets
-- `mcp__foundry-mcp__test-discover` - Discover tests without running
+- `mcp__plugin_foundry_foundry-mcp__test action="run"` - Full test run with options
+- `mcp__plugin_foundry_foundry-mcp__test action="run-quick"` - Quick run (fail-fast, skip slow)
+- `mcp__plugin_foundry_foundry-mcp__test action="run-unit"` - Unit tests only
+- `mcp__plugin_foundry_foundry-mcp__test action="presets"` - List available presets
+- `mcp__plugin_foundry_foundry-mcp__test action="discover"` - Discover tests without running
 
 **AI consultation:**
-- `mcp__foundry-mcp__provider-list` - Check available AI tools
-- `mcp__foundry-mcp__provider-execute` - Consult AI for debugging
+- `mcp__plugin_foundry_foundry-mcp__provider action="list"` - Check available AI tools
+- `mcp__plugin_foundry_foundry-mcp__provider action="execute"` - Consult AI for debugging
 
 **Code documentation (optional):**
-- `mcp__foundry-mcp__code-find-function` - Find function definitions
-- `mcp__foundry-mcp__code-trace-calls` - Trace call graphs
+- `mcp__plugin_foundry_foundry-mcp__code action="find-function"` - Find function definitions
+- `mcp__plugin_foundry_foundry-mcp__code action="trace-calls"` - Trace call graphs
 
 ## Core Workflow
 
@@ -66,17 +66,17 @@ Fix & Verify
 
 **Quick run (stop on first failure):**
 ```
-mcp__foundry-mcp__test-run-quick
+mcp__plugin_foundry_foundry-mcp__test action="run-quick"
 ```
 
 **Full suite with verbose output:**
 ```
-mcp__foundry-mcp__test-run verbose=true
+mcp__plugin_foundry_foundry-mcp__test action="run" verbose=true
 ```
 
 **Specific test:**
 ```
-mcp__foundry-mcp__test-run target="tests/test_module.py::test_function"
+mcp__plugin_foundry_foundry-mcp__test action="run" target="tests/test_module.py::test_function"
 ```
 
 ## Phase 2: Investigate Failures
@@ -104,9 +104,9 @@ mcp__foundry-mcp__test-run target="tests/test_module.py::test_function"
 
 If code documentation exists:
 ```
-mcp__foundry-mcp__doc-stats
-mcp__foundry-mcp__code-find-function name="function_name"
-mcp__foundry-mcp__code-trace-calls function_name="function_name"
+mcp__plugin_foundry_foundry-mcp__code action="doc-stats"
+mcp__plugin_foundry_foundry-mcp__code action="find-function" symbol="function_name"
+mcp__plugin_foundry_foundry-mcp__code action="trace-calls" symbol="function_name"
 ```
 
 ### 3.1 Subagent Guidance (Context Exploration)
@@ -140,7 +140,7 @@ Use the Explore agent (very thorough) to find:
 
 **Check availability:**
 ```
-mcp__foundry-mcp__provider-list
+mcp__plugin_foundry_foundry-mcp__provider action="list"
 ```
 
 **Decision:**
@@ -150,7 +150,7 @@ mcp__foundry-mcp__provider-list
 
 **Consultation:**
 ```
-mcp__foundry-mcp__provider-execute provider_id="gemini" prompt="..."
+mcp__plugin_foundry_foundry-mcp__provider action="execute" provider_id="gemini" prompt="..."
 ```
 
 > For tool selection guidance by failure type, see `reference.md#tool-selection`
@@ -159,8 +159,8 @@ mcp__foundry-mcp__provider-execute provider_id="gemini" prompt="..."
 
 1. Synthesize findings from investigation + AI recommendations
 2. Implement fix using Edit tool
-3. Verify with specific test: `mcp__foundry-mcp__test-run target="tests/test_module.py::test_function"`
-4. Run full suite: `mcp__foundry-mcp__test-run`
+3. Verify with specific test: `mcp__plugin_foundry_foundry-mcp__test action="run" target="tests/test_module.py::test_function"`
+4. Run full suite: `mcp__plugin_foundry_foundry-mcp__test action="run"`
 
 ## Test Presets
 

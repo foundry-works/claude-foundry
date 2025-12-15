@@ -16,11 +16,11 @@ description: Generate stakeholder-friendly documentation from SDD specifications
 
 ## MCP Tooling
 
-| MCP Tool | Purpose |
-| --- | --- |
-| `mcp__foundry-mcp__spec-doc` | Deterministic/basic rendering (fast, no AI) |
-| `mcp__foundry-mcp__spec-doc-llm` | AI-enhanced narratives with summary/standard/full levels |
-| `mcp__foundry-mcp__spec-review-fidelity` | Optional fidelity audit prior to rendering |
+| Router | Action | Purpose |
+| --- | --- | --- |
+| `spec` | `doc` | Deterministic/basic rendering (fast, no AI) |
+| `spec` | `doc-llm` | AI-enhanced narratives with summary/standard/full levels |
+| `review` | `fidelity` | Optional fidelity audit prior to rendering |
 
 The skill routes every request through one of these tools. There is **no CLI fallback**—all parameters are passed as structured MCP inputs.
 

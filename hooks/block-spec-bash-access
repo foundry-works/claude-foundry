@@ -47,23 +47,23 @@ HOW TO FIX:
 
   ALTERNATIVE: MCP tools (for granular operations)
   ────────────────────────────────────────────────
-  mcp__foundry-mcp__task-next spec_id="<id>"
-  mcp__foundry-mcp__task-query spec_id="<id>" status="pending"
-  mcp__foundry-mcp__task-info spec_id="<id>" task_id="<task-id>"
-  mcp__foundry-mcp__task-progress spec_id="<id>"
-  mcp__foundry-mcp__spec-get-hierarchy spec_id="<id>"
-  mcp__foundry-mcp__task-complete spec_id="<id>" task_id="<id>" completion_note="..."
-  mcp__foundry-mcp__spec-apply-plan spec_id="<id>" modifications_file="mods.json"
+  mcp__plugin_foundry_foundry-mcp__task action="next" spec_id="<id>"
+  mcp__plugin_foundry_foundry-mcp__task action="query" spec_id="<id>" status="pending"
+  mcp__plugin_foundry_foundry-mcp__task action="info" spec_id="<id>" task_id="<task-id>"
+  mcp__plugin_foundry_foundry-mcp__task action="progress" spec_id="<id>"
+  mcp__plugin_foundry_foundry-mcp__spec action="get-hierarchy" spec_id="<id>"
+  mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id="<id>" task_id="<id>" completion_note="..."
+  mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="<id>"
 
 EXAMPLES:
   Querying: Instead of python -c "import json; ..." or jq on specs
-    Use: Skill(sdd-next) OR mcp__foundry-mcp__task-query spec_id="my-spec" status="pending"
+    Use: Skill(sdd-next) OR mcp__plugin_foundry_foundry-mcp__task action="query" spec_id="my-spec" status="pending"
 
   Modifying: Instead of Python script or sed/awk on spec JSON
-    Use: Skill(sdd-modify) OR mcp__foundry-mcp__spec-apply-plan spec_id="..." modifications_file="..."
+    Use: Skill(sdd-modify) OR mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="..."
 
   Reading: Instead of cat specs/active/my-spec.json
-    Use: Skill(sdd-next) OR mcp__foundry-mcp__task-prepare spec_id="my-spec"
+    Use: Skill(sdd-next) OR mcp__plugin_foundry_foundry-mcp__task action="prepare" spec_id="my-spec"
 
 ⚠️  CRITICAL: ALL spec file access must go through Skills or MCP tools.
    If Read() is blocked, Bash file I/O is also blocked. Use the tools above.

@@ -84,7 +84,7 @@ For specs with 100+ tasks:
 ### Schema Validation Errors
 
 If you see "JSON Schema validation failed":
-1. Run `mcp__foundry-mcp__spec-schema-export` to see valid structure
+1. Run `mcp__plugin_foundry_foundry-mcp__spec action="schema-export"` to see valid structure
 2. Compare your spec against the schema
 3. Look for required fields that are missing
 4. Check enum values match allowed options
@@ -99,7 +99,7 @@ Validation will fail with "missing required fields". Use `sdd-plan` to create ne
 
 ### Backup Files
 
-`mcp__foundry-mcp__validate-fix` creates `.backup` files before modification. To revert:
+`mcp__plugin_foundry_foundry-mcp__spec action="fix"` creates `.backup` files before modification. To revert:
 ```bash
 cp my-spec.json.backup my-spec.json
 ```

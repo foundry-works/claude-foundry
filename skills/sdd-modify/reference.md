@@ -27,7 +27,7 @@ Detailed workflows, examples, and edge cases for the sdd-modify skill.
 When starting from a review report (markdown output from sdd-plan-review or sdd-fidelity-review), convert it to structured modifications:
 
 ```bash
-mcp__foundry-mcp__review-parse-feedback spec_id="my-spec-001" review_path="reports/plan-review.md"
+mcp__plugin_foundry_foundry-mcp__review action="parse-feedback" spec_id="my-spec-001" review_path="reports/plan-review.md"
 ```
 
 **Output:** Creates a modifications JSON file (typically `{review-path}.suggestions.json`)
@@ -62,7 +62,7 @@ mcp__foundry-mcp__review-parse-feedback spec_id="my-spec-001" review_path="repor
 **Always preview before applying.** Use dry-run mode to see what will change:
 
 ```bash
-mcp__foundry-mcp__spec-apply-plan spec_id="my-spec-001" modifications_file="suggestions.json" dry_run=true
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec-001" modifications_file="suggestions.json" dry_run=true
 ```
 
 **Example preview output:**
@@ -102,7 +102,7 @@ Summary: 2 task updates, 1 verification addition
 After confirming the preview, apply changes:
 
 ```bash
-mcp__foundry-mcp__spec-apply-plan spec_id="my-spec-001" modifications_file="suggestions.json"
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec-001" modifications_file="suggestions.json"
 ```
 
 **What happens automatically:**
@@ -150,7 +150,7 @@ When you have pre-prepared modifications or want to make manual bulk changes:
       "task_id": "task-2-1",
       "verification": {
         "verification_type": "run-tests",
-        "mcp_tool": "mcp__foundry-mcp__test-run",
+        "mcp_tool": "mcp__plugin_foundry_foundry-mcp__test action=\"run\"",
         "expected": "All tests pass"
       }
     }
@@ -162,10 +162,10 @@ When you have pre-prepared modifications or want to make manual bulk changes:
 
 ```bash
 # Preview
-mcp__foundry-mcp__spec-apply-plan spec_id="my-spec-001" modifications_file="modifications.json" dry_run=true
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec-001" modifications_file="modifications.json" dry_run=true
 
 # Apply
-mcp__foundry-mcp__spec-apply-plan spec_id="my-spec-001" modifications_file="modifications.json"
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec-001" modifications_file="modifications.json"
 ```
 
 **When to use:**
@@ -209,7 +209,7 @@ Add a verification step to a task:
   "task_id": "task-1-3",
   "verification": {
     "verification_type": "fidelity",
-    "mcp_tool": "mcp__foundry-mcp__spec-review-fidelity",
+    "mcp_tool": "mcp__plugin_foundry_foundry-mcp__review action=\"fidelity\"",
     "scope": "task",
     "target": "task-1-3",
     "expected": "Implementation matches specification"
@@ -218,8 +218,8 @@ Add a verification step to a task:
 ```
 
 **Verification types:**
-- `run-tests` - Automated tests via `mcp__foundry-mcp__test-run`
-- `fidelity` - Implementation-vs-spec comparison via `mcp__foundry-mcp__spec-review-fidelity`
+- `run-tests` - Automated tests via `mcp__plugin_foundry_foundry-mcp__test action="run"`
+- `fidelity` - Implementation-vs-spec comparison via `mcp__plugin_foundry_foundry-mcp__review action="fidelity"`
 
 **Run-tests verification example:**
 ```json
@@ -228,7 +228,7 @@ Add a verification step to a task:
   "task_id": "task-2-1",
   "verification": {
     "verification_type": "run-tests",
-    "mcp_tool": "mcp__foundry-mcp__test-run",
+    "mcp_tool": "mcp__plugin_foundry_foundry-mcp__test action=\"run\"",
     "expected": "All tests pass"
   }
 }
@@ -355,11 +355,11 @@ After plan quality review:
 # ... (sdd-plan-review output) ...
 
 # Parse into modifications
-mcp__foundry-mcp__review-parse-feedback spec_id="my-spec" review_path="reports/plan-review.md"
+mcp__plugin_foundry_foundry-mcp__review action="parse-feedback" spec_id="my-spec" review_path="reports/plan-review.md"
 
 # Preview and apply
-mcp__foundry-mcp__spec-apply-plan spec_id="my-spec" modifications_file="reports/plan-review.md.suggestions.json" dry_run=true
-mcp__foundry-mcp__spec-apply-plan spec_id="my-spec" modifications_file="reports/plan-review.md.suggestions.json"
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec" modifications_file="reports/plan-review.md.suggestions.json" dry_run=true
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec" modifications_file="reports/plan-review.md.suggestions.json"
 ```
 
 ### From sdd-fidelity-review
@@ -371,11 +371,11 @@ After implementation fidelity check:
 # ... (sdd-fidelity-review output) ...
 
 # Parse into modifications
-mcp__foundry-mcp__review-parse-feedback spec_id="my-spec" review_path="reports/fidelity-review.md"
+mcp__plugin_foundry_foundry-mcp__review action="parse-feedback" spec_id="my-spec" review_path="reports/fidelity-review.md"
 
 # Preview and apply
-mcp__foundry-mcp__spec-apply-plan spec_id="my-spec" modifications_file="reports/fidelity-review.md.suggestions.json" dry_run=true
-mcp__foundry-mcp__spec-apply-plan spec_id="my-spec" modifications_file="reports/fidelity-review.md.suggestions.json"
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec" modifications_file="reports/fidelity-review.md.suggestions.json" dry_run=true
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec" modifications_file="reports/fidelity-review.md.suggestions.json"
 ```
 
 ### Direct JSON Modification
@@ -385,10 +385,10 @@ When you know the exact changes:
 ```bash
 # Create modifications.json manually
 # Preview
-mcp__foundry-mcp__spec-apply-plan spec_id="my-spec" modifications_file="modifications.json" dry_run=true
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec" modifications_file="modifications.json" dry_run=true
 
 # Apply
-mcp__foundry-mcp__spec-apply-plan spec_id="my-spec" modifications_file="modifications.json"
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec" modifications_file="modifications.json"
 ```
 
 ---
@@ -401,7 +401,7 @@ mcp__foundry-mcp__spec-apply-plan spec_id="my-spec" modifications_file="modifica
 
 **Resolution:**
 1. Verify spec ID is correct
-2. Check spec location: `mcp__foundry-mcp__spec-list`
+2. Check spec location: `mcp__plugin_foundry_foundry-mcp__spec action="list"`
 3. Ensure spec is in expected folder (active/, pending/, etc.)
 
 ### Invalid Modifications File
@@ -520,26 +520,26 @@ mcp__foundry-mcp__spec-apply-plan spec_id="my-spec" modifications_file="modifica
 
 ### Core Commands
 
-| Command | Purpose |
-|---------|---------|
-| `spec-apply-plan` | Apply modifications from JSON file |
-| `review-parse-feedback` | Convert review markdown to modifications |
-| `spec-validate` | Validate spec structure |
-| `spec-validate-fix` | Auto-fix validation issues |
+| Router | Action | Purpose |
+|--------|--------|---------|
+| `spec` | `apply-plan` | Apply modifications from JSON file |
+| `review` | `parse-feedback` | Convert review markdown to modifications |
+| `spec` | `validate` | Validate spec structure |
+| `spec` | `validate-fix` | Auto-fix validation issues |
 
 ### Supporting Commands
 
-| Command | Purpose |
-|---------|---------|
-| `spec-get` | Retrieve spec data |
-| `spec-get-hierarchy` | Get spec structure |
-| `spec-list` | List available specs |
-| `task-add` | Add new task node |
-| `task-remove` | Remove task node |
-| `task-update-metadata` | Update task metadata |
-| `spec-update-frontmatter` | Update spec metadata |
-| `verification-add` | Add verification result |
-| `journal-add` | Add journal entry |
+| Router | Action | Purpose |
+|--------|--------|---------|
+| `spec` | `get` | Retrieve spec data |
+| `spec` | `get-hierarchy` | Get spec structure |
+| `spec` | `list` | List available specs |
+| `authoring` | `task-add` | Add new task node |
+| `authoring` | `task-remove` | Remove task node |
+| `task` | `update-metadata` | Update task metadata |
+| `authoring` | `update-frontmatter` | Update spec metadata |
+| `verification` | `add` | Add verification result |
+| `journal` | `add` | Add journal entry |
 
 ### Common Flags
 

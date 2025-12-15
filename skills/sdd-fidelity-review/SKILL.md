@@ -34,7 +34,7 @@ Use this skill when you need to:
 
 ## MCP Tooling
 
-This skill relies entirely on the Foundry MCP server (`foundry-mcp`). Tool names follow the `mcp__foundry-mcp__<tool-name>` pattern.
+This skill relies entirely on the Foundry MCP server (`foundry-mcp`). Tools use the router+action pattern: `mcp__plugin_foundry_foundry-mcp__<router>` with `action="<action>"`.
 
 **Critical Rules:**
 - **ALWAYS** use MCP tools for spec operations
@@ -84,17 +84,17 @@ Use the Explore agent (very thorough) to investigate:
 
 **Phase review:**
 ```bash
-mcp__foundry-mcp__review-fidelity <spec-id> --phase <phase-id>
+mcp__plugin_foundry_foundry-mcp__review action="fidelity" spec_id="{spec-id}" phase_id="{phase-id}"
 ```
 
 **Task review:**
 ```bash
-mcp__foundry-mcp__review-fidelity <spec-id> --task <task-id>
+mcp__plugin_foundry_foundry-mcp__review action="fidelity" spec_id="{spec-id}" task_id="{task-id}"
 ```
 
 **Query tasks before review:**
 ```bash
-mcp__foundry-mcp__task-query <spec-id> --parent <phase-id> --json
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id="{spec-id}" parent="{phase-id}"
 ```
 
 > For query patterns and anti-patterns, see `reference.md#querying-spec-and-task-data-efficiently`
@@ -161,11 +161,7 @@ Generate reports in this format:
 
 ## Long-Running Operations
 
-**This skill may take up to 5 minutes.** Always use foreground execution:
-
-```python
-Bash(command="mcp__foundry-mcp__review-fidelity ...", timeout=300000)
-```
+**This skill may take up to 5 minutes.** The MCP tool handles timeout internally.
 
 **Never** use `run_in_background=True` with frequent polling.
 

@@ -64,7 +64,7 @@ AI-powered review of markdown plans before converting them to formal JSON specif
 ### Tool Usage
 
 ```bash
-mcp__foundry-mcp__plan-review plan_path="./PLAN.md" review_type="full"
+mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="./PLAN.md" review_type="full"
 ```
 
 ### Review Types
@@ -258,8 +258,8 @@ Each verification step should specify its type:
 
 | Type | Description | MCP Tool |
 |------|-------------|----------|
-| `run-tests` | Automated tests via pytest or similar | `mcp__foundry-mcp__test-run` |
-| `fidelity` | Implementation-vs-spec comparison | `mcp__foundry-mcp__spec-review-fidelity` |
+| `run-tests` | Automated tests via pytest or similar | `mcp__plugin_foundry_foundry-mcp__test action="run"` |
+| `fidelity` | Implementation-vs-spec comparison | `mcp__plugin_foundry_foundry-mcp__review action="fidelity"` |
 
 **Example verification node:**
 ```json
@@ -271,7 +271,7 @@ Each verification step should specify its type:
   "children": [],
   "metadata": {
     "verification_type": "run-tests",
-    "mcp_tool": "mcp__foundry-mcp__test-run",
+    "mcp_tool": "mcp__plugin_foundry_foundry-mcp__test action=\"run\"",
     "expected": "All tests pass"
   },
   "dependencies": {
@@ -340,7 +340,7 @@ Marks what this task prevents from starting. Inverse of `blocked_by`.
 
 - Prefer `blocked_by` over `blocks` for clarity
 - Keep dependency chains short (3-4 hops max)
-- Avoid circular dependencies (use `mcp__foundry-mcp__spec-detect-cycles` to check)
+- Avoid circular dependencies (use `mcp__plugin_foundry_foundry-mcp__spec action="detect-cycles"` to check)
 - Group independent tasks in parallel branches
 
 ---
@@ -432,7 +432,7 @@ Full specification structure:
       "completed_tasks": 0,
       "metadata": {
         "verification_type": "run-tests",
-        "mcp_tool": "mcp__foundry-mcp__test-run",
+        "mcp_tool": "mcp__plugin_foundry_foundry-mcp__test action=\"run\"",
         "expected": "All tests pass"
       },
       "dependencies": {
@@ -451,7 +451,7 @@ Full specification structure:
       "completed_tasks": 0,
       "metadata": {
         "verification_type": "fidelity",
-        "mcp_tool": "mcp__foundry-mcp__spec-review-fidelity",
+        "mcp_tool": "mcp__plugin_foundry_foundry-mcp__review action=\"fidelity\"",
         "scope": "phase",
         "target": "phase-1",
         "expected": "Implementation matches specification"
@@ -493,21 +493,21 @@ Examples:
 
 Always check first:
 ```bash
-mcp__foundry-mcp__doc-stats
+mcp__plugin_foundry_foundry-mcp__code action="doc-stats"
 ```
 
 If `classes_count > 0` or `functions_count > 0`, use documentation tools:
 
 ```bash
 # Find existing implementations
-mcp__foundry-mcp__code-find-class name="UserService"
-mcp__foundry-mcp__code-find-function name="authenticate"
+mcp__plugin_foundry_foundry-mcp__code action="find-class" symbol="UserService"
+mcp__plugin_foundry_foundry-mcp__code action="find-function" symbol="authenticate"
 
 # Trace dependencies
-mcp__foundry-mcp__code-trace-calls function_name="login" direction="both"
+mcp__plugin_foundry_foundry-mcp__code action="trace-calls" symbol="login"
 
 # Analyze impact of changes
-mcp__foundry-mcp__code-impact-analysis target="AuthController"
+mcp__plugin_foundry_foundry-mcp__code action="impact-analysis" symbol="AuthController"
 ```
 
 ### When Documentation Unavailable
@@ -544,7 +544,7 @@ This keeps exploration context isolated and returns focused results for planning
 Before planning a refactor, always run impact analysis:
 
 ```bash
-mcp__foundry-mcp__code-impact-analysis target="TargetClass" max_depth=3
+mcp__plugin_foundry_foundry-mcp__code action="impact-analysis" symbol="TargetClass" depth=3
 ```
 
 This identifies:
@@ -635,8 +635,8 @@ For refactoring/complex changes:
 After creating a spec, validation may fail. This is normal for new specs.
 
 **Solution:**
-1. Run `mcp__foundry-mcp__spec-validate spec_id="{spec-id}"` to see errors
-2. Run `mcp__foundry-mcp__spec-validate-fix spec_id="{spec-id}" auto_fix=true`
+1. Run `mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="{spec-id}"` to see errors
+2. Run `mcp__plugin_foundry_foundry-mcp__spec action="validate-fix" spec_id="{spec-id}" auto_fix=true`
 3. Re-validate until error count stops decreasing
 4. For remaining errors, see `Skill(foundry:sdd-validate)` troubleshooting
 
@@ -652,7 +652,7 @@ If a spec exceeds 6 phases or 50 tasks:
 
 ### Circular Dependencies Detected
 
-If `mcp__foundry-mcp__spec-detect-cycles` finds cycles:
+If `mcp__plugin_foundry_foundry-mcp__spec action="detect-cycles"` finds cycles:
 
 **Solution:**
 1. Identify the cycle path (e.g., `task-1-2 -> task-2-3 -> task-1-2`)
@@ -662,15 +662,15 @@ If `mcp__foundry-mcp__spec-detect-cycles` finds cycles:
 
 ### Documentation Not Available
 
-If `mcp__foundry-mcp__doc-stats` shows no documentation:
+If `mcp__plugin_foundry_foundry-mcp__code action="doc-stats"` shows no documentation:
 
 **Solution:**
 1. Use `Glob`, `Grep`, and `Read` for analysis
 2. Consider generating documentation first:
    ```bash
-   mcp__foundry-mcp__spec-doc-llm directory="." use_ai=true
+   mcp__plugin_foundry_foundry-mcp__spec action="doc-llm" directory="." use_ai=true
    ```
-3. Re-run `doc-stats` after generation
+3. Re-run `code action="doc-stats"` after generation
 
 ### User Doesn't Approve Phase Plan
 
@@ -685,13 +685,13 @@ If user requests changes to the high-level plan:
 
 ### AI Plan Review Not Available
 
-If `mcp__foundry-mcp__plan-review` returns an error about no AI provider:
+If `mcp__plugin_foundry_foundry-mcp__plan action="review"` returns an error about no AI provider:
 
 **Solution:**
 1. Check that an AI provider is configured (GEMINI_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY)
 2. Verify the provider is accessible
-3. If no provider available, skip AI review and proceed directly to JSON spec creation
-4. Consider using `cursor-agent` if running in an environment with it available
+3. Use `mcp__plugin_foundry_foundry-mcp__provider action="list"` to see available providers
+4. **Do not proceed** to JSON spec creation until AI review is working - this is a required step
 
 ### Plan Review Returns Many Critical Blockers
 

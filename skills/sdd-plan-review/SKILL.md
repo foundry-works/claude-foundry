@@ -39,20 +39,13 @@ Use this skill when you need to:
 
 ## MCP Tooling
 
-This skill relies entirely on the Foundry MCP server (`foundry-mcp`). Tool names follow the `mcp__foundry-mcp__<tool-name>` pattern.
+This skill relies entirely on the Foundry MCP server (`foundry-mcp`). Tools use the router+action pattern: `mcp__plugin_foundry_foundry-mcp__<router>` with `action="<action>"`.
 
-| Category | Tool | Purpose |
-|----------|------|---------|
-| Review | `spec-review` | Execute multi-model review |
-| Review | `review-list-tools` | List available review toolchains |
-| Review | `review-list-plan-tools` | List plan-specific review tools |
-| Spec Read | `spec-get` | Get spec content |
-| Spec Read | `spec-get-hierarchy` | Get spec structure |
-| Spec Read | `spec-stats` | Get spec statistics |
-| Spec Read | `spec-list` | List available specs |
-| Provider | `provider-list` | List AI providers |
-| Provider | `provider-status` | Check provider availability |
-| Provider | `provider-execute` | Execute provider query |
+| Router | Actions | Purpose |
+|--------|---------|---------|
+| `review` | `spec-review`, `list-tools`, `list-plan-tools` | Execute reviews and list toolchains |
+| `spec` | `get`, `get-hierarchy`, `stats`, `list` | Get spec content and structure |
+| `provider` | `list`, `status`, `execute` | List and manage AI providers |
 
 **Critical Rules:**
 - **ALWAYS** use MCP tools for spec operations
@@ -74,17 +67,17 @@ This skill relies entirely on the Foundry MCP server (`foundry-mcp`). Tool names
 
 **Run a review:**
 ```bash
-mcp__foundry-mcp__spec-review spec_id="{spec-id}" review_type="{type}"
+mcp__plugin_foundry_foundry-mcp__review action="spec-review" spec_id="{spec-id}" review_type="{type}"
 ```
 
 **Check available tools:**
 ```bash
-mcp__foundry-mcp__review-list-tools
+mcp__plugin_foundry_foundry-mcp__review action="list-tools"
 ```
 
 **Check provider status:**
 ```bash
-mcp__foundry-mcp__provider-list
+mcp__plugin_foundry_foundry-mcp__provider action="list"
 ```
 
 ## Core Workflow
@@ -92,7 +85,7 @@ mcp__foundry-mcp__provider-list
 ### Step 1: Verify Available Tools
 
 ```bash
-mcp__foundry-mcp__review-list-tools
+mcp__plugin_foundry_foundry-mcp__review action="list-tools"
 ```
 
 Check which AI review toolchains are installed:
@@ -120,7 +113,7 @@ Use this decision matrix:
 ### Step 3: Execute Review
 
 ```bash
-mcp__foundry-mcp__spec-review spec_id="{spec-id}" review_type="{type}"
+mcp__plugin_foundry_foundry-mcp__review action="spec-review" spec_id="{spec-id}" review_type="{type}"
 ```
 
 The tool automatically:
@@ -157,7 +150,7 @@ After completing the review:
 
 ## Output Format
 
-Reports are written to `specs/.reviews/{spec-id}-review-{type}.md`:
+Reports are written to `specs/.plan-reviews/{spec-id}-review-{type}.md`:
 
 ```markdown
 ## Feedback Summary
@@ -182,8 +175,7 @@ Review output can be extensive (hundreds of lines). Writing directly to the conv
 3. Callers access full data via file paths
 
 **Output Locations:**
-- Markdown report: `specs/.reviews/{spec-id}-review-{type}.md`
-- JSON summary: `specs/.reviews/{spec-id}-review-{type}.json`
+- Markdown report: `specs/.plan-reviews/{plan-name}-{review-type}.md`
 
 ## Example Invocation
 

@@ -30,7 +30,7 @@ Detailed workflows, examples, and edge cases for the sdd-update skill.
 Mark a task as in_progress when you begin work:
 
 ```bash
-mcp__foundry-mcp__task-update-status {spec-id} {task-id} in_progress
+mcp__plugin_foundry_foundry-mcp__task action="start" spec_id={spec-id} task_id={task-id}
 ```
 
 The MCP tool automatically records the start timestamp for tracking purposes.
@@ -45,16 +45,16 @@ Document decisions, deviations, or important notes:
 
 ```bash
 # Document a decision
-mcp__foundry-mcp__journal add {spec-id} --title "Decision Title" --content "Explanation of decision and rationale" --task-id {task-id} --entry-type decision
+mcp__plugin_foundry_foundry-mcp__journal action="add" spec_id={spec-id} title="Decision Title" content="Explanation of decision and rationale" task_id={task-id} entry_type="decision"
 
 # Document a deviation from the plan
-mcp__foundry-mcp__journal add {spec-id} --title "Deviation: Changed Approach" --content "Created separate service file instead of modifying existing. Improves separation of concerns." --task-id {task-id} --entry-type deviation
+mcp__plugin_foundry_foundry-mcp__journal action="add" spec_id={spec-id} title="Deviation: Changed Approach" content="Created separate service file instead of modifying existing. Improves separation of concerns." task_id={task-id} entry_type="deviation"
 
 # Document task completion (use status_change, NOT completion)
-mcp__foundry-mcp__journal add {spec-id} --title "Task Completed: Implement Auth" --content "Successfully implemented authentication with JWT tokens. All tests passing." --task-id {task-id} --entry-type status_change
+mcp__plugin_foundry_foundry-mcp__journal action="add" spec_id={spec-id} title="Task Completed: Implement Auth" content="Successfully implemented authentication with JWT tokens. All tests passing." task_id={task-id} entry_type="status_change"
 
 # Document a note
-mcp__foundry-mcp__journal add {spec-id} --title "Implementation Note" --content "Using Redis for session storage as discussed." --task-id {task-id} --entry-type note
+mcp__plugin_foundry_foundry-mcp__journal action="add" spec_id={spec-id} title="Implementation Note" content="Using Redis for session storage as discussed." task_id={task-id} entry_type="note"
 ```
 
 **Entry types:** `decision`, `deviation`, `blocker`, `note`, `status_change`
@@ -68,7 +68,7 @@ mcp__foundry-mcp__journal add {spec-id} --title "Implementation Note" --content 
 When a task cannot proceed:
 
 ```bash
-mcp__foundry-mcp__block-task {spec-id} {task-id} --reason "Description of blocker" --type {type} --ticket "TICKET-123"
+mcp__plugin_foundry_foundry-mcp__task action="block" spec_id={spec-id} task_id={task-id} reason="Description of blocker" blocker_type={type} ticket="TICKET-123"
 ```
 
 **Blocker types:**
@@ -82,13 +82,13 @@ mcp__foundry-mcp__block-task {spec-id} {task-id} --reason "Description of blocke
 When blocker is resolved:
 
 ```bash
-mcp__foundry-mcp__task-unblock {spec-id} {task-id} --resolution "Description of how it was resolved"
+mcp__plugin_foundry_foundry-mcp__task action="unblock" spec_id={spec-id} task_id={task-id} resolution="Description of how it was resolved"
 ```
 
 #### List All Blockers
 
 ```bash
-mcp__foundry-mcp__list-blockers {spec-id}
+mcp__plugin_foundry_foundry-mcp__task action="list-blocked" spec_id={spec-id}
 ```
 
 ---
@@ -101,13 +101,13 @@ Document verification results:
 
 ```bash
 # Verification passed
-mcp__foundry-mcp__add-verification {spec-id} {verify-id} PASSED --command "npm test" --output "All tests passed" --notes "Optional notes"
+mcp__plugin_foundry_foundry-mcp__verification action="add" spec_id={spec-id} verify_id={verify-id} result="PASSED" command="npm test" output="All tests passed" notes="Optional notes"
 
 # Verification failed
-mcp__foundry-mcp__add-verification {spec-id} {verify-id} FAILED --command "npm test" --output "3 tests failed" --issues "List of issues found"
+mcp__plugin_foundry_foundry-mcp__verification action="add" spec_id={spec-id} verify_id={verify-id} result="FAILED" command="npm test" output="3 tests failed" issues="List of issues found"
 
 # Partial success
-mcp__foundry-mcp__add-verification {spec-id} {verify-id} PARTIAL --notes "Most checks passed, minor issues remain"
+mcp__plugin_foundry_foundry-mcp__verification action="add" spec_id={spec-id} verify_id={verify-id} result="PARTIAL" notes="Most checks passed, minor issues remain"
 ```
 
 #### Automatic Verification Execution
@@ -116,21 +116,17 @@ If verification tasks have metadata specifying how to execute them, run automati
 
 ```bash
 # Execute verification based on metadata
-mcp__foundry-mcp__execute-verify {spec-id} {verify-id}
+mcp__plugin_foundry_foundry-mcp__verification action="execute" spec_id={spec-id} verify_id={verify-id}
 
 # Execute and automatically record result
-mcp__foundry-mcp__execute-verify {spec-id} {verify-id} --record
+mcp__plugin_foundry_foundry-mcp__verification action="execute" spec_id={spec-id} verify_id={verify-id} record=true
 ```
 
 **Requirements:** Verification task must have `skill` or `command` in its metadata.
 
 #### Verify on Task Completion
 
-Automatically run verifications when marking a task complete:
-
-```bash
-mcp__foundry-mcp__task-update-status {spec-id} {task-id} completed --verify
-```
+Automatically run verifications when marking a task complete via `task action="complete"`.
 
 The `--verify` flag runs all associated verify tasks. If any fail, the task reverts to `in_progress`.
 
@@ -165,20 +161,17 @@ Verification tasks can specify custom failure behavior via `on_failure` metadata
 
 #### Complete a Task (Recommended: Atomic Status + Journal)
 
-When finishing a task, use `complete-task` to atomically mark it complete AND create a journal entry:
+When finishing a task, use `task action="complete"` to atomically mark it complete AND create a journal entry:
 
 ```bash
 # Complete with automatic journal entry
-mcp__foundry-mcp__complete-task {spec-id} {task-id} --journal-content "Successfully implemented JWT authentication with token refresh. All tests passing including edge cases for expired tokens."
+mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id={spec-id} task_id={task-id} journal_entry="Successfully implemented JWT authentication with token refresh. All tests passing including edge cases for expired tokens."
 
-# Customize the journal entry
-mcp__foundry-mcp__complete-task {spec-id} {task-id} --journal-title "Task Completed: Authentication Implementation" --journal-content "Detailed description of what was accomplished..." --entry-type status_change
-
-# Add a brief status note
-mcp__foundry-mcp__complete-task {spec-id} {task-id} --note "All tests passing" --journal-content "Implemented authentication successfully."
+# Add a completion note
+mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id={spec-id} task_id={task-id} completion_note="All tests passing" journal_entry="Implemented authentication successfully."
 ```
 
-**What `complete-task` does automatically:**
+**What `task action="complete"` does automatically:**
 1. Updates task status to `completed`
 2. Records completion timestamp
 3. Creates a journal entry documenting the completion
@@ -188,44 +181,30 @@ mcp__foundry-mcp__complete-task {spec-id} {task-id} --note "All tests passing" -
 
 #### Parent Node Journaling
 
-When completing a task causes parent nodes (phases or task groups) to auto-complete, `complete-task` automatically creates journal entries for those parents:
+When completing a task causes parent nodes (phases or task groups) to auto-complete, the tool automatically creates journal entries for those parents:
 
 - **Automatic detection**: The system detects when all child tasks in a phase/group are completed
 - **Automatic journaling**: Creates journal entries like "Phase Completed: Phase 1" for each auto-completed parent
 - **No manual action needed**: You don't need to manually journal parent completions
 - **Hierarchical**: Works for multiple levels (e.g., completing a task can journal both its group AND its phase)
 
-Example output:
-```bash
-$ mcp__foundry-mcp__complete-task my-spec-001 task-1-2 --journal-content "Completed final task"
-✓ Task marked complete
-✓ Journal entry added
-✓ Auto-journaled 2 parent node(s): group-1, phase-1
-```
-
 #### Alternative: Status-Only Update (Not Recommended for Completion)
 
 If you need to mark a task completed without journaling (rare), use:
 
 ```bash
-mcp__foundry-mcp__task-update-status {spec-id} {task-id} completed --note "Brief completion note"
+mcp__plugin_foundry_foundry-mcp__task action="update-status" spec_id={spec-id} task_id={task-id} status="completed" note="Brief completion note"
 ```
 
-**Warning:** This sets `needs_journaling=True` and requires a follow-up `add-journal` call. Use `complete-task` instead to avoid forgetting to journal.
+**Warning:** Use `task action="complete"` instead to ensure proper journaling.
 
 #### Complete a Spec
 
 When all phases are verified and complete:
 
 ```bash
-# Check if ready to complete
-mcp__foundry-mcp__check-complete {spec-id}
-
 # Complete spec (updates metadata, regenerates docs, moves to completed/)
-mcp__foundry-mcp__complete-spec {spec-id}
-
-# Skip documentation regeneration
-mcp__foundry-mcp__complete-spec {spec-id} --skip-doc-regen
+mcp__plugin_foundry_foundry-mcp__lifecycle action="complete" spec_id={spec-id}
 ```
 
 ---
@@ -237,21 +216,21 @@ mcp__foundry-mcp__complete-spec {spec-id} --skip-doc-regen
 Move a spec from pending/ to active/ when ready to start work:
 
 ```bash
-mcp__foundry-mcp__activate-spec {spec-id}
+mcp__plugin_foundry_foundry-mcp__lifecycle action="activate" spec_id={spec-id}
 ```
 
 This updates metadata status to "active" and makes the spec visible to sdd-next.
 
 #### Move to Completed
 
-Use `complete-spec` (see Workflow 5) to properly complete and move a spec.
+Use `lifecycle action="complete"` (see Workflow 5) to properly complete and move a spec.
 
 #### Archive Superseded Specs
 
 Move specs that are no longer relevant:
 
 ```bash
-mcp__foundry-mcp__move-spec {spec-id} archived
+mcp__plugin_foundry_foundry-mcp__lifecycle action="move" spec_id={spec-id} to_folder="archived"
 ```
 
 ---
@@ -305,7 +284,7 @@ When `file_staging.show_before_commit = true` (default), the agent sees uncommit
 ```bash
 # Step 1: Preview uncommitted files (automatic via show_commit_preview_and_wait)
 # Shows: modified, untracked, and staged files
-mcp__foundry-mcp__complete-task SPEC_ID TASK_ID
+mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id={spec-id} task_id={task-id}
 
 # Step 2: Agent stages only task-related files
 git add specs/active/spec.json
@@ -313,8 +292,8 @@ git add src/feature/implementation.py
 git add tests/test_feature.py
 # (Deliberately skip unrelated files like debug scripts, personal notes)
 
-# Step 3: Create commit with staged files only
-mcp__foundry-mcp__create-task-commit SPEC_ID TASK_ID
+# Step 3: Create commit with staged files only (via git directly after staging)
+git commit -m "{task-id}: {task-title}"
 ```
 
 **Benefits:**
@@ -348,16 +327,13 @@ show_before_commit = true  # false = auto-stage all (backward compatible)
 
 ```bash
 # Complete task (shows preview if enabled)
-mcp__foundry-mcp__complete-task SPEC_ID TASK_ID
-
-# Create commit from staged files
-mcp__foundry-mcp__create-task-commit SPEC_ID TASK_ID
+mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id={spec-id} task_id={task-id}
 
 # Example workflow:
-mcp__foundry-mcp__complete-task user-auth-001 task-1-2
+mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id="user-auth-001" task_id="task-1-2"
 # (Review preview, stage desired files)
 git add specs/active/user-auth-001.json src/auth/service.py
-mcp__foundry-mcp__create-task-commit user-auth-001 task-1-2
+git commit -m "task-1-2: Implement JWT verification middleware"
 ```
 
 **All git commands use `cwd=repo_root`** obtained from `find_git_root()` to ensure they run in the correct repository directory.
@@ -395,10 +371,10 @@ All git commands must run in the repository root directory:
 
 #### Complete Example Workflow
 
-1. Complete the task with `mcp__foundry-mcp__complete-task SPEC_ID TASK_ID`.
+1. Complete the task with `mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id={spec-id} task_id={task-id}`.
 2. If git integration is enabled and cadence matches the event, `sdd-update` checks for uncommitted changes.
 3. Stage files either via the preview workflow (recommended) or `git add --all` when auto-staging is enabled.
-4. Run `mcp__foundry-mcp__create-task-commit SPEC_ID TASK_ID` to generate the commit; the command formats the message and records the SHA automatically.
+4. Create the commit with `git commit -m "{task-id}: {task-title}"`.
 5. If no changes are staged or the git command fails, the tool logs a warning and the task completion still succeeds.
 
 #### Git Configuration File
@@ -438,109 +414,65 @@ When a spec is completed, the workflow can automatically push commits to the rem
 
 ### Preview Changes
 
-Use `--dry-run` to preview changes before applying:
+Use `dry_run=true` to preview changes before applying:
 
 ```bash
-mcp__foundry-mcp__task-update-status {spec-id} {task-id} completed --dry-run
-mcp__foundry-mcp__block-task {spec-id} {task-id} --reason "Test" --dry-run
+mcp__plugin_foundry_foundry-mcp__task action="update-status" spec_id={spec-id} task_id={task-id} status="completed" dry_run=true
+mcp__plugin_foundry_foundry-mcp__task action="block" spec_id={spec-id} task_id={task-id} reason="Test" dry_run=true
 ```
 
 ### Query Spec State
 
 ```bash
-# Get overall progress
-mcp__foundry-mcp__status-report {spec-id}
-
-# List all phases with progress
-mcp__foundry-mcp__list-phases {spec-id}
+# Get spec with progress
+mcp__plugin_foundry_foundry-mcp__spec action="get" spec_id={spec-id}
 
 # Find tasks by status
-mcp__foundry-mcp__task-query {spec-id} --status pending
-mcp__foundry-mcp__task-query {spec-id} --status blocked
-
-# Find tasks by type
-mcp__foundry-mcp__task-query {spec-id} --type verify
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} status="pending"
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} status="blocked"
 
 # Get specific task details
-mcp__foundry-mcp__task-info {spec-id} {task-id}
+mcp__plugin_foundry_foundry-mcp__task action="info" spec_id={spec-id} task_id={task-id}
 ```
 
 ### Update Metadata
 
 ```bash
 # Update spec metadata fields
-mcp__foundry-mcp__update-frontmatter {spec-id} status "active"
-mcp__foundry-mcp__update-frontmatter {spec-id} owner "user@example.com"
-mcp__foundry-mcp__update-frontmatter {spec-id} priority "high"
-
-# Sync metadata with hierarchy state
-mcp__foundry-mcp__sync-metadata {spec-id}
+mcp__plugin_foundry_foundry-mcp__authoring action="update-frontmatter" spec_id={spec-id} key="status" value="active"
+mcp__plugin_foundry_foundry-mcp__authoring action="update-frontmatter" spec_id={spec-id} key="owner" value="user@example.com"
 ```
 
 ### Update Task Metadata
 
-Update metadata fields for individual tasks using `update-task-metadata`:
+Update metadata fields for individual tasks:
 
 ```bash
-# Update predefined metadata fields using individual flags
-mcp__foundry-mcp__update-task-metadata {spec-id} {task-id} --file-path "src/auth.py"
-mcp__foundry-mcp__update-task-metadata {spec-id} {task-id} --description "Updated task description"
-mcp__foundry-mcp__update-task-metadata {spec-id} {task-id} --task-category "implementation"
-mcp__foundry-mcp__update-task-metadata {spec-id} {task-id} --actual-hours 2.5
+# Update predefined metadata fields
+mcp__plugin_foundry_foundry-mcp__task action="update-metadata" spec_id={spec-id} task_id={task-id} file_path="src/auth.py"
+mcp__plugin_foundry_foundry-mcp__task action="update-metadata" spec_id={spec-id} task_id={task-id} description="Updated task description"
 
-# Update custom metadata fields using JSON
-mcp__foundry-mcp__update-task-metadata {spec-id} {task-id} \
-  --metadata '{"focus_areas": ["performance", "security"], "priority": "high"}'
-
-# Combine individual flags with custom JSON (flags take precedence)
-mcp__foundry-mcp__update-task-metadata {spec-id} {task-id} \
-  --file-path "src/middleware.py" \
-  --metadata '{"focus_areas": ["authentication"], "complexity": "medium"}'
-
-# Complex nested metadata structures
-mcp__foundry-mcp__update-task-metadata {spec-id} {task-id} \
-  --metadata '{
-    "focus_areas": ["error handling", "edge cases"],
-    "blockers": ["clarification needed", "dependency X"],
-    "implementation_notes": {
-      "approach": "incremental",
-      "testing_strategy": "unit + integration"
-    }
-  }'
+# Update with custom metadata JSON
+mcp__plugin_foundry_foundry-mcp__task action="update-metadata" spec_id={spec-id} task_id={task-id} custom_metadata='{"focus_areas": ["performance", "security"], "priority": "high"}'
 ```
 
-**Available individual flags:**
-- `--file-path` - File path associated with this task
-- `--description` - Task description
-- `--task-category` - Category (e.g., implementation, testing, documentation)
-- `--actual-hours` - Actual hours spent on task
-- `--status-note` - Status note or completion note
-- `--verification-type` - Verification type (run-tests, fidelity)
-- `--command` - Command executed
-
-**Custom metadata with --metadata:**
-- Accepts JSON object with any custom fields
-- Useful for tracking focus areas, priorities, blockers, complexity, etc.
-- Merges with individual flags (individual flags take precedence)
-- Supports nested structures and arrays
+**Available metadata fields:**
+- `file_path` - File path associated with this task
+- `description` - Task description
+- `task_category` - Category (e.g., implementation, testing, documentation)
+- `actual_hours` - Actual hours spent on task
+- `status_note` - Status note or completion note
+- `verification_type` - Verification type (run-tests, fidelity)
+- `command` - Command executed
+- `custom_metadata` - JSON object with any custom fields
 
 **Common use cases:**
 ```bash
 # Track focus areas for investigation tasks
-mcp__foundry-mcp__update-task-metadata {spec-id} task-1-1 \
-  --metadata '{"focus_areas": ["code-doc structure", "skill patterns"]}'
+mcp__plugin_foundry_foundry-mcp__task action="update-metadata" spec_id={spec-id} task_id="task-1-1" custom_metadata='{"focus_areas": ["code-doc structure", "skill patterns"]}'
 
 # Document blockers and complexity
-mcp__foundry-mcp__update-task-metadata {spec-id} task-2-3 \
-  --metadata '{"blockers": ["API design unclear"], "complexity": "high"}'
-
-# Track implementation approach
-mcp__foundry-mcp__update-task-metadata {spec-id} task-3-2 \
-  --metadata '{
-    "approach": "refactor existing code",
-    "estimated_subtasks": 4,
-    "dependencies": ["task-3-1"]
-  }'
+mcp__plugin_foundry_foundry-mcp__task action="update-metadata" spec_id={spec-id} task_id="task-2-3" custom_metadata='{"blockers": ["API design unclear"], "complexity": "high"}'
 ```
 
 ### Validation
@@ -551,10 +483,10 @@ For comprehensive spec validation, use the sdd-validate skill:
 Skill(foundry:sdd-validate) "Validate specs/active/{spec-id}.json"
 ```
 
-For deep audits:
+For statistics and validation:
 
 ```bash
-mcp__foundry-mcp__audit-spec {spec-id}
+mcp__plugin_foundry_foundry-mcp__spec action="stats" spec_id={spec-id}
 ```
 
 ---
@@ -710,7 +642,7 @@ Based on configuration, when completing a task via `sdd-update`, the system will
 
 **Error:**
 ```bash
-mcp__foundry-mcp__journal add: error: argument --entry-type: invalid choice: 'completion'
+mcp__plugin_foundry_foundry-mcp__journal add: error: argument --entry-type: invalid choice: 'completion'
 Exit code: 2
 ```
 
@@ -720,18 +652,13 @@ Exit code: 2
 
 ```bash
 # WRONG - "completion" is not a valid entry type
-mcp__foundry-mcp__journal add {spec-id} --task-id {task-id} --entry-type completion --title "..." --content "..."
+mcp__plugin_foundry_foundry-mcp__journal action="add" spec_id={spec-id} task_id={task-id} entry_type="completion" ...
 
 # CORRECT - Use "status_change" for task completion entries
-mcp__foundry-mcp__journal add {spec-id} --task-id {task-id} --entry-type status_change --title "Task Completed" --content "..."
-
-# ALTERNATIVE - Use bulk-journal with completion template
-mcp__foundry-mcp__bulk-journal {spec-id} --template completion
+mcp__plugin_foundry_foundry-mcp__journal action="add" spec_id={spec-id} task_id={task-id} entry_type="status_change" title="Task Completed" content="..."
 ```
 
-**Why this happens:** The `bulk-journal` command has a `--template` parameter that accepts `completion` as a value for batch journaling. However, `add-journal` has an `--entry-type` parameter with different valid values. These are two separate parameters for different purposes:
-- `bulk-journal --template completion` - Batch journal multiple completed tasks using a template
-- `journal add --entry-type status_change` - Add individual journal entry about task status changes
+**Why this happens:** The entry_type parameter has specific valid values. Use `status_change` for task completion entries, `decision` for decisions, `deviation` for deviations, etc.
 
 ### Reading Spec Files Directly
 
@@ -745,52 +672,46 @@ Read("specs/active/my-spec.json")
 cat specs/active/my-spec.json
 
 # CORRECT - Use the MCP tool for structured access
-mcp__foundry-mcp__status-report {spec-id}
-mcp__foundry-mcp__task-info {spec-id} {task-id}
-mcp__foundry-mcp__task-query {spec-id} --status pending
+mcp__plugin_foundry_foundry-mcp__spec action="get" spec_id={spec-id}
+mcp__plugin_foundry_foundry-mcp__task action="info" spec_id={spec-id} task_id={task-id}
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} status="pending"
 ```
 
 ---
 
 ## Command Reference
 
-### Status Management
-- `update-status` - Change task status
-- `block-task` - Mark task as blocked with reason
-- `unblock-task` - Unblock a task with resolution
+### Task Router (`task`)
+- `action="update-status"` - Change task status
+- `action="block"` - Mark task as blocked with reason
+- `action="unblock"` - Unblock a task with resolution
+- `action="complete"` - Complete task with journal entry
+- `action="start"` - Mark task as in_progress
+- `action="query"` - Filter tasks by status, type, or parent
+- `action="info"` - Get detailed task information
+- `action="list-blocked"` - List all blocked tasks
+- `action="update-metadata"` - Update task metadata fields
 
-### Documentation
-- `journal add` - Add journal entry to spec
-- `bulk-journal` - Add entries for multiple completed tasks
-- `check-journaling` - Detect tasks without journal entries
-- `add-verification` - Document verification results
-- `execute-verify` - Run verification task automatically
+### Journal Router (`journal`)
+- `action="add"` - Add journal entry to spec
+- `action="list"` - List journal entries
 
-### Lifecycle
-- `activate-spec` - Move spec from pending/ to active/
-- `move-spec` - Move spec between folders
-- `complete-spec` - Mark complete and move to completed/
+### Lifecycle Router (`lifecycle`)
+- `action="activate"` - Move spec from pending/ to active/
+- `action="move"` - Move spec between folders
+- `action="complete"` - Mark complete and move to completed/
 
-### Query & Reporting
-- `status-report` - Get progress and status summary
-- `query-tasks` - Filter tasks by status, type, or parent
-- `task-info` - Get detailed task information
-- `list-phases` - List all phases with progress
-- `list-blockers` - List all blocked tasks
-- `check-complete` - Verify if spec/phase is ready to complete
+### Spec Router (`spec`)
+- `action="get"` - Get spec with progress
+- `action="validate"` - Check spec file consistency
+- `action="stats"` - Get statistics and validation
 
-### Metadata
-- `update-task-metadata` - Update task metadata fields (individual flags or JSON)
-- `update-frontmatter` - Update spec metadata fields
-- `sync-metadata` - Synchronize metadata with hierarchy
+### Verification Router (`verification`)
+- `action="add"` - Document verification results
+- `action="execute"` - Run verification task automatically
 
-### Validation
-- `validate-spec` - Check spec file consistency
-- `audit-spec` - Deep audit of spec file integrity
-
-### Common Flags
-- `--dry-run` - Preview changes without saving
-- `--verify` - Auto-run verify tasks on completion
+### Common Parameters
+- `dry_run=true` - Preview changes without saving
 
 ---
 
@@ -814,26 +735,18 @@ After running sdd-fidelity-review or sdd-plan-review:
 
 ```bash
 # Parse review feedback into structured modifications
-mcp__foundry-mcp__parse-review my-spec-001 --review reports/review.md --output suggestions.json
+mcp__plugin_foundry_foundry-mcp__review action="parse-feedback" spec_id="my-spec-001" review_path="reports/review.md"
 
 # Preview modifications
-mcp__foundry-mcp__apply-modifications my-spec-001 --from suggestions.json --dry-run
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec-001" dry_run=true
 
 # Apply modifications
-mcp__foundry-mcp__apply-modifications my-spec-001 --from suggestions.json
+mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec-001"
 ```
 
 **2. Bulk Modifications**
 
-Apply multiple structural changes at once:
-
-```bash
-# Create modifications.json with desired changes
-# (update task descriptions, add verifications, correct metadata)
-
-# Apply bulk modifications
-mcp__foundry-mcp__apply-modifications my-spec-001 --from modifications.json
-```
+Apply multiple structural changes at once using `Skill(foundry:sdd-modify)` for guided workflows.
 
 **3. Update Task Descriptions**
 
@@ -865,8 +778,8 @@ Use `Skill(foundry:sdd-modify)` when you need to:
 
 - **Skill(foundry:sdd-modify)** - Full documentation on systematic spec modification
 - **skills/sdd-modify/examples/** - Detailed workflow examples
-- **mcp__foundry-mcp__parse-review --help** - Parse review reports into modification format
-- **mcp__foundry-mcp__apply-modifications --help** - Apply modifications with validation
+- **`review action="parse-feedback"`** - Parse review reports into modification format
+- **`spec action="apply-plan"`** - Apply modifications with validation
 
 ---
 

@@ -48,15 +48,14 @@ Use `Skill(foundry:sdd-plan)` for:
 
 ## MCP Tooling
 
-This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Tool names follow the `mcp__foundry-mcp__<tool-name>` pattern.
+This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Tools use the router+action pattern: `mcp__plugin_foundry_foundry-mcp__<router>` with `action="<action>"`.
 
-| Tool Category | MCP Tools | Purpose |
-|---------------|-----------|---------|
-| **Codebase Analysis** | `doc-stats`, `code-find-class`, `code-find-function`, `code-trace-calls`, `code-impact-analysis` | Understand existing code structure |
-| **Plan Review** | `plan-review` | AI-powered review of markdown plans before spec creation |
-| **Spec Creation** | `spec-schema-export`, `spec-create` | Generate specification files |
-| **Spec Validation** | `spec-validate`, `spec-validate-fix` | Ensure spec integrity |
-| **Spec Query** | `spec-list`, `spec-get`, `spec-get-hierarchy` | Inspect existing specs |
+| Router | Actions | Purpose |
+|--------|---------|---------|
+| **code** | `find-class`, `find-function`, `trace-calls`, `impact-analysis` | Understand existing code structure |
+| **plan** | `create`, `list`, `review` | Create, list, and review markdown plans |
+| **authoring** | `spec-create` | Generate specification files |
+| **spec** | `validate`, `validate-fix`, `list`, `get`, `get-hierarchy`, `schema-export` | Validation and querying |
 
 **Critical Rules:**
 - **ALWAYS** use MCP tools for codebase analysis when documentation exists
@@ -76,14 +75,14 @@ Before creating any plan, deeply understand what needs to be accomplished:
 
 Check if documentation exists:
 ```bash
-mcp__foundry-mcp__doc-stats
+mcp__plugin_foundry_foundry-mcp__code action="doc-stats"
 ```
 
 If documentation available, use for analysis:
-- `mcp__foundry-mcp__code-find-class` - Find existing class implementations
-- `mcp__foundry-mcp__code-find-function` - Find function implementations
-- `mcp__foundry-mcp__code-trace-calls` - Trace call graphs
-- `mcp__foundry-mcp__code-impact-analysis` - Analyze change impact
+- `mcp__plugin_foundry_foundry-mcp__code action="find-class"` - Find existing class implementations
+- `mcp__plugin_foundry_foundry-mcp__code action="find-function"` - Find function implementations
+- `mcp__plugin_foundry_foundry-mcp__code action="trace-calls"` - Trace call graphs
+- `mcp__plugin_foundry_foundry-mcp__code action="impact-analysis"` - Analyze change impact
 
 If documentation unavailable, fall back to `Glob`, `Grep`, and `Read`.
 
@@ -119,14 +118,25 @@ Use the Explore agent (medium thoroughness) to find:
 
 For complex features (3+ phases expected), first create a phase-only markdown plan and **present to the user for approval before detailed planning**.
 
+**Option A: Create plan with MCP tool (recommended)**
+```bash
+mcp__plugin_foundry_foundry-mcp__plan action="create" name="Feature Name" template="detailed"
+```
+This creates `specs/.plans/feature-name.md` with a structured template.
+
+**Option B: Create plan manually**
+Create a markdown file directly in `specs/.plans/` following the phase plan template.
+
 > For phase plan template, see `reference.md#phase-plan-template`
 
-### Step 3.5: AI Review of Phase Plan (Optional)
+After creating the plan template, **read and fill in the placeholders** with your actual plan content (objectives, phases, tasks, risks, success criteria).
 
-Before converting your markdown plan to a formal JSON spec, you can get AI-powered feedback to catch issues early:
+### Step 3.5: AI Review of Phase Plan
+
+Before converting your markdown plan to a formal JSON spec, get AI-powered feedback to catch issues early:
 
 ```bash
-mcp__foundry-mcp__plan-review plan_path="./PLAN.md" review_type="full"
+mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name.md" review_type="full"
 ```
 
 **Review Types:**
@@ -138,23 +148,14 @@ mcp__foundry-mcp__plan-review plan_path="./PLAN.md" review_type="full"
 | `feasibility` | Technical complexity and risk assessment |
 
 **Review → Revise → Repeat:**
-1. Create markdown plan
-2. Run AI review
-3. Review feedback in `./tmp/<plan-name>-review.md`
-4. Revise plan based on feedback
-5. Repeat until no critical blockers
+1. Create markdown plan with `plan action="create"` (creates template in `specs/.plans/`)
+2. Read template and fill in actual plan content
+3. Run AI review with `plan action="review"`
+4. Review feedback in `specs/.plan-reviews/<plan-name>-<review-type>.md`
+5. Revise plan based on feedback
+6. Repeat until no critical blockers
 
-**When to use AI review:**
-- Complex features with 3+ phases
-- Unfamiliar domains or technology
-- High-risk architectural changes
-- When user requests additional validation
-
-**When to skip:**
-- Simple features with clear scope
-- Well-understood domain/patterns
-- Time-sensitive changes
-- User explicitly approves plan without review
+**AI review is required** for all specs created with this skill. It catches issues early before they become expensive to fix during implementation.
 
 > For review output format and iteration examples, see `reference.md#ai-plan-review`
 
@@ -162,8 +163,8 @@ mcp__foundry-mcp__plan-review plan_path="./PLAN.md" review_type="full"
 
 After phase approval, get the spec schema and create the JSON spec:
 ```bash
-mcp__foundry-mcp__spec-schema-export
-mcp__foundry-mcp__spec-create name="feature-name" template="medium"
+mcp__plugin_foundry_foundry-mcp__spec action="schema-export"
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="feature-name" template="medium"
 ```
 
 The spec file is created at `specs/pending/{spec-id}.json`.
@@ -174,8 +175,8 @@ The spec file is created at `specs/pending/{spec-id}.json`.
 
 Use `Skill(foundry:sdd-validate)` to validate and auto-fix the specification:
 ```bash
-mcp__foundry-mcp__spec-validate spec_id="{spec-id}"
-mcp__foundry-mcp__spec-validate-fix spec_id="{spec-id}" auto_fix=true
+mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="{spec-id}"
+mcp__plugin_foundry_foundry-mcp__spec action="validate-fix" spec_id="{spec-id}" auto_fix=true
 ```
 
 ## Size Guidelines

@@ -141,7 +141,7 @@ You should see 40+ tools including `spec-create`, `task-next`, `doc-stats`, etc.
 Try a simple tool invocation:
 
 ```
-Use mcp__foundry-mcp__env-verify-environment to check the environment
+Use mcp__plugin_foundry_foundry-mcp__environment action="verify" to check the environment
 ```
 
 ---
@@ -155,7 +155,7 @@ Let's walk through a complete spec-driven development cycle.
 Before planning, verify codebase documentation is available:
 
 ```
-Use mcp__foundry-mcp__doc-stats to check documentation status
+Use mcp__plugin_foundry_foundry-mcp__code action="doc-stats" to check documentation status
 ```
 
 If documentation isn't available, the tool will guide you on how to generate it.
@@ -179,7 +179,7 @@ The skill will:
 Move from planning to implementation:
 
 ```
-Use mcp__foundry-mcp__spec-activate with spec_id "your-spec-id"
+Use mcp__plugin_foundry_foundry-mcp__lifecycle action="activate" spec_id="your-spec-id"
 ```
 
 This moves the spec from `pending/` to `active/`.

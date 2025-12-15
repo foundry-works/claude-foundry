@@ -152,12 +152,12 @@
 
 2. **Use auto-fix:**
    ```
-   mcp__foundry-mcp__spec-fix with spec_id="my-spec"
+   mcp__plugin_foundry_foundry-mcp__spec action="fix" spec_id="my-spec"
    ```
 
 3. **Get schema:**
    ```
-   mcp__foundry-mcp__spec-schema
+   mcp__plugin_foundry_foundry-mcp__spec action="schema-export"
    ```
 
 ### Hierarchy Integrity Errors
@@ -187,7 +187,7 @@
 
 3. **Review dependency graph:**
    ```
-   mcp__foundry-mcp__task-check-deps with spec_id="my-spec" task_id="task-001"
+   mcp__plugin_foundry_foundry-mcp__task action="check-deps" spec_id="my-spec" task_id="task-001"
    ```
 
 ---
@@ -204,7 +204,7 @@
 
 1. **List blocked tasks:**
    ```
-   mcp__foundry-mcp__task-list-blocked with spec_id="my-spec"
+   mcp__plugin_foundry_foundry-mcp__task action="list-blocked" spec_id="my-spec"
    ```
 
 2. **Check dependencies:**
@@ -213,7 +213,7 @@
 
 3. **Unblock manually:**
    ```
-   mcp__foundry-mcp__task-unblock with spec_id="my-spec" task_id="task-001"
+   mcp__plugin_foundry_foundry-mcp__task action="unblock" spec_id="my-spec" task_id="task-001"
    ```
 
 ### Task Count Mismatches
@@ -226,12 +226,12 @@
 
 1. **Validate spec:**
    ```
-   mcp__foundry-mcp__spec-validate with spec_id="my-spec"
+   mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="my-spec"
    ```
 
 2. **Reconcile state:**
    ```
-   mcp__foundry-mcp__spec-reconcile-state with spec_id="my-spec"
+   mcp__plugin_foundry_foundry-mcp__spec action="stats" spec_id="my-spec"
    ```
 
 3. **Check status values:**
@@ -254,9 +254,10 @@
 
 3. **Manual journal add:**
    ```
-   mcp__foundry-mcp__journal-add with
+   mcp__plugin_foundry_foundry-mcp__journal action="add"
      spec_id="my-spec"
-     entry={"entry_type": "note", "content": "Test entry"}
+     entry_type="note"
+     content="Test entry"
    ```
 
 ---
@@ -327,7 +328,7 @@ fixture 'db_session' not found
 
 2. **Use quick preset:**
    ```
-   mcp__foundry-mcp__test-run with preset="quick"
+   mcp__plugin_foundry_foundry-mcp__test action="run" preset="quick"
    ```
 
 3. **Increase timeout:**
@@ -455,21 +456,18 @@ fixture 'db_session' not found
 ### Context Limits
 
 **Symptoms:**
-- Autonomous mode stopping early
 - "Context limit reached" warnings
+- Large responses being truncated
 
 **Solutions:**
 
-1. **Check context usage:**
-   ```
-   mcp__foundry-mcp__session-context
-   ```
+1. **Use pagination:**
+   - Large result sets are automatically paginated
+   - Follow cursor to get more results
 
-2. **Adjust threshold:**
-   ```toml
-   [workflow]
-   context_limit_percent = 90  # Increase from default 85
-   ```
+2. **Request focused data:**
+   - Query specific phases instead of entire specs
+   - Use summary views when possible
 
 3. **Break into smaller sessions:**
    - Complete fewer tasks per session
@@ -485,12 +483,12 @@ fixture 'db_session' not found
 
 2. **Query specific phases:**
    ```
-   mcp__foundry-mcp__task-query with spec_id="my-spec" phase_id="phase-1"
+   mcp__plugin_foundry_foundry-mcp__task action="query" spec_id="my-spec" parent="phase-1"
    ```
 
 3. **Use summary views:**
    ```
-   mcp__foundry-mcp__spec-render-progress with spec_id="my-spec"
+   mcp__plugin_foundry_foundry-mcp__spec action="render-progress" spec_id="my-spec"
    ```
 
 ---
@@ -527,7 +525,7 @@ foundry-mcp
 ### Checking Configuration
 
 ```
-mcp__foundry-mcp__env-verify-environment
+mcp__plugin_foundry_foundry-mcp__environment action="verify"
 ```
 
 **Shows:**
@@ -538,7 +536,7 @@ mcp__foundry-mcp__env-verify-environment
 ### Verifying Installation
 
 ```
-mcp__foundry-mcp__sdd-verify-toolchain
+mcp__plugin_foundry_foundry-mcp__health action="check"
 ```
 
 **Checks:**

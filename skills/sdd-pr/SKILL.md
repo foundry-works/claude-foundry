@@ -23,12 +23,12 @@ Use `Skill(foundry:sdd-pr)` to:
 
 ## MCP Tooling
 
-This skill works exclusively through the Foundry MCP server (`foundry-mcp`). Tools follow the `mcp__foundry-mcp__<tool-name>` pattern.
+This skill works exclusively through the Foundry MCP server (`foundry-mcp`). Tools use the router+action pattern: `mcp__plugin_foundry_foundry-mcp__<router>` with `action="<action>"`.
 
 **Key tools:**
-- `mcp__foundry-mcp__pr-create` - Create PR with spec context
-- `mcp__foundry-mcp__pr-context` - Gather PR context from spec
-- `mcp__foundry-mcp__journal-get` - Get journal entries for context
+- `mcp__plugin_foundry_foundry-mcp__pr action="create"` - Create PR with spec context
+- `mcp__plugin_foundry_foundry-mcp__pr action="context"` - Gather PR context from spec
+- `mcp__plugin_foundry_foundry-mcp__journal action="list"` - Get journal entries for context
 
 ## Core Philosophy
 

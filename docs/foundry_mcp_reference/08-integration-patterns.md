@@ -41,110 +41,105 @@ Each skill orchestrates specific foundry-mcp tools:
 
 Creates specifications using planning tools.
 
-| Tool | Purpose in Skill |
-|------|------------------|
-| `doc-stats` | Check documentation availability |
-| `doc-scope` | Get module context for planning |
-| `doc-search` | Find existing implementations |
-| `spec-schema` | Get spec JSON schema |
-| `spec-create` | Create the specification |
-| `spec-validate` | Validate before saving |
-| `spec-fix` | Auto-fix issues |
+| Router | Action | Purpose in Skill |
+|--------|--------|------------------|
+| `code` | `doc-stats` | Check documentation availability |
+| `code` | `find-class` | Find existing class patterns |
+| `code` | `find-function` | Find existing implementations |
+| `authoring` | `spec-create` | Create the specification |
+| `spec` | `validate` | Validate before saving |
+| `spec` | `fix` | Auto-fix issues |
 
 ### sdd-next
 
 Finds and prepares the next actionable task.
 
-| Tool | Purpose in Skill |
-|------|------------------|
-| `spec-find` | Discover active specs |
-| `spec-list` | List specs by status |
-| `task-next` | Find next actionable task |
-| `task-prepare` | Get full task context |
-| `session-work-mode` | Check work mode |
-| `session-context` | Monitor context usage |
+| Router | Action | Purpose in Skill |
+|--------|--------|------------------|
+| `spec` | `find` | Discover active specs |
+| `spec` | `list` | List specs by status |
+| `task` | `next` | Find next actionable task |
+| `task` | `prepare` | Get full task context |
 
 ### sdd-update
 
 Tracks progress and updates task status.
 
-| Tool | Purpose in Skill |
-|------|------------------|
-| `task-update-status` | Change task status |
-| `task-complete` | Mark task done |
-| `task-start` | Mark task in progress |
-| `journal-add` | Add journal entries |
-| `task-block` | Record blockers |
-| `task-unblock` | Clear blockers |
+| Router | Action | Purpose in Skill |
+|--------|--------|------------------|
+| `task` | `update-status` | Change task status |
+| `task` | `complete` | Mark task done |
+| `task` | `start` | Mark task in progress |
+| `journal` | `add` | Add journal entries |
+| `task` | `block` | Record blockers |
+| `task` | `unblock` | Clear blockers |
 
 ### sdd-validate
 
 Validates specifications and identifies issues.
 
-| Tool | Purpose in Skill |
-|------|------------------|
-| `spec-validate` | Run validation |
-| `spec-fix` | Auto-fix issues |
-| `spec-stats` | Get statistics |
-| `spec-audit` | Deep audit |
+| Router | Action | Purpose in Skill |
+|--------|--------|------------------|
+| `spec` | `validate` | Run validation |
+| `spec` | `fix` | Auto-fix issues |
+| `spec` | `stats` | Get statistics |
 
 ### sdd-fidelity-review
 
 Reviews implementation against specifications.
 
-| Tool | Purpose in Skill |
-|------|------------------|
-| `fidelity-check` | Compare code vs spec |
-| `verify-check` | Run verification |
-| `verify-fix` | Fix verification issues |
-| `doc-dependencies` | Check impact |
+| Router | Action | Purpose in Skill |
+|--------|--------|------------------|
+| `review` | `fidelity` | Compare code vs spec |
+| `verification` | `execute` | Run verification |
+| `code` | `impact-analysis` | Check impact |
 
 ### sdd-plan-review
 
 AI-powered specification review.
 
-| Tool | Purpose in Skill |
-|------|------------------|
-| `review-spec` | AI review of spec |
-| `review-parse-feedback` | Parse review results |
-| `journal-add` | Record review findings |
+| Router | Action | Purpose in Skill |
+|--------|--------|------------------|
+| `review` | `spec-review` | AI review of spec |
+| `review` | `parse-feedback` | Parse review results |
+| `journal` | `add` | Record review findings |
 
 ### sdd-pr
 
 Creates pull requests with spec context.
 
-| Tool | Purpose in Skill |
-|------|------------------|
-| `pr-context` | Gather PR information |
-| `pr-create` | Create the PR |
-| `journal-list` | Get decision history |
-| `task-list` | Get completed tasks |
+| Router | Action | Purpose in Skill |
+|--------|--------|------------------|
+| `pr` | `context` | Gather PR information |
+| `pr` | `create` | Create the PR |
+| `journal` | `list` | Get decision history |
+| `task` | `list` | Get completed tasks |
 
 ### run-tests
 
 Executes tests with debugging support.
 
-| Tool | Purpose in Skill |
-|------|------------------|
-| `test-run` | Run tests |
-| `test-run-quick` | Quick smoke tests |
-| `test-discover` | Find available tests |
-| `test-presets` | List test presets |
-| `test-consult` | External AI debugging |
+| Router | Action | Purpose in Skill |
+|--------|--------|------------------|
+| `test` | `run` | Run tests |
+| `test` | `run-quick` | Quick smoke tests |
+| `test` | `discover` | Find available tests |
+| `test` | `presets` | List test presets |
+| `provider` | `execute` | External AI debugging |
 
 ### doc-query
 
 Queries codebase documentation.
 
-| Tool | Purpose in Skill |
-|------|------------------|
-| `doc-stats` | Check doc status |
-| `doc-scope` | Get scoped docs |
-| `doc-search` | Search documentation |
-| `doc-dependencies` | Map dependencies |
-| `doc-context` | Get full context |
-| `code-find-class` | Find class definitions |
-| `code-find-function` | Find functions |
+| Router | Action | Purpose in Skill |
+|--------|--------|------------------|
+| `code` | `doc-stats` | Check doc status |
+| `code` | `find-class` | Find class definitions |
+| `code` | `find-function` | Find functions |
+| `code` | `get-callers` | Find function callers |
+| `code` | `get-callees` | Find function callees |
+| `code` | `trace-calls` | Build call graphs |
+| `code` | `impact-analysis` | Analyze change impact |
 
 ---
 
@@ -152,16 +147,16 @@ Queries codebase documentation.
 
 ### Basic Pattern
 
-Skills invoke tools using the MCP naming convention:
+Skills invoke tools using the router+action pattern:
 
 ```
-mcp__foundry-mcp__<tool-name>
+mcp__plugin_foundry_foundry-mcp__<router> action="<action>"
 ```
 
 With parameters:
 
 ```
-mcp__foundry-mcp__task-next with spec_id="my-feature"
+mcp__plugin_foundry_foundry-mcp__task action="next" spec_id="my-feature"
 ```
 
 ### Named Parameters
@@ -169,11 +164,10 @@ mcp__foundry-mcp__task-next with spec_id="my-feature"
 All parameters are passed by name:
 
 ```
-mcp__foundry-mcp__spec-create with
-  spec_id="feature-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-create"
+  name="feature-2025-12-04"
   title="My Feature"
   description="Implement the feature"
-  phases=[...]
 ```
 
 ### Response Handling
@@ -181,7 +175,7 @@ mcp__foundry-mcp__spec-create with
 Skills check the response structure:
 
 ```python
-response = mcp__foundry-mcp__task-next(spec_id="my-feature")
+response = mcp__plugin_foundry_foundry-mcp__task(action="next", spec_id="my-feature")
 
 if response["success"]:
     task = response["data"]["task"]
@@ -292,7 +286,7 @@ while True:
 
 ```
 # Correct: Use MCP tool
-response = mcp__foundry-mcp__spec-get(spec_id="my-feature")
+response = mcp__plugin_foundry_foundry-mcp__spec(action="get", spec_id="my-feature")
 spec = response["data"]["spec"]
 ```
 
@@ -309,7 +303,7 @@ with open("specs/active/my-feature.json") as f:
 ### DO: Check Response Success
 
 ```
-response = mcp__foundry-mcp__task-next(spec_id="my-feature")
+response = mcp__plugin_foundry_foundry-mcp__task(action="next", spec_id="my-feature")
 if response["success"]:
     task = response["data"]["task"]
 ```
@@ -318,7 +312,7 @@ if response["success"]:
 
 ```
 # Wrong: No success check
-response = mcp__foundry-mcp__task-next(spec_id="my-feature")
+response = mcp__plugin_foundry_foundry-mcp__task(action="next", spec_id="my-feature")
 task = response["data"]["task"]  # May fail if success: false
 ```
 
@@ -326,7 +320,7 @@ task = response["data"]["task"]  # May fail if success: false
 
 ```
 # Get relevant context
-doc_response = mcp__foundry-mcp__doc-scope(path="src/auth", view="plan")
+doc_response = mcp__plugin_foundry_foundry-mcp__code(action="find-function", symbol="authenticate")
 # Use context for planning
 ```
 
@@ -347,37 +341,38 @@ for f in files:
 
 ```python
 # 1. Check documentation
-doc_status = mcp__foundry-mcp__doc-stats(path="src/")
+doc_status = mcp__plugin_foundry_foundry-mcp__code(action="doc-stats")
 
 if not doc_status["success"]:
     # Handle missing docs
     return
 
 # 2. Get planning context
-context = mcp__foundry-mcp__doc-scope(path="src/auth", view="plan")
+context = mcp__plugin_foundry_foundry-mcp__code(action="find-function", symbol="authenticate")
 
 # 3. Create specification
-spec_response = mcp__foundry-mcp__spec-create(
-    spec_id="auth-feature-2025-12-04",
-    title="Authentication Feature",
-    phases=[...]
+spec_response = mcp__plugin_foundry_foundry-mcp__authoring(
+    action="spec-create",
+    name="auth-feature-2025-12-04",
+    title="Authentication Feature"
 )
 
 # 4. Validate
-validation = mcp__foundry-mcp__spec-validate(
+validation = mcp__plugin_foundry_foundry-mcp__spec(
+    action="validate",
     spec_id="auth-feature-2025-12-04"
 )
 
 if not validation["data"]["valid"]:
     # Fix issues
-    mcp__foundry-mcp__spec-fix(spec_id="auth-feature-2025-12-04")
+    mcp__plugin_foundry_foundry-mcp__spec(action="fix", spec_id="auth-feature-2025-12-04")
 ```
 
 ### Example: Task Execution
 
 ```python
 # 1. Find next task
-next_task = mcp__foundry-mcp__task-next(spec_id="auth-feature-2025-12-04")
+next_task = mcp__plugin_foundry_foundry-mcp__task(action="next", spec_id="auth-feature-2025-12-04")
 
 if not next_task["success"] or not next_task["data"].get("task"):
     # No tasks available
@@ -386,7 +381,8 @@ if not next_task["success"] or not next_task["data"].get("task"):
 task = next_task["data"]["task"]
 
 # 2. Get full context
-context = mcp__foundry-mcp__task-prepare(
+context = mcp__plugin_foundry_foundry-mcp__task(
+    action="prepare",
     spec_id="auth-feature-2025-12-04",
     task_id=task["task_id"]
 )
@@ -395,10 +391,11 @@ context = mcp__foundry-mcp__task-prepare(
 # ...
 
 # 4. Complete task
-mcp__foundry-mcp__task-complete(
+mcp__plugin_foundry_foundry-mcp__task(
+    action="complete",
     spec_id="auth-feature-2025-12-04",
     task_id=task["task_id"],
-    notes="Implemented login endpoint with JWT"
+    completion_note="Implemented login endpoint with JWT"
 )
 ```
 
@@ -406,16 +403,14 @@ mcp__foundry-mcp__task-complete(
 
 ## Skill Configuration
 
-Skills can read configuration from foundry-mcp:
+Skills can read configuration from foundry-mcp via the server router:
 
 ```
-# Get work mode
-mode = mcp__foundry-mcp__session-work-mode()
+# Get server capabilities
+caps = mcp__plugin_foundry_foundry-mcp__server(action="capabilities")
 
-# Check context usage
-context = mcp__foundry-mcp__session-context()
-if context["data"]["percent_used"] > 85:
-    # Stop autonomous execution
+# Check health status
+health = mcp__plugin_foundry_foundry-mcp__health(action="check")
 ```
 
 ---

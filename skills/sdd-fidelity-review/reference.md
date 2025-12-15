@@ -73,60 +73,51 @@ Before running a fidelity review, you may need to gather context about the spec,
 ### Query Multiple Tasks at Once
 ```bash
 # Get all tasks in a phase
-mcp__foundry-mcp__task-query <spec-id> --parent phase-1 --json
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} parent="phase-1"
 
 # Get tasks by status
-mcp__foundry-mcp__task-query <spec-id> --status completed --json
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} status="completed"
 
 # Combine filters
-mcp__foundry-mcp__task-query <spec-id> --parent phase-2 --status pending --json
-
-# Get all tasks (no limit)
-mcp__foundry-mcp__task-query <spec-id> --limit 0 --json
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} parent="phase-2" status_filter="pending"
 ```
 
 ### Get Single Task Details
 ```bash
 # Get detailed information about a specific task
-mcp__foundry-mcp__task-info <spec-id> task-1-3
+mcp__plugin_foundry_foundry-mcp__task action="info" spec_id={spec-id} task_id="task-1-3"
 ```
 
 ### List Phases
 ```bash
 # See all phases with progress information
-mcp__foundry-mcp__list-phases <spec-id>
+mcp__plugin_foundry_foundry-mcp__task action="list" spec_id={spec-id} include_phases=true
 ```
 
 ### DON'T Do This (Inefficient)
 ```bash
-# BAD: Bash loop calling mcp__foundry-mcp__task-info repeatedly
+# BAD: Bash loop calling task info repeatedly
 for i in 1 2 3 4 5; do
-  mcp__foundry-mcp__task-info spec-id "task-1-$i"
+  mcp__plugin_foundry_foundry-mcp__task action="info" spec_id={spec-id} task_id="task-1-$i"
 done
 
 # BAD: Creating temp scripts
 cat > /tmp/get_tasks.sh << 'EOF'
 ...
 EOF
-
-# BAD: Using grep to parse JSON
-mcp__foundry-mcp__task-info spec-id task-1 | grep -o '"status":"[^"]*"'
 ```
 
 ### DO This Instead
 ```bash
 # GOOD: Single command gets all tasks in phase-1
-mcp__foundry-mcp__task-query spec-id --parent phase-1 --json
-
-# GOOD: Parse JSON properly with jq if needed
-mcp__foundry-mcp__task-query spec-id --parent phase-1 --json | jq '.[] | select(.status=="completed")'
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} parent="phase-1"
 ```
 
 ---
 
 ## Workflow
 
-This skill delegates all fidelity review logic to the dedicated `mcp__foundry-mcp__review-fidelity` MCP tool, which handles spec loading, implementation analysis, AI consultation, and report generation.
+This skill delegates all fidelity review logic to the dedicated `mcp__plugin_foundry_foundry-mcp__review action="fidelity"` MCP tool, which handles spec loading, implementation analysis, AI consultation, and report generation.
 
 ### Step 1: Validate Inputs
 
@@ -136,23 +127,23 @@ Ensure the user provides:
 
 ### Step 2: Construct MCP Invocation
 
-Build the appropriate `mcp__foundry-mcp__review-fidelity` command based on review scope:
+Build the appropriate `mcp__plugin_foundry_foundry-mcp__review action="fidelity"` command based on review scope:
 
 **For task review:**
 ```bash
-mcp__foundry-mcp__review-fidelity <spec-id> --task <task-id>
+mcp__plugin_foundry_foundry-mcp__review action="fidelity" spec_id={spec-id} task_id={task-id}
 ```
 
 **For phase review:**
 ```bash
-mcp__foundry-mcp__review-fidelity <spec-id> --phase <phase-id>
+mcp__plugin_foundry_foundry-mcp__review action="fidelity" spec_id={spec-id} phase_id={phase-id}
 ```
 
 ### Step 3: Execute the MCP Tool
 
-Use the Bash tool to execute the constructed command:
+Invoke the MCP tool directly:
 ```bash
-mcp__foundry-mcp__review-fidelity <spec-id> --task <task-id>
+mcp__plugin_foundry_foundry-mcp__review action="fidelity" spec_id={spec-id} task_id={task-id}
 ```
 
 **CRITICAL:** The MCP tool handles ALL spec file operations. Do NOT:
@@ -160,15 +151,14 @@ mcp__foundry-mcp__review-fidelity <spec-id> --task <task-id>
 - Parse specs with Python or jq
 - Use cat/head/tail/grep on spec files
 - Create temporary bash scripts (e.g., `/tmp/*.sh`)
-- Use bash loops to iterate through tasks (e.g., `for i in 1 2 3; do mcp__foundry-mcp__task-info...`)
-- Call `mcp__foundry-mcp__task-info` in a loop - use `mcp__foundry-mcp__task-query` for batch retrieval
+- Use bash loops to iterate through tasks
 - Use grep/sed/awk to parse JSON outputs - all commands return structured JSON
 
 **When you need task/spec context before running fidelity review:**
-- Use `mcp__foundry-mcp__task-query <spec-id> --parent <phase-id> --json` to get all tasks in a phase
-- Use `mcp__foundry-mcp__task-query <spec-id> --status <status> --json` to filter by status
-- Use `mcp__foundry-mcp__task-info <spec-id> <task-id>` to get a single task's details
-- Use `mcp__foundry-mcp__list-phases <spec-id>` to see all phases
+- Use `mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} parent={phase-id}` to get all tasks in a phase
+- Use `mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} status={status}` to filter by status
+- Use `mcp__plugin_foundry_foundry-mcp__task action="info" spec_id={spec-id} task_id={task-id}` to get a single task's details
+- Use `mcp__plugin_foundry_foundry-mcp__task action="list" spec_id={spec-id} include_phases=true` to see all phases
 
 Then execute the fidelity review with the appropriate scope.
 
@@ -311,7 +301,7 @@ The `sdd-fidelity-review` skill hands its synthesized results—JSON findings pl
 Fidelity review generates a detailed report comparing implementation against specification:
 
 **Usage Pattern:**
-1. Skill executes `mcp__foundry-mcp__review-fidelity` directly via MCP
+1. Skill executes `mcp__plugin_foundry_foundry-mcp__review action="fidelity"` directly via MCP
 2. The tool analyzes implementation, generates JSON output, and saves the JSON consensus report in `.fidelity-reviews/`
 3. Skill parses the JSON, presents the summarized findings, and surfaces the stored report path to the caller
 
@@ -405,7 +395,7 @@ For complex fidelity reviews, leverage Claude Code's built-in subagents to gathe
 
 ### Pre-Review Context Gathering
 
-Before running `mcp__foundry-mcp__review-fidelity`, gather implementation context:
+Before running `mcp__plugin_foundry_foundry-mcp__review action="fidelity"`, gather implementation context:
 
 **Phase review preparation:**
 ```

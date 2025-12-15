@@ -149,7 +149,7 @@ Active specs live in `specs/active/`.
 AI assistants (or humans) query for the next actionable task:
 
 ```
-mcp__foundry-mcp__task-next with spec_id="my-feature"
+mcp__plugin_foundry_foundry-mcp__task action="next" spec_id="my-feature"
 ```
 
 Each task includes:
@@ -165,7 +165,7 @@ As work progresses, journal entries capture decisions and blockers.
 Run verification steps defined for each phase:
 
 ```
-mcp__foundry-mcp__verify-check with spec_id="my-feature" phase_id="phase-1"
+mcp__plugin_foundry_foundry-mcp__verification action="execute" spec_id="my-feature" verify_id="phase-1"
 ```
 
 Record results. If verification fails, the phase remains open until issues are resolved.
@@ -175,8 +175,8 @@ Record results. If verification fails, the phase remains open until issues are r
 Mark tasks as done with completion notes:
 
 ```
-mcp__foundry-mcp__task-complete with spec_id="my-feature" task_id="task-001"
-  notes="Implemented JWT authentication with refresh tokens"
+mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id="my-feature" task_id="task-001"
+  completion_note="Implemented JWT authentication with refresh tokens"
 ```
 
 Generate PR descriptions from spec context and journal entries.

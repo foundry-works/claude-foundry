@@ -1,294 +1,277 @@
 # Tool Reference
 
-> Complete reference for all foundry-mcp MCP tools.
+> Complete reference for all foundry-mcp MCP tools using the consolidated router architecture.
 
 ---
 
-## Tool Naming Conventions
+## Router Architecture
 
-foundry-mcp tools follow strict naming conventions:
-
-### Format
-```
-prefix-verb[-modifier]
-```
-
-- **prefix** — Domain of the operation (`spec-`, `task-`, `doc-`, etc.)
-- **verb** — Action being performed (`create`, `list`, `validate`, etc.)
-- **modifier** — Optional qualifier (`-quick`, `-fix`, etc.)
-
-### Common Prefixes
-
-| Prefix | Domain | Example |
-|--------|--------|---------|
-| `spec-` | Specification operations | `spec-create`, `spec-validate` |
-| `task-` | Task operations | `task-next`, `task-complete` |
-| `plan-` / `phase-` | Planning utilities | `plan-format`, `phase-check-complete` |
-| `journal-` | Decision tracking | `journal-add`, `journal-list` |
-| `doc-` / `code-` | Documentation/code analysis | `doc-stats`, `code-find-class` |
-| `test-` | Testing operations | `test-run`, `test-discover` |
-| `review-` | Review workflows | `review-spec`, `review-parse-feedback` |
-| `pr-` | Pull request workflows | `pr-context`, `pr-create` |
-| `provider-` | LLM provider management | `provider-list`, `provider-status` |
-| `sdd-` | Environment helpers | `sdd-verify-toolchain` |
+foundry-mcp uses 17 consolidated routers, each handling related operations via an `action` parameter.
 
 ### Invocation Pattern
 
 From claude-foundry skills, invoke tools as:
 ```
-mcp__foundry-mcp__<tool-name>
+mcp__plugin_foundry_foundry-mcp__<router> action="<action>" [parameters...]
 ```
 
 **Example:**
 ```
-mcp__foundry-mcp__spec-validate with spec_id="my-spec"
+mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="my-spec"
+mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id="my-spec" task_id="task-1-1"
 ```
 
 ---
 
-## Tools by Domain
+## Routers by Domain
 
-### Spec Operations
+### spec — Specification Operations
 
-Tools for creating, managing, and validating specifications.
+Operations for querying, validating, and managing specifications.
 
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `spec-create` | Create a new specification | `spec_id`, `title`, `description`, `phases` |
-| `spec-get` | Retrieve a spec by ID | `spec_id` |
-| `spec-get-hierarchy` | Get full spec hierarchy | `spec_id` |
-| `spec-list` | List specs by status | `status`, `limit`, `cursor` |
-| `spec-list-basic` | Lightweight spec listing | `status` |
-| `spec-list-by-folder` | List specs in specific folder | `folder` |
-| `spec-find` | Find specs matching criteria | `query`, `status`, `date_range` |
-| `spec-validate` | Validate spec structure | `spec_id`, `strict` |
-| `spec-fix` | Auto-fix spec issues | `spec_id`, `dry_run` |
-| `spec-validate-fix` | Validate and fix in one call | `spec_id` |
-| `spec-stats` | Get spec statistics | `spec_id` |
-| `spec-render` | Render spec as markdown | `spec_id`, `format` |
-| `spec-render-progress` | Render progress summary | `spec_id` |
-| `spec-update-frontmatter` | Update spec metadata | `spec_id`, `updates` |
-| `spec-reconcile-state` | Reconcile spec state | `spec_id` |
-
-#### Lifecycle Operations
-
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `spec-lifecycle-move` | Move spec between folders | `spec_id`, `target_folder` |
-| `spec-lifecycle-activate` | Activate a pending spec | `spec_id` |
-| `spec-lifecycle-complete` | Mark spec as completed | `spec_id`, `completion_notes` |
-| `spec-lifecycle-archive` | Archive a completed spec | `spec_id` |
-| `spec-lifecycle-state` | Get current lifecycle state | `spec_id` |
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `get` | Retrieve a spec by ID | `spec_id` |
+| `get-hierarchy` | Get full spec hierarchy | `spec_id` |
+| `list` | List specs by status | `status`, `limit`, `cursor` |
+| `list-basic` | Lightweight spec listing | `status` |
+| `list-by-folder` | List specs in specific folder | `directory` |
+| `find` | Find specs matching criteria | `status` |
+| `validate` | Validate spec structure | `spec_id` |
+| `fix` | Auto-fix spec issues | `spec_id`, `dry_run` |
+| `validate-fix` | Validate and fix in one call | `spec_id` |
+| `stats` | Get spec statistics | `spec_id` |
+| `render` | Render spec as markdown | `spec_id` |
+| `render-progress` | Render progress summary | `spec_id` |
 
 ---
 
-### Task Operations
+### task — Task Operations
 
-Tools for working with tasks within specifications.
+Operations for managing tasks within specifications.
 
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `task-next` | Get next actionable task | `spec_id` |
-| `task-prepare` | Prepare task with context | `spec_id`, `task_id` |
-| `task-get` | Get task details | `spec_id`, `task_id` |
-| `task-info` | Get detailed task info | `spec_id`, `task_id` |
-| `task-query` | Query tasks with filters | `spec_id`, `status`, `phase_id` |
-| `task-list` | List all tasks | `spec_id`, `status` |
-| `task-check-deps` | Check task dependencies | `spec_id`, `task_id` |
-| `task-update-status` | Update task status | `spec_id`, `task_id`, `status` |
-| `task-start` | Mark task as in_progress | `spec_id`, `task_id` |
-| `task-complete` | Mark task as completed | `spec_id`, `task_id`, `notes`, `journal_entry` |
-| `task-progress` | Get task progress metrics | `spec_id` |
-
-#### Blocker Operations
-
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `task-block` | Block a task | `spec_id`, `task_id`, `reason`, `metadata` |
-| `task-unblock` | Unblock a task | `spec_id`, `task_id`, `resolution` |
-| `task-list-blocked` | List all blocked tasks | `spec_id` |
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `next` | Get next actionable task | `spec_id` |
+| `prepare` | Prepare task with context | `spec_id`, `task_id` |
+| `get` | Get task details | `spec_id`, `task_id` |
+| `info` | Get detailed task info | `spec_id`, `task_id` |
+| `query` | Query tasks with filters | `spec_id`, `status`, `parent` |
+| `list` | List all tasks | `spec_id`, `status` |
+| `check-deps` | Check task dependencies | `spec_id`, `task_id` |
+| `update-status` | Update task status | `spec_id`, `task_id`, `status` |
+| `start` | Mark task as in_progress | `spec_id`, `task_id` |
+| `complete` | Mark task as completed | `spec_id`, `task_id`, `journal_entry` |
+| `progress` | Get task progress metrics | `spec_id` |
+| `block` | Block a task | `spec_id`, `task_id`, `reason`, `blocker_type` |
+| `unblock` | Unblock a task | `spec_id`, `task_id`, `resolution` |
+| `list-blocked` | List all blocked tasks | `spec_id` |
 
 ---
 
-### Journal Operations
+### journal — Decision Tracking
 
-Tools for tracking decisions and audit trails.
+Operations for journal entries and audit trails.
 
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `journal-add` | Add a journal entry | `spec_id`, `task_id`, `entry`, `entry_type` |
-| `journal-list` | List journal entries | `spec_id`, `task_id`, `limit` |
-| `journal-list-unjournaled` | Find tasks without journals | `spec_id` |
-| `journal-bulk-add` | Add multiple entries | `spec_id`, `entries` |
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `add` | Add a journal entry | `spec_id`, `title`, `content`, `task_id`, `entry_type` |
+| `list` | List journal entries | `spec_id`, `task_id`, `limit` |
 
----
-
-### Planning & Phase Operations
-
-Tools for planning and phase management.
-
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `plan-format` | Format plan as markdown | `spec_id` |
-| `plan-report-time` | Report time metrics | `spec_id` |
-| `phase-list` | List all phases | `spec_id` |
-| `phase-check-complete` | Check if phase is complete | `spec_id`, `phase_id` |
-| `phase-report-time` | Report phase time metrics | `spec_id`, `phase_id` |
+**Entry types:** `decision`, `deviation`, `blocker`, `note`, `status_change`
 
 ---
 
-### Documentation & Code Analysis
+### lifecycle — Spec Lifecycle
 
-Tools for querying codebase documentation and code intelligence.
+Operations for moving specs through lifecycle stages.
 
-#### Documentation Statistics
-
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `doc-stats` | Get documentation status | `path` |
-| `doc-scope` | Get scoped documentation | `path`, `view` |
-| `doc-search` | Search documentation | `query`, `scope` |
-| `doc-dependencies` | Get dependency graph | `path` |
-| `doc-context` | Get comprehensive context | `path` |
-
-#### Code Analysis
-
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `code-find-class` | Find class definition | `class_name`, `path` |
-| `code-find-function` | Find function definition | `function_name`, `path` |
-| `code-trace-calls` | Trace function calls | `function_name` |
-| `code-impact-analysis` | Analyze change impact | `path` |
-| `code-get-callers` | Get function callers | `function_name` |
-| `code-get-callees` | Get functions called | `function_name` |
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `move` | Move spec between folders | `spec_id`, `to_folder` |
+| `activate` | Activate a pending spec | `spec_id` |
+| `complete` | Mark spec as completed | `spec_id` |
+| `archive` | Archive a completed spec | `spec_id` |
+| `state` | Get current lifecycle state | `spec_id` |
 
 ---
 
-### Testing Operations
+### authoring — Spec Creation & Modification
 
-Tools for test discovery and execution with pytest.
+Operations for creating and structurally modifying specifications.
 
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `test-run` | Run tests | `path`, `markers`, `verbose` |
-| `test-run-quick` | Run quick smoke tests | `path` |
-| `test-run-unit` | Run unit tests only | `path` |
-| `test-discover` | Discover available tests | `path`, `format` |
-| `test-presets` | List available presets | — |
-| `test-consult` | Consult external AI for debugging | `error`, `context`, `tool` |
-
----
-
-### Review Operations
-
-Tools for AI-powered spec review and fidelity checking.
-
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `review-spec` | AI review of specification | `spec_id`, `focus_areas` |
-| `review-parse-feedback` | Parse review feedback | `feedback_text` |
-| `fidelity-check` | Compare implementation vs spec | `spec_id`, `task_id` |
-| `verify-check` | Run verification steps | `spec_id`, `phase_id` |
-| `verify-fix` | Fix verification issues | `spec_id`, `phase_id` |
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `spec-create` | Create a new specification | `name`, `title`, `description` |
+| `phase-add` | Add a phase to a spec | `spec_id`, `phase_id`, `title` |
+| `task-add` | Add a task to a spec | `spec_id`, `title`, `parent` |
+| `assumption-add` | Add an assumption | `spec_id`, `text`, `assumption_type` |
+| `revision-add` | Add a revision entry | `spec_id`, `changes` |
+| `update-frontmatter` | Update spec metadata | `spec_id`, `key`, `value` |
 
 ---
 
-### PR Workflow Operations
+### review — Review Operations
 
-Tools for creating pull requests with spec context.
+Operations for AI-powered reviews and fidelity checking.
 
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `pr-context` | Gather PR creation context | `spec_id` |
-| `pr-create` | Create a pull request | `spec_id`, `title`, `body`, `base_branch` |
-| `task-create-commit` | Create commit for task | `spec_id`, `task_id`, `message` |
-
----
-
-### Session & Context Operations
-
-Tools for managing development sessions and context.
-
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `session-work-mode` | Get/set work mode | `mode` |
-| `session-generate-marker` | Generate session marker | — |
-| `session-context` | Get context usage info | — |
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `fidelity` | Compare implementation vs spec | `spec_id`, `task_id` |
+| `parse-feedback` | Parse review feedback | `feedback` |
 
 ---
 
-### Provider Operations
+### plan — Planning Operations
 
-Tools for LLM provider management.
+Operations for planning and plan review.
 
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `provider-list` | List available providers | — |
-| `provider-status` | Get provider status | `provider_name` |
-| `provider-execute` | Execute with specific provider | `provider_name`, `prompt` |
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `review` | AI review of specification | `name`, `plan_path` |
 
 ---
 
-### Discovery & Capability Operations
+### pr — Pull Request Operations
 
-Tools for discovering available functionality.
+Operations for creating PRs with spec context.
 
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `create` | Create a pull request | `spec_id`, `title`, `base_branch` |
+| `context` | Gather PR creation context | `spec_id` |
+
+---
+
+### test — Testing Operations
+
+Operations for test discovery and execution.
+
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `run` | Run tests | `target`, `markers`, `verbose` |
+| `run-quick` | Run quick smoke tests | `target` |
+| `run-unit` | Run unit tests only | `target` |
+| `discover` | Discover available tests | `target` |
+| `presets` | List available presets | — |
+
+---
+
+### code — Code Analysis
+
+Operations for querying codebase documentation and code intelligence.
+
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `find-class` | Find class definition | `symbol` |
+| `find-function` | Find function definition | `symbol` |
+| `trace-calls` | Trace function calls | `symbol` |
+| `impact-analysis` | Analyze change impact | `symbol` |
+| `get-callers` | Get function callers | `symbol` |
+| `get-callees` | Get functions called | `symbol` |
+
+---
+
+### provider — LLM Provider Management
+
+Operations for managing LLM providers.
+
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `list` | List available providers | — |
+| `status` | Get provider status | `provider_id` |
+| `execute` | Execute with specific provider | `provider_id`, `prompt` |
+
+---
+
+### verification — Verification Operations
+
+Operations for verification steps and results.
+
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `add` | Add verification result | `spec_id`, `verify_id`, `result` |
+| `execute` | Run verification task | `spec_id`, `verify_id` |
+| `format-summary` | Format verification summary | `spec_id` |
+
+---
+
+### environment — Environment Setup
+
+Operations for environment setup and verification.
+
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `verify` | Verify environment setup | — |
+| `setup` | Run setup process | `path` |
+| `init-workspace` | Initialize specs workspace | `path` |
+
+---
+
+### health — Health Checks
+
+Operations for server health monitoring.
+
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `liveness` | Basic liveness check | — |
+| `readiness` | Full readiness check | — |
+| `check` | Comprehensive health check | `include_details` |
+
+---
+
+### error — Error Tracking
+
+Operations for error monitoring and patterns.
+
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `list` | List errors | `limit`, `since` |
+| `get` | Get error details | `error_id` |
+| `stats` | Get error statistics | — |
+| `patterns` | Analyze error patterns | `min_count` |
+
+---
+
+### metrics — Metrics Tracking
+
+Operations for metrics collection and analysis.
+
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `query` | Query metrics | `metric_name`, `since`, `until` |
+| `list` | List available metrics | — |
+| `summary` | Get metrics summary | — |
+| `stats` | Get detailed statistics | — |
+
+---
+
+### server — Server Information
+
+Operations for discovering server capabilities.
+
+| Action | Description | Key Parameters |
+|--------|-------------|----------------|
+| `capabilities` | Get server capabilities | — |
 | `tool-list` | List all available tools | `category` |
-| `tool-list-categories` | List tool categories | — |
-| `tool-get-schema` | Get tool JSON schema | `tool_name` |
-| `capability-get` | Get capability info | `capability_name` |
-| `capability-negotiate` | Negotiate capabilities | `client_capabilities` |
-| `sdd-server-capabilities` | Get server capabilities | — |
-
----
-
-### Environment Operations
-
-Tools for environment setup and verification.
-
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `sdd-verify-toolchain` | Verify development tools | — |
-| `sdd-init-workspace` | Initialize specs workspace | `path` |
-| `sdd-cache-manage` | Manage cache | `action` |
-| `env-verify-environment` | Verify environment setup | — |
+| `tool-schema` | Get tool JSON schema | `tool_name` |
 
 ---
 
 ## Common Parameters
 
-Parameters that appear across multiple tools:
+Parameters that appear across multiple routers:
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `spec_id` | string | Unique specification identifier |
+| `action` | string | **Required.** The operation to perform |
+| `spec_id` | string | Specification identifier |
 | `task_id` | string | Task identifier within a spec |
 | `phase_id` | string | Phase identifier within a spec |
 | `status` | string | Status filter: `pending`, `in_progress`, `completed`, `blocked` |
-| `path` | string | File or directory path |
+| `dry_run` | boolean | Preview changes without applying |
 | `limit` | integer | Maximum results to return |
 | `cursor` | string | Pagination cursor for next page |
-| `dry_run` | boolean | Preview changes without applying |
-
----
-
-## Feature Flags
-
-Some tools are gated by feature flags:
-
-| Flag | Tools Enabled | Default |
-|------|---------------|---------|
-| `response_contract_v2` | All (standardized responses) | Enabled |
-| `environment_tools` | `sdd-verify-toolchain`, `env-*` | Enabled |
-| `spec_helpers` | `spec-reconcile-state`, `spec-update-frontmatter` | Enabled |
-| `planning_tools` | `plan-*`, `phase-*` | Enabled |
-
-Check available flags:
-```
-mcp__foundry-mcp__capability-get with capability_name="feature_flags"
-```
 
 ---
 
@@ -319,71 +302,31 @@ See [05-Response Contract](./05-response-contract.md) for details.
 ### Find Next Task
 
 ```
-mcp__foundry-mcp__task-next with spec_id="my-feature-spec"
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "task": {
-      "task_id": "task-001",
-      "description": "Implement user authentication",
-      "status": "pending",
-      "dependencies": []
-    },
-    "context": {
-      "phase": "Phase 1: Core Implementation",
-      "blocking_tasks": []
-    }
-  },
-  "meta": { "version": "response-v2" }
-}
+mcp__plugin_foundry_foundry-mcp__task action="next" spec_id="my-feature-spec"
 ```
 
 ### Validate a Spec
 
 ```
-mcp__foundry-mcp__spec-validate with spec_id="my-feature-spec"
+mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="my-feature-spec"
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "valid": true,
-    "issues": [],
-    "stats": {
-      "total_tasks": 15,
-      "completed_tasks": 3,
-      "pending_tasks": 12
-    }
-  },
-  "meta": { "version": "response-v2" }
-}
+### Complete a Task
+
+```
+mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id="my-spec" task_id="task-1-1" journal_entry="Implemented authentication with JWT tokens. All tests passing."
 ```
 
 ### Run Tests
 
 ```
-mcp__foundry-mcp__test-run with path="tests/unit" markers="quick"
+mcp__plugin_foundry_foundry-mcp__test action="run" target="tests/unit" markers="quick"
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "passed": 42,
-    "failed": 0,
-    "skipped": 2,
-    "duration": 3.5,
-    "failures": []
-  },
-  "meta": { "version": "response-v2" }
-}
+### Move Spec to Active
+
+```
+mcp__plugin_foundry_foundry-mcp__lifecycle action="activate" spec_id="my-spec"
 ```
 
 ---

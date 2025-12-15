@@ -40,14 +40,14 @@ Use `Skill(foundry:sdd-validate)` to:
 
 ## MCP Tooling
 
-- This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools follow the `mcp__foundry-mcp__<tool-name>` pattern (for example, `mcp__foundry-mcp__validate-check`, `mcp__foundry-mcp__validate-fix`).
+- This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools use the router+action pattern: `mcp__plugin_foundry_foundry-mcp__<router>` with `action="<action>"` (for example, `mcp__plugin_foundry_foundry-mcp__spec action="validate"`, `mcp__plugin_foundry_foundry-mcp__spec action="fix"`).
 - There is no CLI fallback. All instructions correspond to MCP invocations with named parameters.
 - Stay inside the repo root and rely on these helpers instead of reading spec JSON directly.
 
 ## Core Workflow
 
-1. **Validate**: `mcp__foundry-mcp__validate-check {spec-id}` - Check for issues (`mcp__foundry-mcp__validate-check`)
-2. **Fix**: `mcp__foundry-mcp__validate-fix {spec-id}` - Auto-fix common problems (creates backup) (`mcp__foundry-mcp__validate-fix`)
+1. **Validate**: `mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id={spec-id}` - Check for issues
+2. **Fix**: `mcp__plugin_foundry_foundry-mcp__spec action="fix" spec_id={spec-id}` - Auto-fix common problems (creates backup)
 3. **Re-validate**: Check for newly revealed issues
 4. **Repeat**: Continue until error count stops decreasing
 5. **Manual fixes**: Use `--verbose` for details when plateau is reached
@@ -57,7 +57,7 @@ Use `Skill(foundry:sdd-validate)` to:
 ## Key Concepts
 
 ### Always Re-validate After Fixing
-Fixing issues often reveals new problems that were previously hidden. Always run `mcp__foundry-mcp__validate-check` after `mcp__foundry-mcp__validate-fix` to see the current state.
+Fixing issues often reveals new problems that were previously hidden. Always run `mcp__plugin_foundry_foundry-mcp__spec action="validate"` after `mcp__plugin_foundry_foundry-mcp__spec action="fix"` to see the current state.
 
 ### Error Count Progression
 Track how error count changes across passes:
@@ -67,7 +67,7 @@ Track how error count changes across passes:
 ### When to Stop Auto-Fixing
 Switch to manual intervention when:
 - Error count unchanged for 2+ passes
-- `mcp__foundry-mcp__validate-fix` reports "skipped issues requiring manual intervention"
+- `mcp__plugin_foundry_foundry-mcp__spec action="fix"` reports "skipped issues requiring manual intervention"
 - All remaining issues need context or human judgment
 
 ### Input Format: Spec Names vs Paths
@@ -76,22 +76,22 @@ All validation commands accept **both** spec names and paths for maximum flexibi
 
 **Spec name (recommended):**
 ```bash
-mcp__foundry-mcp__validate-check pomodoro-timer-2025-11-18-001
+mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="pomodoro-timer-2025-11-18-001"
 ```
 Automatically searches in `specs/pending/`, `specs/active/`, `specs/completed/`, and `specs/archived/`.
 
 **Relative path:**
 ```bash
-mcp__foundry-mcp__validate-check specs/pending/pomodoro-timer-2025-11-18-001.json
-mcp__foundry-mcp__validate-check ../other-project/specs/active/my-spec.json
+mcp__plugin_foundry_foundry-mcp__spec action="validate" path="specs/pending/pomodoro-timer-2025-11-18-001.json"
+mcp__plugin_foundry_foundry-mcp__spec action="validate" path="../other-project/specs/active/my-spec.json"
 ```
 
 **Absolute path:**
 ```bash
-mcp__foundry-mcp__validate-check /full/path/to/my-spec.json
+mcp__plugin_foundry_foundry-mcp__spec action="validate" path="/full/path/to/my-spec.json"
 ```
 
-**Smart fallback:** If you provide a path that doesn't exist (e.g., `specs/pending/my-spec.json`), the command extracts the spec name (`my-spec`) and searches for it automatically.
+**Smart fallback:** If you provide a path that doesn't exist, the command extracts the spec name and searches for it automatically.
 
 ## Command Reference
 
@@ -100,23 +100,16 @@ mcp__foundry-mcp__validate-check /full/path/to/my-spec.json
 Validate the JSON spec structure and print a summary.
 
 ```bash
-mcp__foundry-mcp__validate-check {spec-id} [--verbose]
+mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="{spec-id}"
 ```
-*MCP tool:* `mcp__foundry-mcp__validate-check`
-
-**Flags:**
-- `--verbose` - Show detailed issue information with locations
-- `--report` - Generate validation report alongside spec
-- `--report-format {markdown,json}` - Choose report format
 
 **Exit codes:**
 - `0` - Clean validation
 - `1` - Warnings only
 - `2` - Errors detected (expected when spec has issues)
 
-**Example:**
-```bash
-$ mcp__foundry-mcp__validate-check my-spec
+**Example output:**
+```
 ❌ Validation found 12 errors
    8 auto-fixable, 4 require manual intervention
 
@@ -127,8 +120,7 @@ $ mcp__foundry-mcp__validate-check my-spec
    - 2 circular dependencies
    - 2 parent/child mismatches
 
-   Run 'mcp__foundry-mcp__validate-fix my-spec' to auto-fix 8 issues
-   Use '--verbose' for detailed issue information
+   Run 'spec action="fix"' to auto-fix 8 issues
 ```
 
 ### fix
@@ -136,15 +128,12 @@ $ mcp__foundry-mcp__validate-check my-spec
 Auto-fix common validation issues with preview and backup support.
 
 ```bash
-mcp__foundry-mcp__validate-fix {spec-id} [--dry-run] [--no-backup]
+mcp__plugin_foundry_foundry-mcp__spec action="fix" spec_id="{spec-id}" dry_run=true
 ```
-*MCP tool:* `mcp__foundry-mcp__validate-fix`
 
-**Flags:**
-- `--preview` / `--dry-run` - Show what would be fixed without modifying files
-- `--no-backup` - Skip backup creation (use with caution)
-- `--diff` - Show before/after changes
-- `--diff-format {markdown,json}` - Choose diff format
+**Parameters:**
+- `dry_run=true` - Show what would be fixed without modifying files
+- `create_backup=false` - Skip backup creation (use with caution)
 
 **Auto-fixable issues:**
 - Incorrect task count rollups
@@ -155,21 +144,10 @@ mcp__foundry-mcp__validate-fix {spec-id} [--dry-run] [--no-backup]
 - Invalid status/type values
 - Bidirectional dependency inconsistencies
 
-**Selective fix application:**
-```bash
-# Apply specific fixes by ID
-mcp__foundry-mcp__validate-fix {spec-id} --select counts.recalculate
-
-# Apply all fixes in a category
-mcp__foundry-mcp__validate-fix {spec-id} --select metadata
-
-# Apply multiple specific fixes
-mcp__foundry-mcp__validate-fix {spec-id} --select counts.recalculate metadata.ensure:task-001
-```
-
 **Example:**
 ```bash
-$ mcp__foundry-mcp__validate-fix my-spec --dry-run
+# Preview fixes
+mcp__plugin_foundry_foundry-mcp__spec action="fix" spec_id="my-spec" dry_run=true
 📋 Would apply 8 fixes:
    - Fix 5 task count rollups
    - Add 2 metadata blocks
@@ -179,37 +157,23 @@ $ mcp__foundry-mcp__validate-fix my-spec --dry-run
    - task-3-2: Circular dependency
    - task-5-2: Dependency references non-existent task
 
-$ mcp__foundry-mcp__validate-fix my-spec
+# Apply fixes
+mcp__plugin_foundry_foundry-mcp__spec action="fix" spec_id="my-spec"
 ✅ Applied 8 fixes
 Created backup: my-spec.json.backup
 
-$ mcp__foundry-mcp__validate-check my-spec
+# Re-validate
+mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="my-spec"
 ❌ Validation found 4 errors (manual intervention required)
 ```
-
-### report
-
-Generate a detailed validation report with stats and dependency analysis.
-
-```bash
-mcp__foundry-mcp__validate-report {spec-id} [--sections validation,stats,health]
-```
-*MCP tool:* `mcp__foundry-mcp__validate-report`
-
-**Flags:**
-- `--output` - Output file path (use `-` for stdout)
-- `--bottleneck-threshold N` - Minimum tasks blocked to flag bottleneck (default: 3)
-
-Report includes: validation summary, categorized issues, statistics, and dependency findings.
 
 ### stats
 
 Calculate and display comprehensive spec statistics.
 
 ```bash
-mcp__foundry-mcp__validate-stats {spec-id}
+mcp__plugin_foundry_foundry-mcp__spec action="stats" spec_id="{spec-id}"
 ```
-*MCP tool:* `mcp__foundry-mcp__validate-stats`
 
 **Shows:**
 - Node, task, phase, and verification counts
@@ -223,12 +187,11 @@ mcp__foundry-mcp__validate-stats {spec-id}
 
 Analyze dependencies for cycles, orphans, deadlocks, and bottlenecks.
 
-**Note:** This command analyzes spec-wide dependency issues. For checking individual task dependencies, use `mcp__foundry-mcp__prepare-task` from sdd-next which includes dependency details by default in `context.dependencies` (e.g., `mcp__foundry-mcp__prepare-task {spec-id}`). The standalone `sdd check-deps` command is rarely needed now.
+**Note:** This command analyzes spec-wide dependency issues. For checking individual task dependencies, use `mcp__plugin_foundry_foundry-mcp__task action="prepare"` from sdd-next which includes dependency details by default in `context.dependencies`.
 
 ```bash
-mcp__foundry-mcp__validate-analyze-deps {spec-id} [--bottleneck-threshold N]
+mcp__plugin_foundry_foundry-mcp__spec action="analyze-deps" spec_id="{spec-id}" bottleneck_threshold=3
 ```
-*MCP tool:* `mcp__foundry-mcp__validate-analyze-deps`
 
 **Analyzes:**
 - **Cycles** - Circular dependency chains
@@ -237,8 +200,7 @@ mcp__foundry-mcp__validate-analyze-deps {spec-id} [--bottleneck-threshold N]
 - **Bottlenecks** - Tasks blocking many others
 
 **Example:**
-```bash
-$ mcp__foundry-mcp__validate-analyze-deps my-spec
+```
 ⚠️  Dependency Analysis: 3 issues found
 
 Cycles (2):
@@ -288,7 +250,7 @@ Pass 4: Validate → 0 errors ✅
 
 ### Auto-fix Succeeded But Errors Remain
 
-This is normal. `mcp__foundry-mcp__validate-fix` reports success when it applies fixes successfully, not when all issues are resolved. Fixing one problem often reveals another (e.g., fixing parent-child mismatches may reveal orphaned nodes).
+This is normal. `mcp__plugin_foundry_foundry-mcp__spec action="fix"` reports success when it applies fixes successfully, not when all issues are resolved. Fixing one problem often reveals another (e.g., fixing parent-child mismatches may reveal orphaned nodes).
 
 **Solution:** Re-validate to see remaining issues, then run fix again or address manually.
 
@@ -296,13 +258,13 @@ This is normal. `mcp__foundry-mcp__validate-fix` reports success when it applies
 
 When error count stays the same for 2+ passes:
 
-1. Run `mcp__foundry-mcp__validate-check {spec-id} --verbose` to see detailed issue information
+1. Run `mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="{spec-id}"` to see detailed issue information
 2. Identify issues marked "requires manual intervention"
 3. Manually fix issues that need context or human judgment
 4. Re-validate after manual fixes
 
 **Understanding Spec Requirements:**
-- Run `mcp__foundry-mcp__schema` (MCP: `mcp__foundry-mcp__spec-schema-export`) to see the complete spec structure, required fields, and valid values
+- Run `mcp__plugin_foundry_foundry-mcp__spec action="schema-export"` to see the complete spec structure, required fields, and valid values
 - The schema shows all field types, enum values (like `status`, `type`, `verification_type`), and optional vs required fields
 - Use this when validation errors reference unknown fields or invalid values
 

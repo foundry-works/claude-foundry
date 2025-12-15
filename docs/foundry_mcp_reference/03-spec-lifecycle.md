@@ -64,7 +64,7 @@ Specifications progress through four states during their lifecycle:
 Move from `pending` to `active` when planning is complete:
 
 ```
-mcp__foundry-mcp__spec-lifecycle-activate with spec_id="my-feature-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__lifecycle action="activate" spec_id="my-feature-2025-12-04"
 ```
 
 **Prerequisites:**
@@ -82,8 +82,7 @@ mcp__foundry-mcp__spec-lifecycle-activate with spec_id="my-feature-2025-12-04"
 Move from `active` to `completed` when all work is done:
 
 ```
-mcp__foundry-mcp__spec-lifecycle-complete with spec_id="my-feature-2025-12-04"
-  completion_notes="Feature implemented and verified"
+mcp__plugin_foundry_foundry-mcp__lifecycle action="complete" spec_id="my-feature-2025-12-04"
 ```
 
 **Prerequisites:**
@@ -101,7 +100,7 @@ mcp__foundry-mcp__spec-lifecycle-complete with spec_id="my-feature-2025-12-04"
 Move from `completed` to `archived` for long-term storage:
 
 ```
-mcp__foundry-mcp__spec-lifecycle-archive with spec_id="my-feature-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__lifecycle action="archive" spec_id="my-feature-2025-12-04"
 ```
 
 **Effects:**
@@ -112,7 +111,7 @@ mcp__foundry-mcp__spec-lifecycle-archive with spec_id="my-feature-2025-12-04"
 ### Checking Current State
 
 ```
-mcp__foundry-mcp__spec-lifecycle-state with spec_id="my-feature-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__lifecycle action="state" spec_id="my-feature-2025-12-04"
 ```
 
 **Returns:**
@@ -337,7 +336,7 @@ Journals track decisions, blockers, and notes:
 Specs are validated against the JSON schema:
 
 ```
-mcp__foundry-mcp__spec-validate with spec_id="my-feature"
+mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="my-feature"
 ```
 
 Checks include:
@@ -363,7 +362,7 @@ Beyond structure, logical integrity is checked:
 Common issues can be auto-fixed:
 
 ```
-mcp__foundry-mcp__spec-fix with spec_id="my-feature"
+mcp__plugin_foundry_foundry-mcp__spec action="fix" spec_id="my-feature"
 ```
 
 Auto-fixable issues:
@@ -404,34 +403,33 @@ Auto-fixable issues:
 Use the `sdd-plan` skill or directly:
 
 ```
-mcp__foundry-mcp__spec-create with
-  spec_id="my-feature-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-create"
+  name="my-feature-2025-12-04"
   title="My Feature"
   description="Implement my feature"
-  phases=[...]
 ```
 
 ### Querying Specs
 
 ```
 # List all active specs
-mcp__foundry-mcp__spec-list with status="active"
+mcp__plugin_foundry_foundry-mcp__spec action="list" status="active"
 
 # Find specs matching criteria
-mcp__foundry-mcp__spec-find with query="authentication"
+mcp__plugin_foundry_foundry-mcp__spec action="find" spec_id="authentication"
 
 # Get full spec hierarchy
-mcp__foundry-mcp__spec-get-hierarchy with spec_id="my-feature"
+mcp__plugin_foundry_foundry-mcp__spec action="get-hierarchy" spec_id="my-feature"
 ```
 
 ### Rendering Specs
 
 ```
 # Render as markdown
-mcp__foundry-mcp__spec-render with spec_id="my-feature"
+mcp__plugin_foundry_foundry-mcp__spec action="render" spec_id="my-feature"
 
 # Render progress summary
-mcp__foundry-mcp__spec-render-progress with spec_id="my-feature"
+mcp__plugin_foundry_foundry-mcp__spec action="render-progress" spec_id="my-feature"
 ```
 
 ---

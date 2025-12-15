@@ -6,14 +6,13 @@
 
 ## Workflow Overview
 
-| Workflow | Purpose | Key Tools |
-|----------|---------|-----------|
-| **Planning** | Create and validate specifications | `spec-create`, `spec-validate`, `doc-*` |
-| **Task Execution** | Find and complete tasks | `task-next`, `task-prepare`, `task-complete` |
-| **Verification** | Validate implementation | `verify-check`, `fidelity-check`, `test-run` |
-| **Phase Completion** | Progress through phases | `phase-check-complete`, `spec-lifecycle-*` |
-| **PR Creation** | Generate pull requests | `pr-context`, `pr-create` |
-| **Autonomous Mode** | Continuous task execution | `session-*`, `task-next` |
+| Workflow | Purpose | Key Routers |
+|----------|---------|-------------|
+| **Planning** | Create and validate specifications | `authoring`, `spec`, `code` |
+| **Task Execution** | Find and complete tasks | `task` |
+| **Verification** | Validate implementation | `verification`, `review`, `test` |
+| **Phase Completion** | Progress through phases | `task`, `lifecycle` |
+| **PR Creation** | Generate pull requests | `pr`, `journal` |
 
 ---
 
@@ -35,7 +34,7 @@ The planning workflow creates a structured specification before any implementati
 Before planning, verify codebase documentation is available:
 
 ```
-mcp__foundry-mcp__doc-stats with path="src/"
+mcp__plugin_foundry_foundry-mcp__code action="doc-stats"
 ```
 
 **Response indicates:**
@@ -47,17 +46,17 @@ If documentation is stale or missing, regenerate before planning.
 
 ### Step 2: Gather Context
 
-Use documentation tools to understand the codebase:
+Use code tools to understand the codebase:
 
 ```
-# Get module overview
-mcp__foundry-mcp__doc-scope with path="src/auth" view="plan"
+# Find related classes
+mcp__plugin_foundry_foundry-mcp__code action="find-class" symbol="Auth"
 
-# Find related implementations
-mcp__foundry-mcp__doc-search with query="authentication" scope="src/"
+# Find related functions
+mcp__plugin_foundry_foundry-mcp__code action="find-function" symbol="authenticate"
 
-# Understand dependencies
-mcp__foundry-mcp__doc-dependencies with path="src/auth/login.py"
+# Trace dependencies
+mcp__plugin_foundry_foundry-mcp__code action="trace-calls" symbol="authenticate"
 ```
 
 ### Step 3: Create the Specification
@@ -65,39 +64,26 @@ mcp__foundry-mcp__doc-dependencies with path="src/auth/login.py"
 Using the `sdd-plan` skill is recommended, or create directly:
 
 ```
-mcp__foundry-mcp__spec-create with
-  spec_id="user-auth-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-create"
+  name="user-auth-2025-12-04"
   title="User Authentication System"
   description="Implement JWT-based authentication"
-  phases=[
-    {
-      "phase_id": "phase-1",
-      "name": "Core Auth Logic",
-      "tasks": [
-        {
-          "task_id": "task-001",
-          "description": "Create User model",
-          "file_path": "src/models/user.py"
-        }
-      ]
-    }
-  ]
 ```
 
 ### Step 4: Validate and Fix
 
 ```
 # Validate structure
-mcp__foundry-mcp__spec-validate with spec_id="user-auth-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="user-auth-2025-12-04"
 
 # Auto-fix issues if needed
-mcp__foundry-mcp__spec-fix with spec_id="user-auth-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__spec action="fix" spec_id="user-auth-2025-12-04"
 ```
 
 ### Step 5: Activate When Ready
 
 ```
-mcp__foundry-mcp__spec-lifecycle-activate with spec_id="user-auth-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__lifecycle action="activate" spec_id="user-auth-2025-12-04"
 ```
 
 ---
@@ -123,7 +109,7 @@ The task execution workflow progresses through implementation systematically.
 ### Step 1: Find Next Actionable Task
 
 ```
-mcp__foundry-mcp__task-next with spec_id="user-auth-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__task action="next" spec_id="user-auth-2025-12-04"
 ```
 
 **Response provides:**
@@ -136,7 +122,7 @@ If no task is returned, all available tasks are blocked or completed.
 ### Step 2: Prepare Task with Full Context
 
 ```
-mcp__foundry-mcp__task-prepare with
+mcp__plugin_foundry_foundry-mcp__task action="prepare"
   spec_id="user-auth-2025-12-04"
   task_id="task-001"
 ```
@@ -158,14 +144,20 @@ Use the context from `task-prepare` to implement the change:
 ### Step 4: Complete and Journal
 
 ```
-mcp__foundry-mcp__task-complete with
+mcp__plugin_foundry_foundry-mcp__task action="complete"
   spec_id="user-auth-2025-12-04"
   task_id="task-001"
-  notes="Implemented User model with email/password fields"
-  journal_entry={
-    "entry_type": "completion",
-    "content": "Created User model following existing patterns from Product model"
-  }
+  completion_note="Implemented User model with email/password fields"
+```
+
+Add a journal entry separately:
+
+```
+mcp__plugin_foundry_foundry-mcp__journal action="add"
+  spec_id="user-auth-2025-12-04"
+  task_id="task-001"
+  entry_type="completion"
+  content="Created User model following existing patterns from Product model"
 ```
 
 ### Step 5: Repeat
@@ -193,10 +185,10 @@ Run tests specified in task/phase verification:
 
 ```
 # Run specific test
-mcp__foundry-mcp__test-run with path="tests/auth/"
+mcp__plugin_foundry_foundry-mcp__test action="run" target="tests/auth/"
 
 # Quick smoke test
-mcp__foundry-mcp__test-run-quick with path="tests/"
+mcp__plugin_foundry_foundry-mcp__test action="run-quick"
 ```
 
 ### Fidelity Review
@@ -204,7 +196,7 @@ mcp__foundry-mcp__test-run-quick with path="tests/"
 Compare implementation against spec requirements:
 
 ```
-mcp__foundry-mcp__fidelity-check with
+mcp__plugin_foundry_foundry-mcp__review action="fidelity"
   spec_id="user-auth-2025-12-04"
   task_id="task-001"
 ```
@@ -219,9 +211,9 @@ mcp__foundry-mcp__fidelity-check with
 Check if all phase verification criteria pass:
 
 ```
-mcp__foundry-mcp__verify-check with
+mcp__plugin_foundry_foundry-mcp__verification action="execute"
   spec_id="user-auth-2025-12-04"
-  phase_id="phase-1"
+  verify_id="phase-1"
 ```
 
 ### Manual Verification
@@ -229,14 +221,11 @@ mcp__foundry-mcp__verify-check with
 Some verification requires human review. Track completion:
 
 ```
-mcp__foundry-mcp__journal-add with
+mcp__plugin_foundry_foundry-mcp__journal action="add"
   spec_id="user-auth-2025-12-04"
   task_id="task-manual-review"
-  entry={
-    "entry_type": "verification",
-    "content": "Security review completed by @security-team",
-    "details": { "reviewer": "security-team", "approved": true }
-  }
+  entry_type="verification"
+  content="Security review completed by @security-team"
 ```
 
 ---
@@ -257,9 +246,9 @@ Phase completion marks logical milestones in development.
 ### Step 1: Check Phase Status
 
 ```
-mcp__foundry-mcp__phase-check-complete with
+mcp__plugin_foundry_foundry-mcp__task action="query"
   spec_id="user-auth-2025-12-04"
-  phase_id="phase-1"
+  parent="phase-1"
 ```
 
 **Response shows:**
@@ -270,21 +259,18 @@ mcp__foundry-mcp__phase-check-complete with
 ### Step 2: Run Phase Verification
 
 ```
-mcp__foundry-mcp__verify-check with
+mcp__plugin_foundry_foundry-mcp__verification action="execute"
   spec_id="user-auth-2025-12-04"
-  phase_id="phase-1"
+  verify_id="phase-1"
 ```
 
 ### Step 3: Journal Phase Completion
 
 ```
-mcp__foundry-mcp__journal-add with
+mcp__plugin_foundry_foundry-mcp__journal action="add"
   spec_id="user-auth-2025-12-04"
-  entry={
-    "entry_type": "completion",
-    "content": "Phase 1 complete: Core auth logic implemented",
-    "phase_id": "phase-1"
-  }
+  entry_type="completion"
+  content="Phase 1 complete: Core auth logic implemented"
 ```
 
 ### Step 4: Continue to Next Phase
@@ -309,7 +295,7 @@ PR creation generates pull requests with rich context from specs.
 ### Step 1: Gather Context
 
 ```
-mcp__foundry-mcp__pr-context with spec_id="user-auth-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__pr action="context" spec_id="user-auth-2025-12-04"
 ```
 
 **Response provides:**
@@ -330,11 +316,9 @@ The `sdd-pr` skill uses context to create:
 ### Step 3: Create the PR
 
 ```
-mcp__foundry-mcp__pr-create with
+mcp__plugin_foundry_foundry-mcp__pr action="create"
   spec_id="user-auth-2025-12-04"
   title="feat: Add user authentication system"
-  body="[Generated PR description]"
-  base_branch="main"
 ```
 
 ### Step 4: Complete the Spec
@@ -342,94 +326,9 @@ mcp__foundry-mcp__pr-create with
 After PR is merged:
 
 ```
-mcp__foundry-mcp__spec-lifecycle-complete with
+mcp__plugin_foundry_foundry-mcp__lifecycle action="complete"
   spec_id="user-auth-2025-12-04"
-  completion_notes="Merged in PR #123"
 ```
-
----
-
-## Autonomous Mode Workflow
-
-### Overview
-
-Autonomous mode enables continuous task execution without human intervention.
-
-```
-┌────────────────┐
-│ Configure      │
-│ Work Mode      │
-└───────┬────────┘
-        │
-        ▼
-┌───────────────────────────────────────────────┐
-│              AUTO-EXECUTION LOOP              │
-│  ┌──────────┐    ┌──────────┐    ┌──────────┐│
-│  │Get Next  │───►│Implement │───►│Complete  ││
-│  │Task      │    │          │    │& Journal ││
-│  └──────────┘    └──────────┘    └──────────┘│
-│        ▲                              │       │
-│        └──────────────────────────────┘       │
-└───────────────────────────────────────────────┘
-        │
-        ▼ (exit conditions met)
-┌────────────────┐
-│ Report Status  │
-└────────────────┘
-```
-
-### Step 1: Configure Work Mode
-
-```
-mcp__foundry-mcp__session-work-mode with mode="autonomous"
-```
-
-### Step 2: Generate Session Marker
-
-```
-mcp__foundry-mcp__session-generate-marker
-```
-
-This creates a marker for tracking the session.
-
-### Step 3: Check Context Usage
-
-Monitor context consumption:
-
-```
-mcp__foundry-mcp__session-context
-```
-
-**Response shows:**
-- Context percentage used
-- Tokens consumed
-- Remaining capacity
-
-### Step 4: Auto-Execution Loop
-
-The autonomous workflow:
-1. Calls `task-next` to find work
-2. Implements the task
-3. Calls `task-complete` with journal
-4. Checks context (stop at ~85%)
-5. Repeats until exit condition
-
-### Exit Conditions
-
-| Condition | Action |
-|-----------|--------|
-| No more tasks | Report completion |
-| Context > 85% | Stop and report progress |
-| Blocked task | Report blocker |
-| Error | Stop and report error |
-
-### Step 5: Report Status
-
-At exit, summarize:
-- Tasks completed this session
-- Remaining tasks
-- Blockers encountered
-- Next steps
 
 ---
 
@@ -438,23 +337,22 @@ At exit, summarize:
 ### Recording a Blocker
 
 ```
-mcp__foundry-mcp__task-block with
+mcp__plugin_foundry_foundry-mcp__task action="block"
   spec_id="user-auth-2025-12-04"
   task_id="task-003"
   reason="Waiting for API endpoint from backend team"
-  metadata={"issue_url": "https://github.com/org/repo/issues/45"}
 ```
 
 ### Listing Blocked Tasks
 
 ```
-mcp__foundry-mcp__task-list-blocked with spec_id="user-auth-2025-12-04"
+mcp__plugin_foundry_foundry-mcp__task action="list-blocked" spec_id="user-auth-2025-12-04"
 ```
 
 ### Unblocking a Task
 
 ```
-mcp__foundry-mcp__task-unblock with
+mcp__plugin_foundry_foundry-mcp__task action="unblock"
   spec_id="user-auth-2025-12-04"
   task_id="task-003"
   resolution="API endpoint now available, documented in wiki"
@@ -467,34 +365,19 @@ mcp__foundry-mcp__task-unblock with
 ### Recording Decisions
 
 ```
-mcp__foundry-mcp__journal-add with
+mcp__plugin_foundry_foundry-mcp__journal action="add"
   spec_id="user-auth-2025-12-04"
   task_id="task-002"
-  entry={
-    "entry_type": "decision",
-    "content": "Chose bcrypt over argon2 for password hashing",
-    "rationale": "Better library support, bcrypt is battle-tested",
-    "alternatives_considered": ["argon2", "pbkdf2", "scrypt"]
-  }
+  entry_type="decision"
+  content="Chose bcrypt over argon2 for password hashing"
 ```
 
 ### Viewing Journal
 
 ```
-mcp__foundry-mcp__journal-list with
+mcp__plugin_foundry_foundry-mcp__journal action="list"
   spec_id="user-auth-2025-12-04"
   limit=10
-```
-
-### Bulk Journaling
-
-```
-mcp__foundry-mcp__journal-bulk-add with
-  spec_id="user-auth-2025-12-04"
-  entries=[
-    { "task_id": "task-001", "entry_type": "note", "content": "..." },
-    { "task_id": "task-002", "entry_type": "decision", "content": "..." }
-  ]
 ```
 
 ---

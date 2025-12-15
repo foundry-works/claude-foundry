@@ -300,7 +300,7 @@ For operations that return many results:
 ### Getting Next Page
 
 ```
-mcp__foundry-mcp__task-query with spec_id="my-feature" cursor="eyJvZmZzZXQiOjIwfQ=="
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id="my-feature" cursor="eyJvZmZzZXQiOjIwfQ=="
 ```
 
 ---
@@ -310,7 +310,7 @@ mcp__foundry-mcp__task-query with spec_id="my-feature" cursor="eyJvZmZzZXQiOjIwf
 ### Checking Success
 
 ```python
-response = mcp__foundry-mcp__spec-get(spec_id="my-feature")
+response = mcp__plugin_foundry_foundry-mcp__spec(action="get", spec_id="my-feature")
 
 if response["success"]:
     spec = response["data"]["spec"]
@@ -336,7 +336,8 @@ all_tasks = []
 cursor = None
 
 while True:
-    response = mcp__foundry-mcp__task-query(
+    response = mcp__plugin_foundry_foundry-mcp__task(
+        action="query",
         spec_id="my-feature",
         cursor=cursor
     )
@@ -368,7 +369,7 @@ All tools currently use `response-v2`:
 Clients can declare supported versions via capability negotiation:
 
 ```
-mcp__foundry-mcp__capability-negotiate with
+mcp__plugin_foundry_foundry-mcp__server action="capability-negotiate"
   client_capabilities={"response_contract": "v2"}
 ```
 

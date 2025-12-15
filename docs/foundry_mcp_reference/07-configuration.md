@@ -283,11 +283,6 @@ Create `.claude/sdd_config.json` for SDD-specific settings:
 
 ### Setting Work Mode
 
-Via tool:
-```
-mcp__foundry-mcp__session-work-mode with mode="autonomous"
-```
-
 Via environment:
 ```bash
 export FOUNDRY_MCP_WORKFLOW_MODE="autonomous"
@@ -386,7 +381,7 @@ enabled = ["response_contract_v2", "planning_tools"]
 ### Checking Flag Status
 
 ```
-mcp__foundry-mcp__capability-get with capability_name="feature_flags"
+mcp__plugin_foundry_foundry-mcp__server action="capability-get" capability_name="feature_flags"
 ```
 
 ---
@@ -429,7 +424,7 @@ chmod -R 755 specs/
 ### Verify Environment
 
 ```
-mcp__foundry-mcp__env-verify-environment
+mcp__plugin_foundry_foundry-mcp__environment action="verify"
 ```
 
 **Response shows:**

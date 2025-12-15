@@ -30,7 +30,7 @@ sdd-plan → sdd-plan-review → sdd-modify → sdd-next → [IMPLEMENT] → sdd
 
 ## Key Patterns
 
-**MCP-First**: All skills use `mcp__foundry-mcp__*` tools exclusively. No CLI fallbacks.
+**MCP-First**: All skills use `mcp__plugin_foundry_foundry-mcp__*` tools exclusively. No CLI fallbacks.
 
 **Human-in-Loop**: Skills use `AskUserQuestion` for key decisions. Don't assume - ask.
 
@@ -53,7 +53,7 @@ sdd-plan → sdd-plan-review → sdd-modify → sdd-next → [IMPLEMENT] → sdd
 ### Resuming Active Work
 1. Use `sdd-next` to find next actionable task
 2. Implement the task
-3. Update status with `sdd-update` or `task-complete`
+3. Update status with `sdd-update` (uses `task action="complete"`)
 4. Continue until phase complete
 
 ### Completing a Phase

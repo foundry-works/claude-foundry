@@ -9,7 +9,6 @@ Detailed workflows, examples, and edge cases for the sdd-next skill.
 - [Deep Dive Context Structure](#deep-dive-context-structure)
 - [Using doc-scope During Implementation](#using-doc-scope-during-implementation)
 - [Post-Implementation Checklist](#post-implementation-checklist)
-- [Autonomous Mode Workflow](#autonomous-mode-phase-completion)
 - [Phase Loop with Human Checkpoints](#phase-loop-with-human-checkpoints)
 - [Troubleshooting](#troubleshooting)
 - [Agent Delegation](#agent-delegation)
@@ -20,9 +19,9 @@ Detailed workflows, examples, and edge cases for the sdd-next skill.
 ## Context Gathering Best Practices
 
 **Default workflow (stick to this unless the spec says otherwise)**
-1. `mcp__foundry-mcp__task-prepare` supplies the recommended task plus rich context (previous sibling, parent metadata, phase progress, sibling files, recent journal summary, doc excerpts, dependencies).
-2. Escalate to `mcp__foundry-mcp__task-info`, `mcp__foundry-mcp__task-query`, or `mcp__foundry-mcp__specs-find` only when the spec explicitly requires data not already present in the preparation payload.
-3. After completing a task, call `task-prepare` again to refresh recommendations and context.
+1. `mcp__plugin_foundry_foundry-mcp__task action="prepare"` supplies the recommended task plus rich context (previous sibling, parent metadata, phase progress, sibling files, recent journal summary, doc excerpts, dependencies).
+2. Escalate to `mcp__plugin_foundry_foundry-mcp__task action="info"`, `mcp__plugin_foundry_foundry-mcp__task action="query"`, or `mcp__plugin_foundry_foundry-mcp__spec action="find"` only when the spec explicitly requires data not already present in the preparation payload.
+3. After completing a task, call `task action="prepare"` again to refresh recommendations and context.
 
 **Extended context flags**
 - `include_full_journal`: Pull the previous sibling's full journal history for nuanced refactors.
@@ -32,9 +31,9 @@ Detailed workflows, examples, and edge cases for the sdd-next skill.
 
 **Decision guide**
 - Need additional detail beyond `context`?
-  - Task metadata or acceptance criteria -> `mcp__foundry-mcp__task-info` for the specific task.
-  - Arbitrary journal history -> `mcp__foundry-mcp__journal-get` (optionally scoped via `task_id`).
-  - Alternate tasks or backlog exploration -> `mcp__foundry-mcp__task-query` with the relevant parent/status filters.
+  - Task metadata or acceptance criteria -> `mcp__plugin_foundry_foundry-mcp__task action="info"` for the specific task.
+  - Arbitrary journal history -> `mcp__plugin_foundry_foundry-mcp__journal action="list"` (optionally scoped via `task_id`).
+  - Alternate tasks or backlog exploration -> `mcp__plugin_foundry_foundry-mcp__task action="query"` with the relevant parent/status filters.
   - Otherwise, stay within the preparation payload to avoid redundant lookups.
 
 **Anti-patterns to avoid**
@@ -48,17 +47,17 @@ Detailed workflows, examples, and edge cases for the sdd-next skill.
 
 | MCP Tool | Returns | Use when | Redundant / Notes |
 | --- | --- | --- | --- |
-| `mcp__foundry-mcp__task-prepare` | Recommended task plus context (siblings, parent, journal summary, dependencies, doc snippets) | **Always** – foundational call for every task | `file_docs` auto-populate when doc-query data exists |
-| `mcp__foundry-mcp__task-info` | Raw task metadata from spec | Spec references data absent from preparation context | Often unnecessary unless spec says so |
-| `mcp__foundry-mcp__specs-find` | Lifecycle-aware spec list with `progress_percentage` | Status reports or verifying completion prompts | Filter by status to minimize payload |
-| `mcp__foundry-mcp__list-phases` | Every phase with completion % | Re-prioritizing phases / presenting alternate scopes | Usually redundant once `context.phase` is populated |
-| `mcp__foundry-mcp__journal-get` | Journal entries for any spec/task | Deep retrospectives or decision lookups | Use `include_full_journal` for the previous sibling instead of separate calls |
+| `task action="prepare"` | Recommended task plus context (siblings, parent, journal summary, dependencies, doc snippets) | **Always** – foundational call for every task | `file_docs` auto-populate when doc-query data exists |
+| `task action="info"` | Raw task metadata from spec | Spec references data absent from preparation context | Often unnecessary unless spec says so |
+| `spec action="find"` | Lifecycle-aware spec list with `progress_percentage` | Status reports or verifying completion prompts | Filter by status to minimize payload |
+| `spec action="list"` | All specs matching status filter | Browsing available specs | Use status filter to minimize payload |
+| `journal action="list"` | Journal entries for any spec/task | Deep retrospectives or decision lookups | Use `include_full_journal` for the previous sibling instead of separate calls |
 
 ---
 
 ## Deep Dive Context Structure
 
-The `mcp__foundry-mcp__prepare-task` response contains everything you need:
+The `mcp__plugin_foundry_foundry-mcp__task action="prepare"` response contains everything you need:
 - `task_data` -> title, metadata, instructions pulled from the spec
 - `dependencies` -> top-level blocking status (can_start, blocked_by list)
 - `context` -> stitched data from the previous sibling, parent task, current phase, sibling files, task journal, AND detailed dependency information
@@ -118,7 +117,7 @@ Typical `context` fields:
 
 When documentation is available and you need detailed implementation context for a file, use:
 ```bash
-mcp__foundry-mcp__doc-scope <file-path> --view implement
+mcp__plugin_foundry_foundry-mcp__code action="scope" path=<file-path> view="implement"
 ```
 
 This provides implementation-focused context including:
@@ -144,7 +143,7 @@ This provides implementation-focused context including:
 **Example workflow:**
 ```bash
 # 1. Task started, need implementation context
-mcp__foundry-mcp__doc-scope src/services/auth.ts --view implement
+mcp__plugin_foundry_foundry-mcp__code action="scope" path="src/services/auth.ts" view="implement"
 
 # 2. Review detailed implementation patterns and signatures
 # (command returns comprehensive implementation context)
@@ -167,182 +166,8 @@ After completing a task:
 - [ ] Task status updated (`in_progress` -> `completed`) with journal entry
 - [ ] Follow-up commands or monitoring notes captured in journal
 - [ ] Blockers or deviations surfaced to user; next steps agreed
-- [ ] **Context check performed** (two-step pattern)
-- [ ] Next recommended task retrieved via `mcp__foundry-mcp__prepare-task {spec-id}` and shared with user
-- [ ] Spec context refreshed via `mcp__foundry-mcp__specs-find --status active` for reporting
-
----
-
-## Autonomous Mode (Phase Completion)
-
-Use this workflow when the configured work mode is **Autonomous Mode** (`"work_mode": "autonomous"` in config). If the user changes the config to Single Task Mode mid-session, switch to Single Task Workflow.
-
-### When to Use
-
-- Config file has `"work_mode": "autonomous"` set
-- User wants to complete multiple tasks in current phase without per-task approval
-- User has sufficient context headroom (check context before starting)
-
-### Key Characteristics
-
-- **Phase-scoped**: Completes all tasks within current phase only (does not cross phase boundaries)
-- **Context-aware**: Checks context after EVERY task, stops if >=85%
-- **Defensive stops**: Stops for blocked tasks and plan deviations (requires user approval)
-- **No plan approval**: Creates execution plans internally without showing user
-
-### Autonomous Workflow Loop
-
-#### Step 1: Task Execution Loop
-
-For each task in current phase:
-
-1. **Prepare next task:**
-   ```bash
-   mcp__foundry-mcp__prepare-task {spec-id}
-   ```
-
-2. **Check phase complete:** If no more tasks in current phase -> Exit loop
-
-3. **Check for blockers:**
-   - If next task blocked: **STOP**
-   - Present blocker info via `AskUserQuestion`
-   - Options: alternative tasks, resolve blocker, or stop
-   - Exit autonomous mode
-
-4. **Create execution plan (silently):**
-   - Analyze task metadata from `prepare-task` output
-   - Create detailed internal plan (no user approval needed)
-   - Include all standard components: prerequisites, steps, success criteria
-
-5. **Mark task in_progress:**
-   ```bash
-   mcp__foundry-mcp__task-update-status {spec-id} {task-id} in_progress
-   ```
-
-6. **Execute implementation** according to internal plan
-
-7. **Handle plan deviations:**
-   - If implementation deviates: **STOP**
-   - Document deviation
-   - Present to user via `AskUserQuestion`
-   - Options: revise plan, update spec, explain more, rollback
-   - Exit autonomous mode
-
-8. **Mark task complete:**
-   ```bash
-   Skill(foundry:sdd-update) "Complete task {task-id} in spec {spec-id}. Completion note: [Brief summary of what was accomplished, tests run, verification performed]."
-   ```
-
-9. **CRITICAL: Check context usage (REQUIRED):**
-
-   Run two-step pattern as SEPARATE, SEQUENTIAL Bash calls:
-   ```bash
-   # First call:
-   mcp__foundry-mcp__session-generate-marker
-   ```
-   ```bash
-   # Second call (only after first completes):
-   mcp__foundry-mcp__session-context --session-marker "SESSION_MARKER_<hash>"
-   ```
-
-   **Check ACTUAL context percentage reported, do NOT speculate:**
-   - If context ACTUALLY >=85% (as reported by command): **STOP**, exit loop, go to Summary
-   - If context <85%: Continue to next iteration
-
-   **CRITICAL:** Do not stop based on predictions like "upcoming work will use context" or "I should have buffer space for the next phase." Only stop when actual usage reaches the threshold. The 85% threshold already provides safety margin.
-
-10. **Check phase completion:**
-    - If current phase complete: Exit loop, go to Summary
-    - Otherwise: Return to step 1
-
-#### Step 2: Present Summary Report
-
-When autonomous mode exits:
-
-```markdown
-## Autonomous Execution Summary
-
-**Mode:** Phase Completion (Autonomous)
-**Spec:** {spec-title} ({spec-id})
-**Phase:** {phase-title} ({phase-id})
-
-### Tasks Completed
-- task-1-1: [title] - Duration: X min
-- task-1-2: [title] - Duration: Y min
-
-### Phase Progress
-Phase {phase-id}: {completed}/{total} tasks ({percentage}%)
-Overall: {total_completed}/{total_tasks} tasks ({overall_percentage}%)
-
-### Context Usage
-Current context: {context_percentage}%
-
-### Exit Reason
-{One of:}
-- Phase Complete
-- Context Limit: >=85% threshold
-- Blocked Task
-- Plan Deviation
-- No Actionable Tasks
-
-### Next Steps
-{Contextual recommendations based on exit reason}
-```
-
-### Autonomous Mode Best Practices
-
-**DO:**
-- Check context after EVERY task completion
-- Stop immediately when context >=85%
-- Base stopping decisions on ACTUAL context percentage, never predictions
-- Use the full safety margin (continue until >=85% reported)
-- Stop for blocked tasks (don't auto-pivot)
-- Stop for plan deviations (don't auto-revise)
-- Create detailed internal plans
-- Present comprehensive summary at end
-
-**DON'T:**
-- Cross phase boundaries
-- Skip plan creation (always plan, just don't show)
-- Continue past 85% context
-- Stop early based on predictions of future context usage
-- Auto-resolve blockers
-- Auto-revise plans on deviations
-- Batch task completions
-
-### Subagent Usage in Autonomous Mode
-
-Autonomous mode benefits significantly from Claude Code's built-in subagent delegation:
-
-**Pre-Phase Exploration:**
-Before starting a phase, use Explore to understand scope:
-```
-Use the Explore agent (very thorough) to find all files
-that will be affected by this phase's tasks
-```
-
-**Parallel Task Investigation:**
-When multiple tasks have no dependencies, investigate in parallel:
-```
-Launch 2-3 Explore agents to gather context for upcoming tasks
-while implementing the current task
-```
-
-**Plan Deviation Research:**
-When implementation reveals unexpected patterns:
-```
-Use the general-purpose subagent to investigate the deviation
-and recommend whether to proceed or stop for replanning
-```
-
-**Context Management Benefits:**
-Subagent exploration keeps autonomous mode efficient:
-- Search results stay in subagent context (not main conversation)
-- Only relevant findings returned to orchestrator
-- Helps stay under the 85% context threshold
-- Haiku model (Explore) is faster for search operations
-
-> For complete subagent reference, see [Built-in Subagent Patterns](#built-in-subagent-patterns)
+- [ ] Next recommended task retrieved via `mcp__plugin_foundry_foundry-mcp__task action="prepare" spec_id={spec-id}` and shared with user
+- [ ] Spec context refreshed via `mcp__plugin_foundry_foundry-mcp__spec action="find" status="active"` for reporting
 
 ---
 
@@ -350,38 +175,37 @@ Subagent exploration keeps autonomous mode efficient:
 
 ### Scope Confirmation
 
-Show `mcp__foundry-mcp__list-phases {spec-id}` with progress. Ask via `AskUserQuestion`:
+Show phase progress via `mcp__plugin_foundry_foundry-mcp__spec action="get" spec_id={spec-id}`. Ask via `AskUserQuestion`:
 - Focus on target phase
 - Adjust scope
-- Revert to single-task mode
 
 ### Queue Preparation
 
 Prime backlog:
 ```bash
-mcp__foundry-mcp__task-query {spec-id} --parent {phase-id} --status pending
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} parent={phase-id} status="pending"
 ```
 
 If queue empty or blocked:
 ```bash
-mcp__foundry-mcp__list-blockers {spec-id}
+mcp__plugin_foundry_foundry-mcp__task action="list-blocked" spec_id={spec-id}
 ```
 Pause for user direction.
 
 ### Task Loop
 
-Reuse Single Task Workflow (steps 3.1-3.6) for each pending task.
+Reuse Task Workflow (steps 3.1-3.5) for each pending task.
 
 After each completion:
-- Refresh phase context via `mcp__foundry-mcp__list-phases {spec-id}` or `mcp__foundry-mcp__task-query {spec-id} --parent {phase-id}`
-- If granted "auto-continue for this phase", note permission but still report blockers immediately
+- Refresh phase context via `mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} parent={phase-id}`
+- Report blockers immediately
 
 ### Phase Wrap-Up
 
 Summarize results:
 ```bash
-mcp__foundry-mcp__list-phases {spec-id}
-mcp__foundry-mcp__task-query {spec-id} --parent {phase-id}
+mcp__plugin_foundry_foundry-mcp__spec action="get" spec_id={spec-id}
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} parent={phase-id}
 ```
 
 Present accomplishments, verification outcomes, blockers.
@@ -397,15 +221,15 @@ Ask via `AskUserQuestion`: continue to next phase, perform phase review, or stop
 **Cause:** Wrong working directory or relative paths
 
 **Solution:**
-- Provide absolute path: `mcp__foundry-mcp__prepare-task {spec-id} --path /absolute/path/to/specs`
-- Run `mcp__foundry-mcp__specs-find --status active` to discover available specs
+- Provide absolute path: `mcp__plugin_foundry_foundry-mcp__task action="prepare" spec_id={spec-id} path="/absolute/path/to/specs"`
+- Run `mcp__plugin_foundry_foundry-mcp__spec action="find" status="active"` to discover available specs
 
 ### All Tasks Blocked
 
 **Diagnosis:**
 ```bash
-mcp__foundry-mcp__list-blockers {spec-id}
-mcp__foundry-mcp__task-query {spec-id} --status blocked
+mcp__plugin_foundry_foundry-mcp__task action="list-blocked" spec_id={spec-id}
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id={spec-id} status="blocked"
 ```
 
 **Solution:** Present alternatives via `AskUserQuestion` or resolve blockers before continuing
@@ -416,7 +240,7 @@ mcp__foundry-mcp__task-query {spec-id} --status blocked
 |----------------------------|------------------------|
 | Closing **any** SDD task (journaling is mandatory and captures intent, verification, and follow-ups). | Investigating merge conflicts, bisects, or broader repo archaeology unrelated to a single spec task. |
 | You need implementation details, test results, deviations, or next-task hints (`journal.entries[]` already hold this context in structured JSON). | You must inspect low-level commit metadata, e.g., to see who touched a file outside the spec workflow. |
-| Preparing status updates: previous sibling journal summaries come bundled in `mcp__foundry-mcp__prepare-task`. | You're debugging historical code paths predating the current spec. |
+| Preparing status updates: previous sibling journal summaries come bundled in `task action="prepare"`. | You're debugging historical code paths predating the current spec. |
 
 **Anti-pattern:** Running `git log` / `git show` to understand a recently completed SDD task when the journal already documents the work. That wastes time and risks contradicting the canonical record. Start with the spec journal; escalate to git history only if a fact is missing or you are diagnosing repo-level issues (rebases, conflicts, regressions).
 
@@ -424,7 +248,7 @@ mcp__foundry-mcp__task-query {spec-id} --status blocked
 - Full implementation narrative (what changed and why) tied to `task_id`.
 - Test and verification results in one place, ready for audits.
 - Deviations, blockers, and next-task hints captured while they are fresh.
-- Structured JSON makes it trivial for `mcp__foundry-mcp__prepare-task` to surface the latest context without extra commands.
+- Structured JSON makes it trivial for `task action="prepare"` to surface the latest context without extra commands.
 - Archives context even if commits are squashed or rebased later.
 
 ---
@@ -476,9 +300,9 @@ This skill handles task execution within existing specs. For spec creation or co
 User Request
     |
     v
-Check for active specs (mcp__foundry-mcp__spec-list)
+Check for active specs (mcp__plugin_foundry_foundry-mcp__spec action="list")
     |
-    +-- Specs exist --> Use sdd-next workflow (task-prepare, execute, complete)
+    +-- Specs exist --> Use sdd-next workflow (task action="prepare", execute, complete)
     |
     +-- No specs --> Offer options via AskUserQuestion:
                       - "Create New Spec" --> Delegate to sdd-planner

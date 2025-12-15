@@ -21,7 +21,7 @@ Testing tools integrate with pytest and support external AI consultation for deb
 ### Discover All Tests
 
 ```
-mcp__foundry-mcp__test-discover with path="tests/"
+mcp__plugin_foundry_foundry-mcp__test action="discover" target="tests/"
 ```
 
 **Response:**
@@ -40,23 +40,10 @@ mcp__foundry-mcp__test-discover with path="tests/"
 }
 ```
 
-### Discovery Formats
-
-```
-# Summary view
-mcp__foundry-mcp__test-discover with path="tests/" format="summary"
-
-# Tree view
-mcp__foundry-mcp__test-discover with path="tests/" format="tree"
-
-# Fixtures view
-mcp__foundry-mcp__test-discover with path="tests/" format="fixtures"
-```
-
 ### Discover by Marker
 
 ```
-mcp__foundry-mcp__test-discover with path="tests/" markers="unit"
+mcp__plugin_foundry_foundry-mcp__test action="discover" target="tests/" markers="unit"
 ```
 
 ---
@@ -66,7 +53,7 @@ mcp__foundry-mcp__test-discover with path="tests/" markers="unit"
 ### Basic Test Run
 
 ```
-mcp__foundry-mcp__test-run with path="tests/"
+mcp__plugin_foundry_foundry-mcp__test action="run" target="tests/"
 ```
 
 **Response:**
@@ -94,7 +81,7 @@ mcp__foundry-mcp__test-run with path="tests/"
 Fast smoke tests for rapid feedback:
 
 ```
-mcp__foundry-mcp__test-run-quick with path="tests/"
+mcp__plugin_foundry_foundry-mcp__test action="run-quick"
 ```
 
 **Characteristics:**
@@ -105,17 +92,16 @@ mcp__foundry-mcp__test-run-quick with path="tests/"
 ### Unit Tests Only
 
 ```
-mcp__foundry-mcp__test-run-unit with path="tests/"
+mcp__plugin_foundry_foundry-mcp__test action="run-unit"
 ```
 
 ### With Options
 
 ```
-mcp__foundry-mcp__test-run with
-  path="tests/unit/"
+mcp__plugin_foundry_foundry-mcp__test action="run"
+  target="tests/unit/"
   markers="not slow"
   verbose=true
-  coverage=true
 ```
 
 ---
@@ -125,7 +111,7 @@ mcp__foundry-mcp__test-run with
 ### List Available Presets
 
 ```
-mcp__foundry-mcp__test-presets
+mcp__plugin_foundry_foundry-mcp__test action="presets"
 ```
 
 **Response:**
@@ -166,7 +152,7 @@ mcp__foundry-mcp__test-presets
 ### Run with Preset
 
 ```
-mcp__foundry-mcp__test-run with path="tests/" preset="quick"
+mcp__plugin_foundry_foundry-mcp__test action="run" preset="quick"
 ```
 
 ---
@@ -197,10 +183,9 @@ Test failures include:
 Route debugging to external AI tools:
 
 ```
-mcp__foundry-mcp__test-consult with
-  error="AssertionError: Expected 401, got 200"
-  context="Test output and code snippet"
-  tool="gemini"
+mcp__plugin_foundry_foundry-mcp__provider action="execute"
+  provider_id="gemini"
+  prompt="Debug: AssertionError: Expected 401, got 200"
 ```
 
 **Available tools:**
@@ -232,22 +217,22 @@ mcp__foundry-mcp__test-consult with
 ### Investigation Workflow
 
 1. **Run failing test** — Get detailed output
-2. **Check context** — Use `doc-*` tools for code context
+2. **Check context** — Use `code` tools for code context
 3. **Consult AI** — External debugging help
 4. **Fix and verify** — Run test again
 
 ```
 # 1. Run the failing test
-mcp__foundry-mcp__test-run with path="tests/unit/test_auth.py::test_login_invalid" verbose=true
+mcp__plugin_foundry_foundry-mcp__test action="run" target="tests/unit/test_auth.py::test_login_invalid" verbose=true
 
 # 2. Get context
-mcp__foundry-mcp__doc-context with path="src/auth/views.py"
+mcp__plugin_foundry_foundry-mcp__code action="find-function" symbol="login"
 
 # 3. Consult
-mcp__foundry-mcp__test-consult with error="..." context="..." tool="gemini"
+mcp__plugin_foundry_foundry-mcp__provider action="execute" provider_id="gemini" prompt="Debug: ..."
 
 # 4. Fix and re-run
-mcp__foundry-mcp__test-run with path="tests/unit/test_auth.py::test_login_invalid"
+mcp__plugin_foundry_foundry-mcp__test action="run" target="tests/unit/test_auth.py::test_login_invalid"
 ```
 
 ---
@@ -293,9 +278,9 @@ mcp__foundry-mcp__test-run with path="tests/unit/test_auth.py::test_login_invali
 ### Running Verification
 
 ```
-mcp__foundry-mcp__verify-check with
+mcp__plugin_foundry_foundry-mcp__verification action="execute"
   spec_id="my-feature"
-  phase_id="phase-1"
+  verify_id="phase-1"
 ```
 
 **Response:**
@@ -329,10 +314,9 @@ mcp__foundry-mcp__verify-check with
 ### Running with Coverage
 
 ```
-mcp__foundry-mcp__test-run with
-  path="tests/"
-  coverage=true
-  coverage_report="html"
+mcp__plugin_foundry_foundry-mcp__test action="run"
+  target="tests/"
+  verbose=true
 ```
 
 **Response includes:**
@@ -359,10 +343,7 @@ mcp__foundry-mcp__test-run with
 ### CI-Friendly Output
 
 ```
-mcp__foundry-mcp__test-run with
-  path="tests/"
-  format="junit"
-  output_file="test-results.xml"
+mcp__plugin_foundry_foundry-mcp__test action="run" target="tests/" verbose=true
 ```
 
 ### Exit Codes

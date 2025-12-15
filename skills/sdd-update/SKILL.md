@@ -27,7 +27,7 @@ Use `Skill(foundry:sdd-update)` to:
 
 ## MCP Tooling
 
-This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Tool names follow the `mcp__foundry-mcp__<tool-name>` pattern.
+This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Tools use the router+action pattern: `mcp__plugin_foundry_foundry-mcp__<router>` with `action="<action>"`.
 
 **Critical Rules:**
 - **ALWAYS** use MCP tools for spec operations
@@ -66,10 +66,10 @@ sdd-plan → sdd-plan-review → sdd-modify → sdd-next → Implementation → 
 
 ### Complete a Task (Recommended)
 
-Use `complete-task` to atomically update status AND create a journal entry:
+Use `task action="complete"` to atomically update status AND create a journal entry:
 
 ```bash
-mcp__foundry-mcp__complete-task {spec-id} {task-id} --journal-content "What was accomplished, tests run, verification performed."
+mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id={spec-id} task_id={task-id} journal_entry="What was accomplished, tests run, verification performed."
 ```
 
 This automatically:
@@ -82,23 +82,23 @@ This automatically:
 ### Start a Task
 
 ```bash
-mcp__foundry-mcp__task-update-status {spec-id} {task-id} in_progress
+mcp__plugin_foundry_foundry-mcp__task action="start" spec_id={spec-id} task_id={task-id}
 ```
 
 ### Block/Unblock Tasks
 
 ```bash
 # Block with reason
-mcp__foundry-mcp__block-task {spec-id} {task-id} --reason "Description" --type dependency
+mcp__plugin_foundry_foundry-mcp__task action="block" spec_id={spec-id} task_id={task-id} reason="Description" blocker_type="dependency"
 
 # Unblock with resolution
-mcp__foundry-mcp__task-unblock {spec-id} {task-id} --resolution "How resolved"
+mcp__plugin_foundry_foundry-mcp__task action="unblock" spec_id={spec-id} task_id={task-id} resolution="How resolved"
 ```
 
 ### Add Journal Entries
 
 ```bash
-mcp__foundry-mcp__journal add {spec-id} --title "Title" --content "Content" --task-id {task-id} --entry-type decision
+mcp__plugin_foundry_foundry-mcp__journal action="add" spec_id={spec-id} title="Title" content="Content" task_id={task-id} entry_type="decision"
 ```
 
 **Entry types:** `decision`, `deviation`, `blocker`, `note`, `status_change`
@@ -107,13 +107,13 @@ mcp__foundry-mcp__journal add {spec-id} --title "Title" --content "Content" --ta
 
 ```bash
 # Activate from backlog
-mcp__foundry-mcp__activate-spec {spec-id}
+mcp__plugin_foundry_foundry-mcp__lifecycle action="activate" spec_id={spec-id}
 
 # Archive
-mcp__foundry-mcp__move-spec {spec-id} archived
+mcp__plugin_foundry_foundry-mcp__lifecycle action="move" spec_id={spec-id} to_folder="archived"
 
 # Complete (all tasks done)
-mcp__foundry-mcp__complete-spec {spec-id}
+mcp__plugin_foundry_foundry-mcp__lifecycle action="complete" spec_id={spec-id}
 ```
 
 ## Task Status Values

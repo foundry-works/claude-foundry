@@ -49,23 +49,23 @@ HOW TO FIX:
 
   ALTERNATIVE: MCP tools (for granular operations)
   ────────────────────────────────────────────────
-  mcp__foundry-mcp__code-find-class name="..." exact=false
-  mcp__foundry-mcp__code-find-function name="..." exact=false
-  mcp__foundry-mcp__code-get-callers function_name="..."
-  mcp__foundry-mcp__code-get-callees function_name="..."
-  mcp__foundry-mcp__code-trace-calls function_name="..." direction="both"
-  mcp__foundry-mcp__code-impact-analysis target="..." target_type="class"
-  mcp__foundry-mcp__doc-stats
+  mcp__plugin_foundry_foundry-mcp__code action="find-class" symbol="..."
+  mcp__plugin_foundry_foundry-mcp__code action="find-function" symbol="..."
+  mcp__plugin_foundry_foundry-mcp__code action="get-callers" symbol="..."
+  mcp__plugin_foundry_foundry-mcp__code action="get-callees" symbol="..."
+  mcp__plugin_foundry_foundry-mcp__code action="trace-calls" symbol="..."
+  mcp__plugin_foundry_foundry-mcp__code action="impact-analysis" symbol="..."
+  mcp__plugin_foundry_foundry-mcp__code action="doc-stats"
 
 EXAMPLES:
   Instead of: cat docs/codebase.json | jq '.classes'
-    Use: Skill(doc-query) OR mcp__foundry-mcp__code-find-class name="" exact=false
+    Use: Skill(doc-query) OR mcp__plugin_foundry_foundry-mcp__code action="find-class" symbol=""
 
   Instead of: python -c "import json; ..." with codebase.json
-    Use: Skill(doc-query) OR mcp__foundry-mcp__code-find-function name="my_function"
+    Use: Skill(doc-query) OR mcp__plugin_foundry_foundry-mcp__code action="find-function" symbol="my_function"
 
   Instead of: grep "some_class" docs/codebase.json
-    Use: Skill(doc-query) OR mcp__foundry-mcp__code-find-class name="some_class"
+    Use: Skill(doc-query) OR mcp__plugin_foundry_foundry-mcp__code action="find-class" symbol="some_class"
 
 ⚠️  CRITICAL: ALL codebase.json access must go through Skills or MCP tools.
    If Read() is blocked, Bash file I/O is also blocked. Use the tools above.

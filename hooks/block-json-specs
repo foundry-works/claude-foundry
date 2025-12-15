@@ -49,21 +49,21 @@ HOW TO FIX:
 
   ALTERNATIVE: MCP tools (for granular operations)
   ────────────────────────────────────────────────
-  mcp__foundry-mcp__task-next spec_id="<id>"
-  mcp__foundry-mcp__task-query spec_id="<id>" status="pending"
-  mcp__foundry-mcp__task-info spec_id="<id>" task_id="<task-id>"
-  mcp__foundry-mcp__task-progress spec_id="<id>"
-  mcp__foundry-mcp__spec-get-hierarchy spec_id="<id>"
-  mcp__foundry-mcp__task-complete spec_id="<id>" task_id="<id>" completion_note="..."
-  mcp__foundry-mcp__task-update-status spec_id="<id>" task_id="<id>" status="in_progress"
-  mcp__foundry-mcp__journal-list spec_id="<id>"
+  mcp__plugin_foundry_foundry-mcp__task action="next" spec_id="<id>"
+  mcp__plugin_foundry_foundry-mcp__task action="query" spec_id="<id>" status="pending"
+  mcp__plugin_foundry_foundry-mcp__task action="info" spec_id="<id>" task_id="<task-id>"
+  mcp__plugin_foundry_foundry-mcp__task action="progress" spec_id="<id>"
+  mcp__plugin_foundry_foundry-mcp__spec action="get-hierarchy" spec_id="<id>"
+  mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id="<id>" task_id="<id>" completion_note="..."
+  mcp__plugin_foundry_foundry-mcp__task action="update-status" spec_id="<id>" task_id="<id>" status="in_progress"
+  mcp__plugin_foundry_foundry-mcp__journal action="list" spec_id="<id>"
 
 EXAMPLES:
   Reading: Instead of Read(specs/active/my-spec.json)
-    Use: Skill(sdd-next) OR mcp__foundry-mcp__task-prepare spec_id="my-spec"
+    Use: Skill(sdd-next) OR mcp__plugin_foundry_foundry-mcp__task action="prepare" spec_id="my-spec"
 
   Status update: Instead of editing JSON directly
-    Use: Skill(sdd-update) OR mcp__foundry-mcp__task-update-status spec_id="..." task_id="..." status="completed"
+    Use: Skill(sdd-update) OR mcp__plugin_foundry_foundry-mcp__task action="update-status" spec_id="..." task_id="..." status="completed"
 
 ⚠️  CRITICAL: Do not use Python, cat, jq, Read(), or any other method to bypass this
    restriction. ALL spec file access must go through Skills or MCP tools.

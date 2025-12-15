@@ -317,10 +317,9 @@ cache_key = sha256("|".join(key_parts)).hexdigest()[:32]
 From MCP tools:
 
 ```
-mcp__foundry-mcp__test-consult with
-  error="AssertionError in test_login"
-  context="[test output and code]"
-  provider="gemini"
+mcp__plugin_foundry_foundry-mcp__provider action="execute"
+  provider_id="gemini"
+  prompt="Debug this error: AssertionError in test_login"
 ```
 
 The orchestrator:
@@ -485,7 +484,7 @@ Piped commands bypass tool allowlist checks in Gemini CLI.
 ### Checking Provider Status
 
 ```
-mcp__foundry-mcp__provider-list
+mcp__plugin_foundry_foundry-mcp__provider action="list"
 ```
 
 Shows all providers with availability status and detection method.
