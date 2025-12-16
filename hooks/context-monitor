@@ -10,7 +10,7 @@
 # Configuration (environment variables):
 # - CONTEXT_THRESHOLD: Percentage threshold for warning (default: 85)
 
-THRESHOLD="${CONTEXT_THRESHOLD:-1}"
+THRESHOLD="${CONTEXT_THRESHOLD:-85}"
 MAX_CONTEXT=155000
 
 # Require jq
@@ -44,7 +44,12 @@ PERCENTAGE=$((TOKENS * 100 / MAX_CONTEXT))
 # Warn if above threshold
 if [ "$PERCENTAGE" -ge "$THRESHOLD" ]; then
     cat << EOF
-{"continue": true, "stopReason": "[CONTEXT ${PERCENTAGE}%] Context usage is high. Complete your current task, then recommend /clear followed by /sdd-next."}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PostToolUse",
+    "additionalContext": "[CONTEXT ${PERCENTAGE}%] Context usage is high. Complete your current task, then recommend /clear followed by /sdd-next."
+  }
+}
 EOF
 fi
 

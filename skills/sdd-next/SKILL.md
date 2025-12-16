@@ -152,7 +152,9 @@ Skill(foundry:sdd-update) "Complete task {task-id} in spec {spec-id}. Completion
 
 ### 3.5 Surface Next Recommendation
 
-**Immediately after completion:**
+**Context Awareness:** The `context-monitor` hook automatically warns when context exceeds 85%. If you see `[CONTEXT X%]` warnings, follow the recommendation to `/clear` then `/sdd-next` after completing the current task.
+
+**Surface next recommendation:**
 ```bash
 mcp__plugin_foundry_foundry-mcp__task action="prepare" spec_id={spec-id}
 ```

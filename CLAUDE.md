@@ -6,11 +6,9 @@ Spec-driven development (SDD) toolkit for Claude Code. Plan before code, verify 
 
 ```
 sdd-plan → sdd-plan-review → sdd-modify → sdd-next → [IMPLEMENT] → sdd-update → sdd-fidelity-review → run-tests → sdd-pr
-                                                                                                              ↓
-                                                                                                         sdd-render
 ```
 
-**Supporting skills:** sdd-validate (spec validation), doc-query (codebase queries)
+**Supporting skills:** sdd-validate (spec validation)
 
 ## Skill Selection
 
@@ -25,8 +23,6 @@ sdd-plan → sdd-plan-review → sdd-modify → sdd-next → [IMPLEMENT] → sdd
 | Run tests and debug failures | `run-tests` |
 | Create PR with spec context | `sdd-pr` |
 | Validate spec JSON structure | `sdd-validate` |
-| Query codebase documentation | `doc-query` |
-| Generate stakeholder documentation | `sdd-render` |
 
 ## Key Patterns
 

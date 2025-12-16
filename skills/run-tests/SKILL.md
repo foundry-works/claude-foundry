@@ -31,9 +31,6 @@ This skill uses the Foundry MCP server (`foundry-mcp`). Tools use the router+act
 - `mcp__plugin_foundry_foundry-mcp__provider action="list"` - Check available AI tools
 - `mcp__plugin_foundry_foundry-mcp__provider action="execute"` - Consult AI for debugging
 
-**Code documentation (optional):**
-- `mcp__plugin_foundry_foundry-mcp__code action="find-function"` - Find function definitions
-- `mcp__plugin_foundry_foundry-mcp__code action="trace-calls"` - Trace call graphs
 
 ## Core Workflow
 
@@ -102,12 +99,7 @@ mcp__plugin_foundry_foundry-mcp__test action="run" target="tests/test_module.py:
 
 ## Phase 3: Gather Code Context
 
-If code documentation exists:
-```
-mcp__plugin_foundry_foundry-mcp__code action="doc-stats"
-mcp__plugin_foundry_foundry-mcp__code action="find-function" symbol="function_name"
-mcp__plugin_foundry_foundry-mcp__code action="trace-calls" symbol="function_name"
-```
+Use **Explore subagents** (preferred) for code context, or `Glob`, `Grep`, and `Read` for targeted lookups.
 
 ### 3.1 Subagent Guidance (Context Exploration)
 

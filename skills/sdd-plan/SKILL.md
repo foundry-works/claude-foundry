@@ -73,18 +73,7 @@ Before creating any plan, deeply understand what needs to be accomplished:
 
 ### Step 2: Analyze Codebase
 
-Check if documentation exists:
-```bash
-mcp__plugin_foundry_foundry-mcp__code action="doc-stats"
-```
-
-If documentation available, use for analysis:
-- `mcp__plugin_foundry_foundry-mcp__code action="find-class"` - Find existing class implementations
-- `mcp__plugin_foundry_foundry-mcp__code action="find-function"` - Find function implementations
-- `mcp__plugin_foundry_foundry-mcp__code action="trace-calls"` - Trace call graphs
-- `mcp__plugin_foundry_foundry-mcp__code action="impact-analysis"` - Analyze change impact
-
-If documentation unavailable, fall back to `Glob`, `Grep`, and `Read`.
+Use **Explore subagents** (preferred) for codebase exploration, or `Glob`, `Grep`, and `Read` for targeted lookups.
 
 ### 2.1 Subagent Guidance (Codebase Exploration)
 
