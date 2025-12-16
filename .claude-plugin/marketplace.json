@@ -4,6 +4,7 @@
     "name": "tylerburleigh",
     "email": "tylerburleigh@gmail.com"
   },
+  "autoUpdate": true,
   "plugins": [
     {
       "name": "foundry",

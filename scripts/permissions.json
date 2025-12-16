@@ -3,25 +3,9 @@
   "version": "2.0.0",
   "categories": {
     "mcp_tools": {
-      "description": "All foundry-mcp MCP router tools (17 routers)",
+      "description": "All foundry-mcp MCP router tools (wildcard)",
       "allow": [
-        "mcp__plugin_foundry_foundry-mcp__authoring",
-        "mcp__plugin_foundry_foundry-mcp__code",
-        "mcp__plugin_foundry_foundry-mcp__environment",
-        "mcp__plugin_foundry_foundry-mcp__error",
-        "mcp__plugin_foundry_foundry-mcp__health",
-        "mcp__plugin_foundry_foundry-mcp__journal",
-        "mcp__plugin_foundry_foundry-mcp__lifecycle",
-        "mcp__plugin_foundry_foundry-mcp__metrics",
-        "mcp__plugin_foundry_foundry-mcp__plan",
-        "mcp__plugin_foundry_foundry-mcp__pr",
-        "mcp__plugin_foundry_foundry-mcp__provider",
-        "mcp__plugin_foundry_foundry-mcp__review",
-        "mcp__plugin_foundry_foundry-mcp__server",
-        "mcp__plugin_foundry_foundry-mcp__spec",
-        "mcp__plugin_foundry_foundry-mcp__task",
-        "mcp__plugin_foundry_foundry-mcp__test",
-        "mcp__plugin_foundry_foundry-mcp__verification"
+        "mcp__plugin_foundry_foundry-mcp__*"
       ]
     },
     "git_commands": {

@@ -132,8 +132,7 @@ All patterns support gitignore-style globs with `**` for recursive matching.
 ```json
 {
   "allow": [
-    "mcp__puppeteer",
-    "mcp__puppeteer__navigate",
+    "mcp__puppeteer__*",
     "mcp__filesystem__list_directory"
   ]
 }
@@ -141,8 +140,12 @@ All patterns support gitignore-style globs with `**` for recursive matching.
 
 | Requirement | Details |
 |-------------|---------|
-| MUST | List each MCP tool individually |
-| MUST NOT | Use wildcards (not supported) |
+| MAY | Use `mcp__server__*` wildcard to allow all tools from a server |
+| MAY | List individual tools for fine-grained control |
+
+**Wildcard Syntax:**
+- `mcp__server__*` - Allow/deny all tools from an MCP server
+- `mcp__server__tool` - Allow/deny a specific tool
 
 ---
 
