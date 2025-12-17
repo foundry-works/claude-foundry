@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "foundry-mcp": {
-      "command": "python",
-      "args": ["-m", "foundry_mcp.server"],
+      "command": "bash",
+      "args": ["-c", "${FOUNDRY_MCP_PYTHON:-python} -m foundry_mcp.server"],
       "env": {
         "FOUNDRY_MCP_LOG_LEVEL": "INFO"
       }
