@@ -271,6 +271,87 @@ To enable multi-model features like plan reviews, install one of:
 Then re-run `/foundry-setup` or manually edit foundry-mcp.toml.
 ```
 
+## Phase 2.6: Test Configuration
+
+**Only run this phase if foundry-mcp.toml exists (either created in Phase 2 or already present).**
+
+This phase detects the appropriate test runner for the project and optionally configures the `[test]` section.
+
+### Step 1: Check Existing Configuration
+
+Read the `foundry-mcp.toml` file and check if it already contains a `[test]` section.
+
+**If `[test]` section exists:** Skip this phase and display:
+> "Test configuration already present in foundry-mcp.toml. Your existing settings are preserved."
+
+Continue to Setup Complete.
+
+### Step 2: Detect Test Runner
+
+Call `mcp__plugin_foundry_foundry-mcp__environment action="detect-test-runner"` to analyze the project.
+
+Parse the response to get:
+- `detected_runners`: Array of detected runners with confidence levels
+- `recommended_default`: The recommended runner based on project type
+
+### Step 3: Present Results and Get User Choice
+
+**If runners were detected:**
+
+Display the detection results:
+
+```
+## Test Runner Detection
+
+Detected test runner(s) for this project:
+
+| Runner | Project Type | Confidence | Reason |
+|--------|--------------|------------|--------|
+| pytest | python | high | pyproject.toml found |
+```
+
+Use `AskUserQuestion`:
+- Question: "Configure test runner in foundry-mcp.toml?"
+- Options:
+  - "Yes, use {recommended_default} (recommended)"
+  - "Skip test configuration"
+
+**If "Yes":** Proceed to Step 4.
+**If "Skip":** Continue to Setup Complete.
+
+---
+
+**If no runners were detected:**
+
+Display:
+> "No test runners detected for this project. You can manually configure the `[test]` section in foundry-mcp.toml if needed."
+
+Continue to Setup Complete.
+
+### Step 4: Append Test Section to TOML
+
+Read the existing `foundry-mcp.toml` file content.
+
+Append the test configuration section using textual append (preserves comments and formatting):
+
+```toml
+
+[test]
+# Auto-configured based on project detection
+default_runner = "{recommended_default}"
+```
+
+Use the Write tool to save the updated file.
+
+Display:
+> "Added [test] section to foundry-mcp.toml with default_runner = \"{recommended_default}\""
+
+### Step 5: Verify TOML is Valid
+
+After appending, read the file back and verify it's valid TOML by checking that `mcp__plugin_foundry_foundry-mcp__health action="readiness"` doesn't report configuration errors.
+
+**If validation fails:** Warn the user that the file may need manual review.
+
 ## Setup Complete
 
 Summarize what was configured:
@@ -278,6 +359,7 @@ Summarize what was configured:
 - Permissions status (created/updated/skipped)
 - Workspace setup (specs directory, foundry-mcp.toml)
 - AI providers configured (list providers added to consultation priority, or note if skipped)
+- Test runner configured (runner name, or note if skipped/already configured)
 
 **Important:** If permissions were added or modified, display:
 > "**Restart Claude Code** for the permission changes to take effect. After restarting, run `/foundry-tutorial` if this is your first time using the plugin."

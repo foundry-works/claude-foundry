@@ -64,6 +64,16 @@ This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Too
 
 ## Core Workflow
 
+### File Path Policy (Critical)
+
+For every node of type `task` with `metadata.task_category` of `implementation` or `refactoring`, set `metadata.file_path` to a **real repo-relative path in the target workspace** (e.g. `services/ai-guide/internal_reasoning/step_setPrompt.go`).
+
+- Do **not** guess or use placeholders like `task-1-1.py`.
+- If the correct file is unclear during planning, prefer changing the task_category to `investigation` and add a follow-up implementation task once the correct file path is known.
+
+This keeps reviews and task execution grounded in the actual codebase.
+
+
 ### Step 1: Understand Intent
 
 Before creating any plan, deeply understand what needs to be accomplished:

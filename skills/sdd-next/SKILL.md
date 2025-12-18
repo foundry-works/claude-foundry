@@ -16,9 +16,14 @@ description: Task preparation skill for spec-driven workflows. Reads specificati
 ```
 Start -> Read Work Mode (Step 0)
            |
-           +-- single mode --> Select Task -> Plan -> Approve -> Implement -> Complete
-           |
-           +-- autonomous mode --> Phase Loop (auto-complete all tasks) -> Summary
+           +-- Select Task (3.2) -> Check Task Type (3.2.1)
+                                          |
+                                          +-- type: "verify" --> Verification Workflow (Section 6) --+
+                                          |                                                          |
+                                          +-- type: "task" --> Plan -> Implement -> Complete ---------+
+                                                                                                      |
+                                                                                                      v
+                                                                                            Surface Next (3.5)
 ```
 
 ---
@@ -84,7 +89,22 @@ Only execute this step if entering the skill directly (not via command):
 - **Recommendation path**: `mcp__plugin_foundry_foundry-mcp__task action="prepare"` -> surface task id, file, estimates, blockers
 - **Browsing path**: Use `mcp__plugin_foundry_foundry-mcp__task action="query"` -> present shortlist via `AskUserQuestion`
 
-### 3.3 Deep Dive & Plan Approval
+### 3.2.1 Task Type Dispatch
+
+After selecting a task, check its type to determine the workflow path.
+
+**Check task type** from the `task action="prepare"` response or via `mcp__plugin_foundry_foundry-mcp__task action="info"`:
+
+| Task Type | Workflow Path |
+|-----------|---------------|
+| `type: "verify"` | Go to **Section 6: Verification Task Workflow** |
+| `type: "task"` (default) | Continue to **3.3 Deep Dive & Plan Approval** |
+
+**CRITICAL:** Verification tasks must NOT go through the implementation workflow (3.3-3.4). They require MCP tool invocation, not code changes.
+
+### 3.3 Deep Dive & Plan Approval (Implementation Tasks Only)
+
+**Note:** This section is for `type: "task"` only. Verification tasks (`type: "verify"`) are handled in Section 6.
 
 Invoke `mcp__plugin_foundry_foundry-mcp__task action="prepare"` with the target `spec_id`. The response contains:
 - `task_data`: title, metadata, instructions
@@ -206,23 +226,72 @@ Skill(foundry:sdd-update) "Complete task task-2-3 in spec my-spec-001. Completio
 
 ---
 
-## CRITICAL: Verification Tasks
+## 6. Verification Task Workflow
 
-### Detecting Verification Tasks
+**Entry:** Routed here from 3.2.1 when task has `type: "verify"`
 
-Check task metadata for `type: verify` or `verification_type` field via `mcp__plugin_foundry_foundry-mcp__task action="info"`.
+### 6.1 Mark Task In Progress
 
-### Dispatch by Verification Type
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="start" spec_id={spec-id} task_id={task-id}
+```
 
-| verification_type | Action |
-|-------------------|--------|
-| `"run-tests"` | Invoke `Skill(foundry:run-tests)` or use `mcp__plugin_foundry_foundry-mcp__test action="run"` |
-| `"fidelity"` | Invoke `Skill(foundry:sdd-fidelity-review)` or use `mcp__plugin_foundry_foundry-mcp__review action="fidelity"` |
+### 6.2 Detect Verification Type
 
-**After verification completes:**
-1. Present findings to user
-2. Use `AskUserQuestion` to get approval before marking complete
-3. Options: "Accept & Complete", "Fix Failures", "Review Details"
+Read `verification_type` from task metadata (already available from `task action="prepare"` or `task action="info"`):
+
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="info" spec_id={spec-id} task_id={task-id}
+```
+
+### 6.3 Dispatch by Verification Type
+
+| verification_type | Skill Invocation |
+|-------------------|------------------|
+| `"run-tests"` | `Skill(foundry:run-tests)` |
+| `"fidelity"` | `Skill(foundry:sdd-fidelity-review)` |
+
+**For fidelity reviews**, extract `scope` and `target` from task metadata to pass to the skill.
+
+### 6.4 Execute Verification Skill
+
+**MANDATORY:** You MUST invoke the Skill. Do NOT perform manual verification by reading files.
+
+**For fidelity review:**
+```bash
+Skill(foundry:sdd-fidelity-review) "Review {scope} {target} in spec {spec-id}"
+```
+
+Example: `Skill(foundry:sdd-fidelity-review) "Review phase phase-1 in spec my-spec-001"`
+
+**For run-tests:**
+```bash
+Skill(foundry:run-tests) "Run tests for spec {spec-id}"
+```
+
+### 6.5 Present Results
+
+After the skill returns:
+1. Display the verdict (pass/fail/partial)
+2. List any deviations or failures found
+3. Show recommendations from the review
+
+### 6.6 Complete or Remediate
+
+**If verdict = pass:**
+```bash
+Skill(foundry:sdd-update) "Complete verify task {task-id}. Fidelity review passed with verdict: {verdict}."
+```
+
+**If verdict = fail or partial:**
+- Do NOT mark the verify task complete
+- Present failures to user via `AskUserQuestion`
+- Options: "Fix Issues & Re-run", "Create Remediation Tasks", "Override & Complete"
+- If user chooses to fix, address deviations then re-run verification skill (6.4)
+
+### 6.7 Return to Main Workflow
+
+After verification task is complete, go to **3.5 Surface Next Recommendation** to continue with the next task.
 
 ---
 
@@ -251,7 +320,7 @@ mcp__plugin_foundry_foundry-mcp__task action="unblock" spec_id={spec-id} task_id
 |---------|-------------|
 | **Spec reading** | Always use MCP tools, NEVER `Read()` or `cat` on JSON |
 | **Task completion** | Never mark complete if tests failing/partial/errors |
-| **Verification** | Dispatch to appropriate skill by `verification_type` |
+| **Verification tasks** | Route via 3.2.1 to Section 6; MUST invoke MCP tools, NOT manual file reads |
 | **User decisions** | Always use `AskUserQuestion`, never text lists |
 
 ---

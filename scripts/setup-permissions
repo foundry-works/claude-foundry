@@ -206,7 +206,9 @@ except:
 categorize_permission() {
     local perm="$1"
 
-    if [[ "$perm" == mcp__plugin_foundry_foundry-mcp__* ]]; then
+    if [[ "$perm" == Skill\(* ]]; then
+        echo "skills"
+    elif [[ "$perm" == mcp__plugin_foundry_foundry-mcp__* ]]; then
         echo "mcp_tools"
     elif [[ "$perm" == Bash\(git\ * ]]; then
         echo "git_commands"
