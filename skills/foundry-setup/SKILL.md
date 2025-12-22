@@ -21,6 +21,7 @@ Check if `$ARGUMENTS` contains `--check` or `--preflight`:
 
 ```
 - **Entry** → Read `references/setup.md` (MANDATORY)
+  - → Ensure Full Mode (check/switch SDD mode)
   - → Preflight (MCP, Python, Git)
     - [--check?] → **Exit**
   - → Permissions → Workspace

@@ -5,6 +5,17 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2025-12-22
+
+### Fixed
+
+- **Fix MCP action name**: Changed `action="verify"` → `action="verify-env"` in setup preflight checks
+
+### Changed
+
+- **Added Phase 0** to foundry-setup: Ensures full SDD mode before running preflight checks
+- **Updated command references**: All documentation now uses renamed commands (`/setup-cmd`, `/next-cmd`, `/on-cmd`, `/off-cmd`, `/tutorial-cmd`)
+
 ## [1.0.8] - 2025-12-22
 
 ### Changed

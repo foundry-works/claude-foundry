@@ -75,10 +75,10 @@ Skills are invoked via `Skill(foundry:skill-name)`:
 
 Slash commands for common workflows:
 
-- `/foundry-setup` - First-time setup and guided tour of plugin features
-- `/sdd-next` - Resume or start spec-driven development work
-- `/sdd-on` - Enable full SDD tools (16 routers)
-- `/sdd-off` - Switch to minimal mode (1 tool) to save context tokens
+- `/setup-cmd` - First-time setup and guided tour of plugin features
+- `/next-cmd` - Resume or start spec-driven development work
+- `/on-cmd` - Enable full SDD tools (17 routers)
+- `/off-cmd` - Switch to minimal mode (1 tool) to save context tokens
 
 ### Agents
 

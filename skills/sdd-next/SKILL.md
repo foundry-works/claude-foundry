@@ -9,7 +9,7 @@ description: Task preparation skill for spec-driven workflows. Reads specificati
 
 - **Purpose:** Task execution workflow - select tasks, plan implementation, and track progress within an active spec.
 - **Scope:** Single-task execution with user approval at key checkpoints.
-- **Entry:** Invoked by `/sdd-next` command after spec has been identified.
+- **Entry:** Invoked by `/next-cmd` command after spec has been identified.
 
 ### Flow
 
@@ -82,7 +82,7 @@ Direct JSON access (`Read()`, `cat`, `jq`, `grep`, etc.) is prohibited.
 ### Anti-Recursion Rule (NEVER VIOLATE)
 
 This skill must NEVER invoke itself or `Skill(sdd-next)`. The only valid callers are:
-- The `/sdd-next` command (entry point)
+- The `/next-cmd` command (entry point)
 - Direct user invocation
 
 If you find yourself about to call `Skill(sdd-next)` from within this skill, **STOP** and proceed with the workflow instead. The skill handles the complete task lifecycle - there is no need to re-invoke it.
@@ -116,7 +116,7 @@ Before proceeding, verify that the full SDD toolkit is available.
 
 Execute one task at a time with explicit user approval.
 
-**Assumption:** The `/sdd-next` command has already identified the active spec and passed it to this skill.
+**Assumption:** The `/next-cmd` command has already identified the active spec and passed it to this skill.
 
 ### Select Task
 
@@ -213,7 +213,7 @@ Skill(foundry:sdd-update) "Complete task {task-id} in spec {spec-id}. Completion
 
 ### Surface Next Recommendation
 
-**Context Awareness:** The `context-monitor` hook automatically warns when context exceeds 85%. If you see `[CONTEXT X%]` warnings, follow the recommendation to `/clear` then `/sdd-next` after completing the current task.
+**Context Awareness:** The `context-monitor` hook automatically warns when context exceeds 85%. If you see `[CONTEXT X%]` warnings, follow the recommendation to `/clear` then `/next-cmd` after completing the current task.
 
 **Surface next recommendation:**
 ```bash

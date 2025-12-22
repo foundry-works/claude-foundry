@@ -45,16 +45,16 @@ mcp__plugin_foundry_foundry-mcp__lifecycle action="activate" spec_id={spec-id}
 1. Complete current task
 2. Mark task complete with journal
 3. Run `/clear`
-4. Resume with `/sdd-next`
+4. Resume with `/next-cmd`
 
 ## SDD Tools in Minimal Mode
 
 **Error:** MCP tools not responding
 
 **Resolution:**
-1. Run `/sdd-on`
+1. Run `/on-cmd`
 2. Restart Claude
-3. Run `/sdd-next` again
+3. Run `/next-cmd` again
 
 ## Quick Reference
 

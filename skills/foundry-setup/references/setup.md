@@ -1,12 +1,24 @@
 # Foundry Setup - Detailed Phase Instructions
 
+## Phase 0: Ensure Full Mode
+
+Before running pre-flight checks, ensure the MCP server is in full mode so all tools are available.
+
+1. Call `mcp__plugin_foundry_foundry-ctl__get_sdd_mode` to check current mode
+2. **If mode is "minimal":** Call `mcp__plugin_foundry_foundry-ctl__set_sdd_mode` with `mode="full"` to enable all tools. Wait for the server restart (~1-2 seconds).
+3. **If mode is already "full":** Continue to Phase 1
+
+**Why this matters:** In minimal mode, only the `wake` tool is available. Without full mode, the setup skill cannot use the MCP tools for pre-flight checks and will fall back to slow Bash commands.
+
+---
+
 ## Phase 1: Pre-flight Checks
 
 Run these checks in parallel to verify the environment:
 
 1. Call `mcp__plugin_foundry_foundry-mcp__health action="liveness"` to verify MCP server connectivity
 2. Call `mcp__plugin_foundry_foundry-mcp__environment action="verify-toolchain"` to check required tools (Python, git)
-3. Call `mcp__plugin_foundry_foundry-mcp__environment action="verify"` to validate runtime versions
+3. Call `mcp__plugin_foundry_foundry-mcp__environment action="verify-env"` to validate runtime versions
 
 Present results in a status table:
 
@@ -42,7 +54,7 @@ Present results in a status table:
 }
 ```
 
-This configuration enables `/sdd-on` and `/sdd-off` commands to toggle between full mode (17 tools) and minimal mode (1 tool) to save context tokens.
+This configuration enables `/on-cmd` and `/off-cmd` commands to toggle between full mode (17 tools) and minimal mode (1 tool) to save context tokens.
 
 **If other checks fail:** Warn but continue - some features may not work.
 
@@ -279,7 +291,7 @@ To enable multi-model features like plan reviews, install one of:
 - opencode CLI: https://github.com/opencode-ai/opencode
 - codex CLI: https://github.com/openai/codex
 
-Then re-run `/foundry-setup` or manually edit foundry-mcp.toml.
+Then re-run `/setup-cmd` or manually edit foundry-mcp.toml.
 ```
 
 ---
@@ -377,7 +389,7 @@ Summarize what was configured:
 - Test runner configured (runner name, or note if skipped/already configured)
 
 **Important:** If permissions were added or modified, display:
-> "**Restart Claude Code** for the permission changes to take effect. After restarting, run `/foundry-tutorial` if this is your first time using the plugin."
+> "**Restart Claude Code** for the permission changes to take effect. After restarting, run `/tutorial-cmd` if this is your first time using the plugin."
 
 If no permissions were changed, end with:
-> "Setup complete! If this is your first time using the plugin, run `/foundry-tutorial` to learn about Spec-Driven Development and see the workflow in action."
+> "Setup complete! If this is your first time using the plugin, run `/tutorial-cmd` to learn about Spec-Driven Development and see the workflow in action."
