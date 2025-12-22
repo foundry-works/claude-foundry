@@ -5,6 +5,18 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.8] - 2025-12-22
+
+### Changed
+
+- **Fix namespace collisions**: Renamed commands to avoid conflicts with same-named skills
+  - `foundry-setup` → `setup-cmd`
+  - `foundry-tutorial` → `tutorial-cmd`
+  - `sdd-next` → `next-cmd`
+  - `sdd-off` → `off-cmd`
+  - `sdd-on` → `on-cmd`
+- Skills now load correctly without being shadowed by command wrappers
+
 ## [1.0.7] - 2025-12-22
 
 ### Changed

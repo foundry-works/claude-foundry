@@ -1,5 +1,5 @@
 ---
-name: sdd-off
+name: off-cmd
 description: Disable SDD tools to save context
 ---
 
@@ -14,5 +14,5 @@ Switch to minimal mode (1 wake tool) to save context tokens when not using SDD f
 2. Wait for the response indicating restart status.
 
 3. Display the result:
-   - If status is "restarting": "SDD tools disabled. **Restart Claude Code** (`/exit` then relaunch) to see reduced context. Use `/sdd-on` to re-enable."
+   - If status is "restarting": "SDD tools disabled. **Restart Claude Code** (`/exit` then relaunch) to see reduced context. Use `/on-cmd` to re-enable."
    - If status is "unchanged": "SDD tools are already disabled."

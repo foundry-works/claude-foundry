@@ -1,5 +1,5 @@
 ---
-name: sdd-next
+name: next-cmd
 description: Resume or start spec-driven development work by detecting active tasks and providing interactive options
 ---
 
@@ -19,7 +19,7 @@ Pass the active spec context to the `sdd-next` skill. The skill will proceed dir
 **IMPORTANT:** Do NOT invoke this command or skill recursively. The skill handles the full workflow.
 
 ```
-Skill(sdd-next) "Active spec detected via /sdd-next command. Skip Step 3.1 (spec detection) and proceed directly to Step 3.2 (task selection)."
+Skill(sdd-next) "Active spec detected via /next-cmd command. Skip Step 3.1 (spec detection) and proceed directly to Step 3.2 (task selection)."
 ```
 
 ### If no active specs exist:

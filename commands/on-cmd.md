@@ -1,5 +1,5 @@
 ---
-name: sdd-on
+name: on-cmd
 description: Enable full SDD tools
 ---
 
