@@ -14,16 +14,18 @@ description: Task preparation skill for spec-driven workflows. Reads specificati
 ### High-Level Flow
 
 ```
-Start -> Read Work Mode (Step 0)
+Start -> Check Mode (Step 0)
            |
-           +-- Select Task (3.2) -> Check Task Type (3.2.1)
-                                          |
-                                          +-- type: "verify" --> Verification Workflow (Section 6) --+
-                                          |                                                          |
-                                          +-- type: "task" --> Plan -> Implement -> Complete ---------+
-                                                                                                      |
-                                                                                                      v
-                                                                                            Surface Next (3.5)
+           +-- minimal? --> EXIT: "Run /sdd-on, restart Claude, try again"
+           |
+           +-- full? --> Select Task (3.2) -> Check Task Type (3.2.1)
+                                                    |
+                                                    +-- type: "verify" --> Verification Workflow (Section 6) --+
+                                                    |                                                          |
+                                                    +-- type: "task" --> Plan -> Implement -> Complete ---------+
+                                                                                                                |
+                                                                                                                v
+                                                                                                      Surface Next (3.5)
 ```
 
 ---
@@ -69,6 +71,26 @@ If you find yourself about to call `Skill(sdd-next)` from within this skill, **S
 
 > For detailed context gathering patterns, see `reference.md#context-gathering-best-practices`
 > For agent delegation patterns (when to use sdd-planner), see `reference.md#agent-delegation`
+
+---
+
+## Step 0: Verify SDD Tools Mode
+
+Before proceeding, verify that the full SDD toolkit is available.
+
+1. Call `mcp__plugin_foundry_foundry-ctl__get_sdd_mode`
+
+2. If mode is `"full"`: Proceed to Task Workflow (Step 3.1)
+
+3. If mode is `"minimal"`:
+   - Display message:
+     ```
+     SDD tools are in minimal mode. To use /sdd-next:
+     1. Run /sdd-on
+     2. Restart Claude
+     3. Run /sdd-next again
+     ```
+   - **Exit skill immediately** — do not proceed
 
 ---
 
