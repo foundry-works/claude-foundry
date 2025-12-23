@@ -5,6 +5,14 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.10] - 2025-12-23
+
+### Removed
+
+- **Remove foundry-ctl**: Removed mode toggling functionality (`/on-cmd`, `/off-cmd` commands) since foundry-mcp-ctl has been removed from foundry-mcp package
+- Simplified MCP server configuration to direct `python -m foundry_mcp.server` command
+- Removed `mcp_ctl` permission category and foundry-ctl references from documentation
+
 ## [1.0.9] - 2025-12-22
 
 ### Fixed
@@ -13,8 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Added Phase 0** to foundry-setup: Ensures full SDD mode before running preflight checks
-- **Updated command references**: All documentation now uses renamed commands (`/setup-cmd`, `/next-cmd`, `/on-cmd`, `/off-cmd`, `/tutorial-cmd`)
+- **Updated command references**: All documentation now uses renamed commands (`/setup-cmd`, `/next-cmd`, `/tutorial-cmd`)
 
 ## [1.0.8] - 2025-12-22
 
@@ -24,8 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `foundry-setup` → `setup-cmd`
   - `foundry-tutorial` → `tutorial-cmd`
   - `sdd-next` → `next-cmd`
-  - `sdd-off` → `off-cmd`
-  - `sdd-on` → `on-cmd`
 - Skills now load correctly without being shadowed by command wrappers
 
 ## [1.0.7] - 2025-12-22
@@ -42,7 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Progressive disclosure for commands**: Simplified `foundry-setup.md` and `foundry-tutorial.md` to flow notation
 - Moved detailed command content to `references/` directory for on-demand loading
-- Added `mcp_ctl` permission category to setup-permissions script
 
 ## [1.0.5] - 2025-12-22
 
@@ -65,20 +69,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Mode toggling**: `/sdd-on` and `/sdd-off` commands to switch between full (17 tools) and minimal (1 tool) modes for context token savings
 - **New skill**: `sdd-refactor` for spec-driven refactoring with impact analysis
 - **LSP-enhanced analysis** in skills:
   - `sdd-plan`: Impact analysis via `findReferences`, dead code detection
   - `sdd-next`: Dependency preview and cross-file impact check before implementation
   - `sdd-fidelity-review`: Structural pre-check verifying expected symbols exist
   - `run-tests`: Phase 0 pre-flight diagnostics catching import errors early
-- Updated MCP configuration docs with `foundry-ctl` wrapper pattern
-- Added `foundry-ctl` permissions to settings example
-
-### Changed
-
-- README now documents recommended MCP config for mode toggling
-- `foundry-setup` command includes mode toggling configuration
 
 ### Removed
 

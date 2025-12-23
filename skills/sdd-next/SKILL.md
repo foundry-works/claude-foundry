@@ -16,12 +16,10 @@ description: Task preparation skill for spec-driven workflows. Reads specificati
 > `[x?]`=decision · `(GATE)`=user approval · `→`=sequence · `↻`=loop · `§`=section ref
 
 ```
-- **Entry** → CheckMode
-  - [minimal?] → **Exit**: "Run /sdd-on, restart, retry"
-  - [full?] → SelectTask
-    - [recommend] → `task action="prepare"` → ShowRecommendation
-    - [browse] → `task action="query"` → (GATE: task selection)
-  - → TypeDispatch
+- **Entry** → SelectTask
+  - [recommend] → `task action="prepare"` → ShowRecommendation
+  - [browse] → `task action="query"` → (GATE: task selection)
+- → TypeDispatch
     - [type=verify?] → §VerifyWorkflow
     - [type=task?] → DeepDive
       - `task action="prepare"` → ExtractContext
@@ -89,26 +87,6 @@ If you find yourself about to call `Skill(sdd-next)` from within this skill, **S
 
 > For detailed context gathering patterns, see `references/context-gathering.md`
 > For agent delegation patterns (when to use sdd-planner), see `references/agent-delegation.md`
-
----
-
-## Step 0: Verify SDD Tools Mode
-
-Before proceeding, verify that the full SDD toolkit is available.
-
-1. Call `mcp__plugin_foundry_foundry-ctl__get_sdd_mode`
-
-2. If mode is `"full"`: Proceed to Task Workflow
-
-3. If mode is `"minimal"`:
-   - Display message:
-     ```
-     SDD tools are in minimal mode. To use /sdd-next:
-     1. Run /sdd-on
-     2. Restart Claude
-     3. Run /sdd-next again
-     ```
-   - **Exit skill immediately** — do not proceed
 
 ---
 

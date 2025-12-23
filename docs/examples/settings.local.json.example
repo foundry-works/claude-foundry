@@ -2,9 +2,7 @@
   "permissions": {
     "allow": [
       "mcp__plugin_foundry_foundry-mcp__*",
-      "mcp__plugin_foundry_foundry-ctl__*",
       "mcp__foundry-mcp__*",
-      "mcp__foundry-ctl__*",
 
       "Bash(git status:*)",
       "Bash(git diff:*)",

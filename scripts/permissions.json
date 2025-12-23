@@ -14,12 +14,6 @@
         "mcp__plugin_foundry_foundry-mcp__*"
       ]
     },
-    "mcp_ctl": {
-      "description": "Foundry control server for mode toggling",
-      "allow": [
-        "mcp__plugin_foundry_foundry-ctl__*"
-      ]
-    },
     "git_commands": {
       "description": "Git read operations for code inspection",
       "allow": [

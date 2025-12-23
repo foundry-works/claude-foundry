@@ -1,17 +1,5 @@
 # Foundry Setup - Detailed Phase Instructions
 
-## Phase 0: Ensure Full Mode
-
-Before running pre-flight checks, ensure the MCP server is in full mode so all tools are available.
-
-1. Call `mcp__plugin_foundry_foundry-ctl__get_sdd_mode` to check current mode
-2. **If mode is "minimal":** Call `mcp__plugin_foundry_foundry-ctl__set_sdd_mode` with `mode="full"` to enable all tools. Wait for the server restart (~1-2 seconds).
-3. **If mode is already "full":** Continue to Phase 1
-
-**Why this matters:** In minimal mode, only the `wake` tool is available. Without full mode, the setup skill cannot use the MCP tools for pre-flight checks and will fall back to slow Bash commands.
-
----
-
 ## Phase 1: Pre-flight Checks
 
 Run these checks in parallel to verify the environment:
@@ -37,24 +25,18 @@ Present results in a status table:
 - Or: `uvx foundry-mcp`
 - Configure in Claude Code MCP settings
 
-**Recommended MCP configuration** (with mode toggling support):
+**Recommended MCP configuration:**
 
 ```json
 {
   "mcpServers": {
     "foundry-mcp": {
       "command": "python",
-      "args": ["-m", "foundry_mcp_ctl", "wrap", "--name", "foundry-mcp", "--", "python", "-m", "foundry_mcp.server"]
-    },
-    "foundry-ctl": {
-      "command": "python",
-      "args": ["-m", "foundry_mcp_ctl", "helper"]
+      "args": ["-m", "foundry_mcp.server"]
     }
   }
 }
 ```
-
-This configuration enables `/on-cmd` and `/off-cmd` commands to toggle between full mode (17 tools) and minimal mode (1 tool) to save context tokens.
 
 **If other checks fail:** Warn but continue - some features may not work.
 

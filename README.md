@@ -28,7 +28,7 @@ Verify installation:
 python -m foundry_mcp.server --help
 ```
 
-> **Note:** The MCP servers (`foundry-mcp` and `foundry-ctl`) are automatically registered when you install the plugin. Do not manually add them with `claude mcp add` as this would create duplicates.
+> **Note:** The MCP server (`foundry-mcp`) is automatically registered when you install the plugin. Do not manually add it with `claude mcp add` as this would create a duplicate.
 
 ## Installation
 
@@ -77,8 +77,6 @@ Slash commands for common workflows:
 
 - `/setup-cmd` - First-time setup and guided tour of plugin features
 - `/next-cmd` - Resume or start spec-driven development work
-- `/on-cmd` - Enable full SDD tools (17 routers)
-- `/off-cmd` - Switch to minimal mode (1 tool) to save context tokens
 
 ### Agents
 
@@ -108,7 +106,6 @@ The sample config allows:
 | Category | Permissions |
 |----------|-------------|
 | **MCP Tools** | All `mcp__plugin_foundry_foundry-mcp__*` tools |
-| **MCP Control** | All `mcp__plugin_foundry_foundry-ctl__*` tools (mode toggling) |
 | **Git** | `status`, `diff`, `log`, `rev-parse`, `branch`, `show` |
 | **Testing** | `pytest`, `python -m pytest` |
 | **Foundry CLI** | `foundry-mcp`, `foundry-cli` |
