@@ -51,6 +51,7 @@ specs/.reviews/
 specs/.backups/
 specs/.human-readable/
 specs/.fidelity-reviews/
+specs/.*/
 
 # MCP config
 #.mcp.json

@@ -37,12 +37,19 @@ Spec
 
 | Category | Description | Requires file_path |
 |----------|-------------|-------------------|
+| `investigation` | Research/exploration | No |
 | `implementation` | New code creation | Yes |
 | `refactoring` | Code restructuring | Yes |
-| `investigation` | Research/exploration | No |
-| `configuration` | Config changes | Optional |
-| `documentation` | Doc updates | Optional |
-| `testing` | Test creation | Yes |
+| `decision` | Architecture/design decisions | No |
+| `research` | External research/learning | No |
+
+## Required Task Fields (Complex)
+
+For `template="complex"` and `template="security"` specs, every `type: "task"` must include:
+- `description`
+- `acceptance_criteria` (array with at least one item)
+- `metadata.task_category`
+- `metadata.file_path` when `task_category` is `implementation` or `refactoring`
 
 ## Verification Types
 

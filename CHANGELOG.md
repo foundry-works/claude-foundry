@@ -5,6 +5,19 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.15] - 2025-12-24
+
+### Changed
+
+- **sdd-plan skill improvements**: Enhanced phase authoring workflow and documentation
+  - Updated SKILL.md with clearer workflow guidance (+138 lines)
+  - Improved `json-spec.md`, `phase-authoring.md`, `task-hierarchy.md`, `troubleshooting.md` references
+- **Configuration updates**: Updated `foundry-mcp.toml` settings
+
+### Fixed
+
+- **Test assertion mismatch**: Fixed `test_metadata_defaults_category_not_string` in foundry-mcp to expect `task_category` field name in error message
+
 ## [1.0.10] - 2025-12-23
 
 ### Changed

@@ -35,7 +35,7 @@ mcp__plugin_foundry_foundry-mcp__authoring action="phase-template" template_acti
 For maximum control over phase structure, use `phase-add-bulk` to create a phase with all its tasks in a single atomic operation. This macro accepts a nested payload with phase metadata and task definitions.
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Implementation", "description": "Core feature implementation", "estimated_hours": 8}' tasks='[{"type": "task", "title": "Implement core logic", "description": "Build the main functionality", "estimated_hours": 4}, {"type": "task", "title": "Add error handling", "description": "Handle edge cases and errors", "estimated_hours": 2}, {"type": "verify", "title": "Run tests", "verification_type": "run-tests"}, {"type": "verify", "title": "Fidelity review", "verification_type": "fidelity"}]'
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Implementation", "description": "Core feature implementation", "estimated_hours": 8}' tasks='[{"type": "task", "title": "Implement core logic", "description": "Build the main functionality", "task_category": "implementation", "file_path": "src/core/logic.py", "estimated_hours": 4, "acceptance_criteria": ["Core logic returns expected outputs"]}, {"type": "task", "title": "Add error handling", "description": "Handle edge cases and errors", "task_category": "implementation", "file_path": "src/core/errors.py", "estimated_hours": 2, "acceptance_criteria": ["Errors are surfaced with actionable messages"]}, {"type": "verify", "title": "Run tests", "verification_type": "run-tests"}, {"type": "verify", "title": "Fidelity review", "verification_type": "fidelity"}]'
 ```
 
 **Payload structure:**
@@ -50,9 +50,11 @@ mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spe
 | `tasks` | Yes | Array of task definitions (min 1) |
 | `tasks[].type` | Yes | `"task"` or `"verify"` |
 | `tasks[].title` | Yes | Task title |
-| `tasks[].description` | No | Task description |
-| `tasks[].file_path` | No | Associated file path |
+| `tasks[].description` | Medium/Complex | Task description |
+| `tasks[].task_category` | Medium/Complex | Task category (`implementation`, `refactoring`, `investigation`, ...) |
+| `tasks[].file_path` | Medium/Complex (impl/refactor) | Associated file path |
 | `tasks[].estimated_hours` | No | Time estimate |
+| `tasks[].acceptance_criteria` | Medium/Complex | Array of completion checks |
 | `tasks[].verification_type` | No | For verify tasks: `"run-tests"` or `"fidelity"` |
 | `position` | No | Zero-based insertion index |
 | `link_previous` | No | Link to previous phase (default: true) |
@@ -64,6 +66,37 @@ mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spe
 - **Use `phase-add-bulk`** to programmatically construct phases from plan sections
 
 > The macro creates all nodes atomically - either the entire phase succeeds or nothing is created.
+
+## Phase Removal
+
+Remove phases that are no longer needed using `phase-remove`. This action removes a phase and all its child tasks.
+
+```bash
+# Preview removal (dry run)
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-remove" spec_id="{spec-id}" phase_id="phase-2" dry_run=true
+
+# Remove a phase
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-remove" spec_id="{spec-id}" phase_id="phase-2"
+
+# Force removal even if other phases depend on it
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-remove" spec_id="{spec-id}" phase_id="phase-2" force=true
+```
+
+**Parameters:**
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `spec_id` | Yes | Target specification ID |
+| `phase_id` | Yes | Phase identifier to remove (e.g., `phase-2`) |
+| `force` | No | Force removal even if other phases depend on this one (default: false) |
+| `dry_run` | No | Preview what would be removed without saving (default: false) |
+
+**Behavior:**
+- Removes the phase and all child tasks/subtasks/verify nodes
+- Fails if other phases have dependencies on this phase (unless `force=true`)
+- Use `dry_run=true` to preview before committing changes
+
+> Always use `dry_run=true` first to verify the scope of removal before executing.
 
 ## AI Review of Phase Plans
 

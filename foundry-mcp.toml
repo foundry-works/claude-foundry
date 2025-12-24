@@ -22,9 +22,9 @@ journal_enabled = true
 # Provider priority list - first available provider wins
 # Format: "[api]provider/model" or "[cli]transport[:backend/model|:model]"
 priority = [
-    "[cli]codex:gpt-5.1-codex",
+    "[cli]codex:gpt-5.2-codex",
+    "[cli]opencode:gpt-5.2-codex",
     "[cli]gemini:pro",
-    "[cli]opencode:gpt-5.1-codex",
     "[cli]cursor-agent:composer-1",
     "[cli]claude:opus",
 ]

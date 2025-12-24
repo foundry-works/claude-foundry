@@ -78,9 +78,46 @@ For efficient spec creation, use this phase-first approach that minimizes manual
 mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="my-feature" template="medium"
 ```
 
+**Medium/complex required fields**
+- `metadata.mission` must be populated
+- Every `type: "task"` must include `description`, `acceptance_criteria`, and `metadata.task_category`
+- `metadata.file_path` is required for `implementation` and `refactoring` tasks
+
+**Task vs Verification nodes**
+
+Tasks and verification steps use different node types:
+
+| Node Type | `type` Value | Key Fields | Purpose |
+|-----------|--------------|------------|---------|
+| Task | `"task"` | `task_category`, `file_path` | Implementation work |
+| Verification | `"verify"` | `verification_type` | Testing/validation |
+
+**Implementation task example** (requires `file_path`):
+```json
+{
+  "type": "task",
+  "title": "Add authentication middleware",
+  "description": "Implement JWT validation for API routes",
+  "task_category": "implementation",
+  "file_path": "src/middleware/auth.py",
+  "acceptance_criteria": ["JWT tokens validated on protected routes"]
+}
+```
+
+**Verification task example** (uses `verification_type`, NOT `task_category`):
+```json
+{
+  "type": "verify",
+  "title": "Run test suite",
+  "verification_type": "run-tests"
+}
+```
+
+> **Common mistake:** Do NOT use `task_category: "verification"` or `task_category: "testing"`. Use `type: "verify"` with `verification_type` instead.
+
 **Step 2: Add phases with tasks using the bulk macro**
 ```bash
-mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Implementation", "description": "Core feature work"}' tasks='[{"type": "task", "title": "Build core logic", "estimated_hours": 4}, {"type": "verify", "title": "Run tests", "verification_type": "run-tests"}]'
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Implementation", "description": "Core feature work"}' tasks='[{"type": "task", "title": "Build core logic", "description": "Implement the primary workflow", "task_category": "implementation", "file_path": "src/core.py", "estimated_hours": 4, "acceptance_criteria": ["Workflow returns expected results"]}, {"type": "verify", "title": "Run tests", "verification_type": "run-tests"}]'
 ```
 
 **Step 3: Fine-tune tasks**
@@ -97,7 +134,7 @@ mcp__plugin_foundry_foundry-mcp__authoring action="spec-update-frontmatter" spec
 ```
 
 Common metadata fields to set:
-- `mission` - Single-sentence objective (required for reviews)
+- `mission` - Single-sentence objective (required for complex/security specs and reviews)
 - `description` - Detailed description
 - `version` - Spec version string
 - `author` - Spec author
@@ -108,12 +145,59 @@ This workflow keeps you in MCP tooling throughout, avoiding direct JSON manipula
 
 This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Tools use the router+action pattern: `mcp__plugin_foundry_foundry-mcp__<router>` with `action="<action>"`.
 
-| Router | Actions | Purpose |
-|--------|---------|---------|
-| **plan** | `create`, `list`, `review` | Create, list, and review markdown plans |
-| **authoring** | `spec-create`, `spec-update-frontmatter`, `phase-template`, `phase-add-bulk` | Generate specifications, update metadata, apply phase templates, add phases with tasks atomically |
-| **spec** | `validate`, `validate-fix`, `list`, `find`, `stats`, `analyze` | Validation, listing, and analysis |
-| **task** | `hierarchy`, `query`, `info`, `prepare` | Query hierarchy, task details, and next task context |
+### Plan Router Actions
+
+| Action | Purpose |
+|--------|---------|
+| `create` | Create a new markdown phase plan |
+| `list` | List existing plans |
+| `review` | Get AI review of a plan |
+
+### Authoring Router Actions
+
+| Action | Purpose |
+|--------|---------|
+| `spec-create` | Create a new spec from template |
+| `spec-update-frontmatter` | Update top-level metadata fields |
+| `phase-template` | Apply a pre-configured phase template |
+| `phase-add-bulk` | Add a phase with tasks atomically |
+
+### Spec Router Actions
+
+| Action | Purpose |
+|--------|---------|
+| `validate` | Validate spec structure |
+| `validate-fix` | Validate and auto-fix issues |
+| `list` | List specs by status |
+| `find` | Find a spec by ID |
+| `stats` | Get spec statistics |
+| `analyze` | Analyze spec directory |
+| `get` | Get raw spec JSON (minified) |
+
+### Task Router Actions
+
+| Category | Action | Purpose |
+|----------|--------|---------|
+| **Query** | `prepare` | Prepare next actionable task context |
+| | `next` | Return the next actionable task |
+| | `info` | Fetch task metadata by ID |
+| | `check-deps` | Analyze task dependencies and blockers |
+| | `progress` | Summarize completion metrics for a node |
+| | `list` | List tasks with pagination and optional filters |
+| | `query` | Query tasks by status or parent |
+| | `hierarchy` | Return paginated hierarchy slices |
+| **Lifecycle** | `start` | Start a task (set to in_progress) |
+| | `complete` | Complete a task with journal entry |
+| | `update-status` | Update task status |
+| | `block` | Block a task with reason |
+| | `unblock` | Unblock a task with resolution |
+| | `list-blocked` | List blocked tasks |
+| **Modification** | `add` | Add a new task |
+| | `remove` | Remove a task |
+| | `update-estimate` | Update estimated effort |
+| | `update-metadata` | Update task metadata fields |
+| | `metadata-batch` | Batch update metadata across multiple nodes |
+| | `fix-verification-types` | Fix invalid/missing verification types |
 
 **Critical Rules:**
 - **NEVER** read spec JSON files directly with `Read()` or shell commands
@@ -204,6 +288,44 @@ mcp__plugin_foundry_foundry-mcp__spec action="validate-fix" spec_id="{spec-id}" 
 3. **User approval** of phase structure before detailed planning
 
 The spec file contains the full task hierarchy including phases, tasks, subtasks, and verification steps.
+
+## Valid Values Quick Reference
+
+### Spec Templates
+
+| Template | Use Case | Required Fields |
+|----------|----------|-----------------|
+| `simple` | Small, straightforward tasks | Basic fields only |
+| `medium` | Standard features | `mission`, `description`, `acceptance_criteria`, `task_category` |
+| `complex` | Large features, multi-phase | All medium fields + detailed metadata |
+| `security` | Security-sensitive work | All complex fields + security review |
+
+### Task Categories
+
+| Category | Description | Requires `file_path` |
+|----------|-------------|---------------------|
+| `investigation` | Research/exploration | No |
+| `implementation` | New code creation | **Yes** |
+| `refactoring` | Code restructuring | **Yes** |
+| `decision` | Architecture/design decisions | No |
+| `research` | External research/learning | No |
+
+### Task Statuses
+
+| Status | Description |
+|--------|-------------|
+| `pending` | Not yet started |
+| `in_progress` | Currently being worked on |
+| `completed` | Finished successfully |
+| `blocked` | Cannot proceed (dependency/issue) |
+
+### Verification Types
+
+| Type | Skill Used | Purpose |
+|------|------------|---------|
+| `run-tests` | `Skill(foundry:run-tests)` | Execute test suite |
+| `fidelity` | `Skill(foundry:sdd-fidelity-review)` | Compare implementation to spec |
+| `manual` | Human verification | Manual testing checklist |
 
 ## Detailed Reference
 

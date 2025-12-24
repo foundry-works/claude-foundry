@@ -17,6 +17,17 @@ Common issues and their resolutions.
 1. Add `metadata.file_path` to task
 2. Or change `task_category` to `investigation`
 
+**Error:** "Missing mission"
+
+**Resolution:** Add `metadata.mission` (required for complex/security specs).
+
+**Error:** "Missing task description / acceptance_criteria / task_category"
+
+**Resolution:** For complex/security specs, ensure every `type: "task"` includes:
+- `description`
+- `acceptance_criteria` (array with at least one item)
+- `metadata.task_category`
+
 **Error:** "Invalid task ID format"
 
 **Resolution:**
@@ -113,10 +124,10 @@ mcp__plugin_foundry_foundry-mcp__authoring action="phase-template" template_acti
 
 ```bash
 # Add phase with tasks atomically (basic)
-mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Phase Title"}' tasks='[{"type": "task", "title": "Task 1"}]'
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Phase Title"}' tasks='[{"type": "task", "title": "Task 1", "description": "Explain the task", "task_category": "investigation", "acceptance_criteria": ["Notes captured in spec journal"]}]'
 
 # Add phase with full metadata and verification tasks
-mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Implementation", "description": "Build core features", "estimated_hours": 8}' tasks='[{"type": "task", "title": "Implement feature", "estimated_hours": 4}, {"type": "verify", "title": "Run tests", "verification_type": "run-tests"}, {"type": "verify", "title": "Fidelity review", "verification_type": "fidelity"}]'
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Implementation", "description": "Build core features", "estimated_hours": 8}' tasks='[{"type": "task", "title": "Implement feature", "description": "Build the primary workflow", "task_category": "implementation", "file_path": "src/feature/core.py", "estimated_hours": 4, "acceptance_criteria": ["Core workflow passes unit tests"]}, {"type": "verify", "title": "Run tests", "verification_type": "run-tests"}, {"type": "verify", "title": "Fidelity review", "verification_type": "fidelity"}]'
 
 # Preview phase creation without saving (dry run)
 mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Test Phase"}' tasks='[{"type": "task", "title": "Test task"}]' dry_run=true

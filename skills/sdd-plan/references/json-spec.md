@@ -29,14 +29,14 @@ The formal specification format used by all SDD tools.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `mission` | string | Yes (skill) | Single-sentence mission describing the spec's purpose |
+| `mission` | string | Yes (complex/security) | Single-sentence mission describing the spec's purpose |
 | `status` | string | Yes | `pending`, `active`, `completed`, `archived` |
 | `priority` | string | No | `low`, `medium`, `high`, `critical` |
 | `owner` | string | No | Email or identifier of owner |
 | `tags` | array | No | Categorization tags |
 | `estimated_hours` | number | No | Total estimated hours |
 
-> Mission is treated as required by `Skill(foundry:sdd-plan)` even if schema validation marks it optional; always populate it before handing off the spec.
+> Mission is required for complex/security specs; always populate it before handing off the spec.
  
 ## Phase Structure
 
@@ -90,11 +90,18 @@ The formal specification format used by all SDD tools.
 }
 ```
 
+### Complex Required Fields
+
+For `template="complex"` and `template="security"` specs, require:
+- `metadata.mission`
+- Every `type: "task"` node includes `description`, `acceptance_criteria`, and `metadata.task_category`
+- `metadata.file_path` for `implementation` and `refactoring` tasks
+
 ## Creating a Spec
 
 ```bash
 # Create from template
 mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="feature-name" template="medium"
 
-# Templates: minimal, small, medium, large
+# Templates: simple, medium, complex, security
 ```
