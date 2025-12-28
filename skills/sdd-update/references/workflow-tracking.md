@@ -24,6 +24,26 @@ mcp__plugin_foundry_foundry-mcp__journal action="add" spec_id={spec-id} title="I
 
 **Entry types:** `decision`, `deviation`, `blocker`, `note`, `status_change`
 
+### Update Phase Estimates
+
+When actual work reveals that phase estimates need adjustment (e.g., a phase is taking longer or shorter than expected), update the phase metadata:
+
+```bash
+# Update estimated hours for a phase
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id={spec-id} phase_id="phase-2" estimated_hours=12.5
+
+# Update phase description and purpose
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id={spec-id} phase_id="phase-2" description="Updated scope" purpose="Refined objective"
+
+# Preview changes before applying
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id={spec-id} phase_id="phase-2" estimated_hours=8.0 dry_run=true
+```
+
+**Use cases:**
+- Task completion reveals more/less work than estimated
+- Scope changes during implementation
+- Post-phase retrospective adjustments
+
 ---
 
 ## Adding Verification Results

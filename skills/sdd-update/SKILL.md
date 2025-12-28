@@ -28,6 +28,7 @@ description: Progress tracking for spec-driven development. Use to update task s
 | `task` | `complete`, `start`, `block`, `unblock`, `query`, `add-dependency`, `remove-dependency`, `add-requirement` |
 | `journal` | `add`, `list` |
 | `lifecycle` | `activate`, `move`, `complete` |
+| `authoring` | `phase-update-metadata` |
 
 **Critical Rules:**
 - ALWAYS use MCP tools for spec operations

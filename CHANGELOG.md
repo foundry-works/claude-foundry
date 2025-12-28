@@ -5,6 +5,15 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.18] - 2025-12-28
+
+### Added
+
+- **phase-update-metadata documentation**: Integrated `phase-update-metadata` MCP action across SDD skills
+  - `sdd-modify`: Added to MCP Tooling table and Supported Operations; full operation documentation in `references/operations.md`
+  - `sdd-update`: Added authoring router with `phase-update-metadata`; documented "Update Phase Estimates" workflow in `references/workflow-tracking.md`
+  - `sdd-plan`: Added to Authoring Router Actions table; documented "Quick Phase Refinements" in `references/phase-authoring.md`
+
 ## [1.0.17] - 2025-12-28
 
 ### Added
