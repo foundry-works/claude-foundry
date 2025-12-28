@@ -31,6 +31,8 @@ This skill uses the Foundry MCP server (`foundry-mcp`). Tools use the router+act
 - `mcp__plugin_foundry_foundry-mcp__provider action="list"` - Check available AI tools
 - `mcp__plugin_foundry_foundry-mcp__provider action="execute"` - Consult AI for debugging
 
+**Requirement discovery:**
+- `mcp__plugin_foundry_foundry-mcp__task action="add-requirement"` - Document discovered requirements when tests reveal spec gaps
 
 ## Core Workflow
 
@@ -150,6 +152,21 @@ mcp__plugin_foundry_foundry-mcp__provider action="execute" provider_id="gemini" 
 2. Implement fix using Edit tool
 3. Verify with specific test: `mcp__plugin_foundry_foundry-mcp__test action="run" target="tests/test_module.py::test_function"`
 4. Run full suite: `mcp__plugin_foundry_foundry-mcp__test action="run"`
+
+### Requirement Discovery
+
+When debugging reveals missing spec requirements (e.g., edge cases, validation rules), document them:
+
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="add-requirement" spec_id={spec-id} task_id={task-id} requirement="Handle empty input array gracefully"
+```
+
+**When to use:**
+- Test failure reveals undocumented edge case
+- Fix requires behavior not in acceptance criteria
+- Investigation uncovers missing validation rule
+
+This keeps the spec updated without interrupting the debugging workflow.
 
 ## Test Presets
 

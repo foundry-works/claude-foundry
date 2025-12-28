@@ -44,6 +44,10 @@ Use `Skill(foundry:sdd-validate)` to:
 - There is no CLI fallback. All instructions correspond to MCP invocations with named parameters.
 - Stay inside the repo root and rely on these helpers instead of reading spec JSON directly.
 
+| Router | Key Actions |
+|--------|-------------|
+| `spec` | `validate`, `fix`, `stats`, `analyze-deps`, `diff`, `history`, `completeness-check`, `duplicate-detection` |
+
 ## Core Workflow
 
 > `[x?]`=decision · `(GATE)`=user approval · `→`=sequence · `↻`=loop · `§`=section ref
@@ -220,6 +224,140 @@ Orphaned dependencies (1):
 
 Recommendation: Fix circular dependencies first to unblock work
 ```
+
+### diff
+
+Compare two versions of a spec to see what changed.
+
+```bash
+mcp__plugin_foundry_foundry-mcp__spec action="diff" spec_id="{spec-id}" compare_to="{backup-path-or-version}"
+```
+
+**Parameters:**
+- `compare_to` - Path to backup file or version identifier to compare against
+
+**Output format:**
+```
+📊 Spec Diff: my-spec-001
+
+Tasks:
+  + task-2-5: New authentication handler (added)
+  ~ task-1-3: Description updated
+  - task-3-1: Removed (was: Legacy endpoint)
+
+Metadata:
+  ~ version: 1.0.0 → 1.1.0
+  + owner: Added "team-alpha"
+
+Dependencies:
+  + task-2-5 → task-1-2 (new dependency)
+
+Summary: 1 added, 2 modified, 1 removed
+```
+
+### history
+
+View modification history for a spec with optional filtering.
+
+```bash
+mcp__plugin_foundry_foundry-mcp__spec action="history" spec_id="{spec-id}" limit=10
+```
+
+**Parameters:**
+- `limit` - Maximum entries to return (default: 20)
+- `since` - Filter entries after this timestamp (ISO 8601)
+- `until` - Filter entries before this timestamp (ISO 8601)
+- `entry_type` - Filter by type: `status_change`, `modification`, `validation`, `backup`
+
+**Example:**
+```bash
+# Recent history
+mcp__plugin_foundry_foundry-mcp__spec action="history" spec_id="my-spec" limit=5
+
+📜 History: my-spec-001 (5 most recent)
+
+2025-12-28T10:30:00Z [status_change] task-2-1: pending → completed
+2025-12-28T09:15:00Z [modification] Added phase-3 with 4 tasks
+2025-12-27T16:45:00Z [validation] Fixed 3 orphaned nodes
+2025-12-27T14:20:00Z [backup] Created before bulk modification
+2025-12-27T10:00:00Z [status_change] Spec activated
+
+# Filter by date range
+mcp__plugin_foundry_foundry-mcp__spec action="history" spec_id="my-spec" since="2025-12-27" entry_type="status_change"
+```
+
+### completeness-check
+
+Analyze spec completeness and quality with scoring.
+
+```bash
+mcp__plugin_foundry_foundry-mcp__spec action="completeness-check" spec_id="{spec-id}"
+```
+
+**Scoring criteria:**
+- **Structure (25%)**: All tasks have parents, no orphans, valid hierarchy
+- **Metadata (25%)**: Descriptions, estimates, acceptance criteria present
+- **Dependencies (25%)**: Dependencies declared, no cycles, proper ordering
+- **Verification (25%)**: Verify tasks present, coverage adequate
+
+**Example output:**
+```
+📋 Completeness Check: my-spec-001
+
+Overall Score: 78/100 (Good)
+
+Structure:     ████████░░  22/25  (1 orphaned task)
+Metadata:      ██████████  25/25  (all tasks have descriptions)
+Dependencies:  ██████░░░░  16/25  (3 tasks missing dependencies)
+Verification:  ███████░░░  15/25  (2 phases lack verify tasks)
+
+Recommendations:
+- Add verify task to phase-2 and phase-4
+- Declare dependencies for task-3-1, task-3-2, task-4-5
+- Reconnect orphaned task-2-7 to parent phase
+```
+
+### duplicate-detection
+
+Detect duplicate or near-duplicate tasks within a spec.
+
+```bash
+mcp__plugin_foundry_foundry-mcp__spec action="duplicate-detection" spec_id="{spec-id}"
+```
+
+**Detects:**
+- Exact title matches across different phases
+- Similar descriptions (fuzzy matching)
+- Overlapping acceptance criteria
+- Redundant verification tasks
+
+**Example output:**
+```
+🔍 Duplicate Detection: my-spec-001
+
+Found 3 potential duplicates:
+
+1. EXACT MATCH (titles):
+   - task-2-3: "Add user validation"
+   - task-4-1: "Add user validation"
+   Resolution: Merge into single task or differentiate titles
+
+2. SIMILAR (85% description match):
+   - task-1-5: "Implement error handling for API calls"
+   - task-3-2: "Add error handling to API endpoints"
+   Resolution: Review if these cover different scopes
+
+3. OVERLAPPING CRITERIA:
+   - verify-2-1 and verify-3-1 both check "all tests pass"
+   Resolution: Consider consolidating verification or specifying scope
+
+No action required for 45 other tasks (unique)
+```
+
+**Resolution guidance:**
+- **Exact matches**: Usually indicates copy-paste error; merge or rename
+- **Similar descriptions**: May be intentional (different phases); add clarifying context
+- **Overlapping criteria**: Narrow scope of each verification task
 
 ## Common Patterns
 

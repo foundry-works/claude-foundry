@@ -5,6 +5,25 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.17] - 2025-12-28
+
+### Added
+
+- **MCP capability documentation**: Comprehensive updates to all SDD skills documenting new MCP server capabilities
+  - `sdd-modify`: Added `spec:completeness-check`, `authoring:find-replace`, bulk operations, phase-move workflow
+  - `sdd-update`: Added `add-dependency`, `remove-dependency`, `add-requirement` task actions
+  - `sdd-validate`: Added `spec:history`, validation history tracking, issue mapping enhancements
+  - `sdd-plan`: Added phase-move, dependency management, task reorganization patterns
+  - `sdd-fidelity-review`: Added `review:diff`, `spec:diff`, incremental review support
+  - `sdd-plan-review`: Added `review:synthesize`, `review:diff` for multi-model consultation
+  - `sdd-pr`: Added `spec:history`, `spec:diff` for PR context enrichment
+  - `sdd-next`: Added `add-dependency`, `add-requirement` for dependency discovery during implementation
+  - `run-tests`: Added `add-requirement` for requirement discovery during debugging
+
+- **New reference files**:
+  - `skills/sdd-update/references/workflow-dependencies.md`: Dependency management patterns
+  - `skills/sdd-validate/references/history-tracking.md`: Validation history tracking
+
 ## [1.0.15] - 2025-12-24
 
 ### Changed

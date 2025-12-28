@@ -12,6 +12,9 @@ Detailed JSON structures for each modification operation.
 | `batch_update` | Apply same change to multiple nodes |
 | `add_node` | Add new task/subtask/verify node |
 | `remove_node` | Remove node (optionally cascading) |
+| `move_task` | Move task to different parent or position |
+| `move_phase` | Reorder phase within the spec |
+| `find_replace` | Find and replace text across spec nodes |
 
 ---
 
@@ -142,6 +145,98 @@ Remove a node (optionally cascading to children):
 **Cascade options:**
 - `false` (default) - Only remove the specified node; fails if it has children
 - `true` - Remove node and all descendants
+
+---
+
+## move_task
+
+Move a task to a different parent or position within the spec:
+
+```json
+{
+  "operation": "move_task",
+  "task_id": "task-2-3",
+  "parent": "phase-3",
+  "position": 1
+}
+```
+
+**MCP invocation:**
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="move" spec_id={spec-id} task_id="task-2-3" parent="phase-3" position=1
+```
+
+**Parameters:**
+- `task_id` (required) - Task to move
+- `parent` (optional) - New parent phase/task ID (omit to keep same parent)
+- `position` (optional) - Target position within parent (1-based; omit to move to end)
+
+**Response fields:**
+- `old_parent` / `new_parent` - Parent before/after move
+- `old_position` / `new_position` - Position before/after move
+- `is_reparenting` - Whether task moved to a different parent
+- `tasks_in_subtree` - Number of tasks moved (includes descendants)
+
+---
+
+## move_phase
+
+Reorder a phase within the spec:
+
+```json
+{
+  "operation": "move_phase",
+  "phase_id": "phase-2",
+  "position": 1
+}
+```
+
+**MCP invocation:**
+```bash
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-move" spec_id={spec-id} phase_id="phase-2" position=1
+```
+
+**Parameters:**
+- `phase_id` (required) - Phase to move
+- `position` (required) - Target position (1-based index)
+
+**Response fields:**
+- `old_position` / `new_position` - Position before/after move
+- `moved` - Whether the phase actually moved (false if already at target)
+
+---
+
+## find_replace
+
+Find and replace text across spec nodes:
+
+```json
+{
+  "operation": "find_replace",
+  "find": "old-pattern",
+  "replace": "new-value",
+  "scope": "all",
+  "use_regex": false,
+  "case_sensitive": true
+}
+```
+
+**MCP invocation:**
+```bash
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-find-replace" spec_id={spec-id} find="old-pattern" replace="new-value" scope="all"
+```
+
+**Parameters:**
+- `find` (required) - Text or pattern to find
+- `replace` (required) - Replacement text
+- `scope` (required) - Where to search: `all`, `descriptions`, `titles`
+- `use_regex` (optional) - Treat `find` as regex (default: false)
+- `case_sensitive` (optional) - Case-sensitive matching (default: true)
+
+**Response fields:**
+- `total_replacements` - Total number of replacements made
+- `nodes_affected` - Number of nodes modified
+- `changes` - Array of changes with `node_id`, `field`, `old`, `new`
 
 ---
 

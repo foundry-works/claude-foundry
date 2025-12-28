@@ -29,6 +29,29 @@ This skill works exclusively through the Foundry MCP server (`foundry-mcp`). Too
 - `mcp__plugin_foundry_foundry-mcp__pr action="create"` - Create PR with spec context
 - `mcp__plugin_foundry_foundry-mcp__pr action="context"` - Gather PR context from spec
 - `mcp__plugin_foundry_foundry-mcp__journal action="list"` - Get journal entries for context
+- `mcp__plugin_foundry_foundry-mcp__spec action="history"` - View spec evolution timeline
+- `mcp__plugin_foundry_foundry-mcp__spec action="diff"` - Compare spec versions
+
+### PR Context Enrichment
+
+Use `spec:history` and `spec:diff` to enrich PR descriptions with change context:
+
+```bash
+# View spec evolution during implementation
+mcp__plugin_foundry_foundry-mcp__spec action="history" spec_id="{spec-id}" limit=10
+
+# Compare current spec vs original to show requirement evolution
+mcp__plugin_foundry_foundry-mcp__spec action="diff" spec_id="{spec-id}" compare_to="specs/.backups/{spec-id}-original.json"
+```
+
+**Why this enriches PRs:**
+- **history**: Shows requirement changes made during implementation, explaining scope adjustments
+- **diff**: Highlights requirements that were added/modified, documenting intentional deviations from original plan
+
+**Include in PR description:**
+- Requirements added during implementation
+- Scope changes with rationale
+- Timeline of significant spec updates
 
 ## Core Philosophy
 
@@ -47,6 +70,8 @@ Traditional PR creation uses static templates. The sdd-pr skill:
 ```
 - **Entry** → GatherContext
   - `pr action="context"` → [Spec|Tasks|Commits|Journals|Diff]
+- SpecChangeSummary → `spec action="diff"` + `spec action="history"`
+  - Capture requirement evolution during implementation
 - AIAnalysis → synthesize context
 - DraftPR → (GATE: user review)
   - [approved] → continue
@@ -63,8 +88,30 @@ Traditional PR creation uses static templates. The sdd-pr skill:
 | **Commit History** | Messages, SHAs, task associations |
 | **Journal Entries** | Technical decisions, rationale |
 | **Git Diff** | Actual code changes |
+| **Spec History** | Requirement changes during implementation |
+| **Spec Diff** | Comparison showing added/modified requirements |
 
 > For detailed context gathering, see `references/context.md`
+
+### Example: PR with Spec Evolution Context
+
+When specs change during implementation, the PR description captures this:
+
+```markdown
+## Summary
+Implements OAuth 2.0 authentication with PKCE flow.
+
+## Scope Evolution
+During implementation, the following requirements were refined:
+- **Added**: Refresh token rotation (task-1-4, discovered during security review)
+- **Modified**: Token expiry from 24h → 1h (task-1-2, per security feedback)
+- **Removed**: Legacy session fallback (deemed unnecessary)
+
+## What Changed
+...
+```
+
+This gives reviewers visibility into why the implementation may differ from the original spec.
 
 ## PR Structure
 

@@ -45,12 +45,39 @@ This skill relies entirely on the Foundry MCP server (`foundry-mcp`). Tools use 
 |--------|---------|---------|
 | `review` | `spec-review`, `list-tools`, `list-plan-tools` | Execute reviews and list toolchains |
 | `spec` | `get`, `get-hierarchy`, `stats`, `list` | Get spec content and structure |
+| `spec` | `completeness-check`, `duplicate-detection` | Automated quality checks |
 | `provider` | `list`, `status`, `execute` | List and manage AI providers |
 
 **Critical Rules:**
 - **ALWAYS** use MCP tools for spec operations
 - **NEVER** use `Read()` on spec JSON files directly
 - **NEVER** shell out to `cat`, `grep`, `jq` for spec parsing
+
+### Automated Quality Checks
+
+Run automated checks before or alongside AI review to catch structural issues:
+
+```bash
+# Check spec completeness (metadata, descriptions, estimates)
+mcp__plugin_foundry_foundry-mcp__spec action="completeness-check" spec_id="{spec-id}"
+
+# Detect duplicate or overlapping tasks
+mcp__plugin_foundry_foundry-mcp__spec action="duplicate-detection" spec_id="{spec-id}"
+```
+
+**Integration with review types:**
+
+| Review Type | Recommended Quality Checks |
+|-------------|---------------------------|
+| `quick` | `completeness-check` (fast structural validation) |
+| `full` | Both checks before AI review |
+| `security` | `completeness-check` (ensure all security requirements specified) |
+| `feasibility` | `duplicate-detection` (avoid double-counting estimates) |
+
+**Workflow integration:**
+- Run quality checks **before** AI review to catch obvious issues
+- Include findings in review context to focus AI on substantive concerns
+- Use `duplicate-detection` when specs have similar task titles across phases
 
 ## Review Types
 
@@ -78,12 +105,19 @@ Use `action="list-tools"` to check available toolchains before running.
 ```
 - **Entry** → `review action="list-tools"` → [tools ≥1?]
   - [no] → **Exit**: no toolchains available
+- QualityChecks → `spec action="completeness-check"` + `spec action="duplicate-detection"`
+  - Surface structural issues before AI review
 - [Type: quick|full|security|feasibility?] → see table above
 - Execute → `review action="spec-review"` (2-4 models parallel)
 - Synthesize → PrioritySort[CRITICAL→LOW]
 - Report → summary + file paths
 - (GATE: handoff) → [proceed to sdd-modify?] → **Exit**
 ```
+
+**Quality checks in workflow:**
+1. Run `completeness-check` to catch missing metadata, descriptions, or estimates
+2. Run `duplicate-detection` to find overlapping tasks before AI wastes time reviewing them
+3. Include findings in context so AI focuses on substantive design issues
 
 > For detailed workflow steps, see `references/workflow.md`
 

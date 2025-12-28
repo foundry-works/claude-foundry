@@ -12,6 +12,9 @@ Quick reference for all MCP tool actions.
 - `action="info"` - Get detailed task information
 - `action="list-blocked"` - List all blocked tasks
 - `action="update-metadata"` - Update task metadata fields
+- `action="add-dependency"` - Add dependency: `depends_on={task-id}`
+- `action="remove-dependency"` - Remove dependency: `depends_on={task-id}`
+- `action="add-requirement"` - Add discovered requirement: `requirement="..."`
 
 ## Journal Router (`journal`)
 - `action="add"` - Add journal entry to spec

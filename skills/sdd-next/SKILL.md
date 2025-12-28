@@ -36,6 +36,7 @@ description: Task preparation skill for spec-driven workflows. Reads specificati
         - (GATE: continue?) → ↻ back to SelectTask | **Exit**
       - [blocked?] → HandleBlocker
         - `task action="block"` → (GATE: alternatives)
+        - [add-dep?] → `task action="add-dependency"` | `task action="add-requirement"`
         - [resolve] → ↻ back to Implement
         - [skip] → SurfaceNext
 
@@ -48,9 +49,17 @@ description: Task preparation skill for spec-driven workflows. Reads specificati
 
 ## MCP Tooling
 
-- This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools use the router+action pattern: `mcp__plugin_foundry_foundry-mcp__<router>` with `action="<action>"`.
-- The agent never invokes the CLI directly. When the narrative says "call" a tool, it refers to issuing an MCP invocation.
-- Stay inside the repo root, avoid chained shell commands, and never read raw spec JSON outside of MCP helpers.
+This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools use the router+action pattern: `mcp__plugin_foundry_foundry-mcp__<router>` with `action="<action>"`.
+
+| Router | Key Actions |
+|--------|-------------|
+| `task` | `prepare`, `query`, `info`, `update-status`, `block`, `unblock`, `add-dependency`, `add-requirement` |
+| `spec` | `find`, `list` |
+
+**Critical Rules:**
+- The agent never invokes the CLI directly
+- Stay inside the repo root, avoid chained shell commands
+- NEVER read raw spec JSON outside of MCP helpers
 
 ---
 
@@ -247,6 +256,22 @@ This gate ensures the user controls the workflow pace and prevents runaway execu
 - Create new task describing what needs resolution
 - Document blocker using `mcp__plugin_foundry_foundry-mcp__task action="block"`
 - Present alternatives to user via `AskUserQuestion`
+
+### Dependency Discovery During Implementation
+
+When you discover a missing dependency or new requirement during implementation, record it without leaving the task context:
+
+```bash
+# Discovered that this task needs another task completed first
+mcp__plugin_foundry_foundry-mcp__task action="add-dependency" spec_id={spec-id} task_id={task-id} depends_on={dependency-task-id}
+
+# Discovered a new acceptance requirement (e.g., from testing)
+mcp__plugin_foundry_foundry-mcp__task action="add-requirement" spec_id={spec-id} task_id={task-id} requirement="Description of discovered requirement"
+```
+
+**Use Cases:**
+- **add-dependency**: Task A needs Task B's output → add B as dependency
+- **add-requirement**: Testing revealed an edge case → add as acceptance criterion
 
 ### Resolving Blocked Tasks
 

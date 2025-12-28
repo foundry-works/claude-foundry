@@ -1,0 +1,2000 @@
+{
+  "spec_id": "incorporate-mcp-capabilities-2025-12-27-001",
+  "title": "incorporate-mcp-capabilities",
+  "generated": "2025-12-27T20:37:13.257760Z",
+  "last_updated": "2025-12-28T14:12:50.074946Z",
+  "metadata": {
+    "description": "",
+    "mission": "Update claude-foundry skills to document new foundry-mcp 0.5.0 capabilities. CONSTRAINTS: (1) Follow docs/claude_code_best_practices/04-skills.md and 11-mcp-consumption.md (2) SKILL.md <500 lines, references one level deep (3) New reference files >50 lines need TOC (4) Use router+action MCP pattern (5) Progressive disclosure - core in SKILL.md, details in references",
+    "objectives": [],
+    "complexity": "medium",
+    "estimated_hours": 43.0,
+    "assumptions": [
+      "All skill modifications MUST adhere to docs/claude_code_best_practices/04-skills.md and 11-mcp-consumption.md guidelines",
+      "SKILL.md body must stay under 500 lines and reference files must be one level deep (no chaining)",
+      "New reference files over 50 lines must include a Table of Contents",
+      "MCP tool documentation must use router+action pattern: mcp__plugin_foundry_foundry-mcp__<router> action=\\\"<action>\\\"",
+      "Use progressive disclosure - keep core workflow in SKILL.md, move detailed examples to reference files"
+    ],
+    "owner": "",
+    "category": "implementation",
+    "template": "medium"
+  },
+  "progress_percentage": 100,
+  "status": "completed",
+  "current_phase": null,
+  "hierarchy": {
+    "spec-root": {
+      "type": "spec",
+      "title": "incorporate-mcp-capabilities",
+      "status": "completed",
+      "parent": null,
+      "children": [
+        "phase-1",
+        "phase-2",
+        "phase-3",
+        "phase-4",
+        "phase-5",
+        "phase-6",
+        "phase-7",
+        "phase-8",
+        "phase-9"
+      ],
+      "total_tasks": 38,
+      "completed_tasks": 38,
+      "metadata": {
+        "purpose": "",
+        "category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-1": {
+      "type": "phase",
+      "title": "Update sdd-modify with Structural Operations",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-1-1",
+        "task-1-2",
+        "task-1-3",
+        "task-1-4",
+        "verify-1-1",
+        "verify-1-2"
+      ],
+      "total_tasks": 6,
+      "completed_tasks": 6,
+      "metadata": {
+        "purpose": "",
+        "description": "Add task/phase movement, find-replace, and rollback capabilities to the structural modification skill",
+        "estimated_hours": 6.0,
+        "needs_journaling": true,
+        "completed_at": "2025-12-27T21:15:45.816064Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-2"
+        ],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-1-1": {
+      "type": "task",
+      "title": "Update SKILL.md MCP Tooling table",
+      "status": "completed",
+      "parent": "phase-1",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add new router actions to the MCP Tooling table: task router (move), authoring router (phase-move, spec-find-replace, spec-rollback)",
+        "file_path": "skills/sdd-modify/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "MCP Tooling table includes move action for task router",
+          "MCP Tooling table includes phase-move, spec-find-replace, spec-rollback for authoring router"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-27T21:01:22.792521Z",
+        "completed_at": "2025-12-27T21:01:56.104433Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T21:01:56.104525Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-1-2": {
+      "type": "task",
+      "title": "Update references/operations.md with new operations",
+      "status": "completed",
+      "parent": "phase-1",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Document JSON structures for move_task, move_phase, find_replace operations with examples",
+        "file_path": "skills/sdd-modify/references/operations.md",
+        "estimated_hours": 2.0,
+        "acceptance_criteria": [
+          "move_task operation documented with JSON format",
+          "move_phase operation documented with JSON format",
+          "find_replace operation documented with JSON format"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-27T21:04:08.519070Z",
+        "completed_at": "2025-12-27T21:05:01.436549Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T21:05:01.436639Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-1-3": {
+      "type": "task",
+      "title": "Update references/workflow.md with new workflows",
+      "status": "completed",
+      "parent": "phase-1",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add workflow examples for task repositioning, phase reordering, bulk find-replace, and rollback recovery",
+        "file_path": "skills/sdd-modify/references/workflow.md",
+        "estimated_hours": 2.0,
+        "acceptance_criteria": [
+          "Task repositioning workflow documented",
+          "Phase reordering workflow documented",
+          "Find-replace workflow documented",
+          "Rollback recovery workflow documented"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-27T21:06:27.408215Z",
+        "completed_at": "2025-12-27T21:07:37.681931Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T21:07:37.681999Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-1-4": {
+      "type": "task",
+      "title": "Update references/troubleshooting.md",
+      "status": "completed",
+      "parent": "phase-1",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add rollback-specific error handling and recovery patterns",
+        "file_path": "skills/sdd-modify/references/troubleshooting.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "Rollback error scenarios documented",
+          "Recovery patterns for failed modifications documented"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-27T21:10:01.043643Z",
+        "completed_at": "2025-12-27T21:10:55.921254Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T21:10:55.921329Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-1-1": {
+      "type": "verify",
+      "title": "Run tests",
+      "status": "completed",
+      "parent": "phase-1",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "run-tests",
+        "started_at": "2025-12-27T21:12:25.757892Z",
+        "completed_at": "2025-12-27T21:13:10.183123Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T21:13:10.183193Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-1-2": {
+      "type": "verify",
+      "title": "Fidelity review",
+      "status": "completed",
+      "parent": "phase-1",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "fidelity",
+        "started_at": "2025-12-27T21:13:54.489611Z",
+        "completed_at": "2025-12-27T21:15:45.816020Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T21:15:45.816114Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-2": {
+      "type": "phase",
+      "title": "Update sdd-update with Dependency Management",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-2-1",
+        "task-2-2",
+        "task-2-3",
+        "task-2-4",
+        "verify-2-1",
+        "verify-2-2"
+      ],
+      "total_tasks": 6,
+      "completed_tasks": 6,
+      "metadata": {
+        "purpose": "",
+        "description": "Add dependency and requirement management capabilities to the progress tracking skill",
+        "estimated_hours": 5.0,
+        "needs_journaling": true,
+        "completed_at": "2025-12-27T22:21:08.150558Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-3"
+        ],
+        "blocked_by": [
+          "phase-1"
+        ],
+        "depends": []
+      }
+    },
+    "task-2-1": {
+      "type": "task",
+      "title": "Update SKILL.md MCP Tooling table",
+      "status": "completed",
+      "parent": "phase-2",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add new task router actions: add-dependency, remove-dependency, add-requirement",
+        "file_path": "skills/sdd-update/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "MCP Tooling table includes add-dependency action",
+          "MCP Tooling table includes remove-dependency action",
+          "MCP Tooling table includes add-requirement action"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-27T21:18:43.955850Z",
+        "completed_at": "2025-12-27T21:19:22.229077Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T21:19:22.229150Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-2-2": {
+      "type": "task",
+      "title": "Create references/workflow-dependencies.md",
+      "status": "completed",
+      "parent": "phase-2",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Create new reference file documenting dependency addition/removal workflows, requirement management, and circular dependency prevention",
+        "file_path": "skills/sdd-update/references/workflow-dependencies.md",
+        "estimated_hours": 2.0,
+        "acceptance_criteria": [
+          "Dependency addition workflow documented",
+          "Dependency removal workflow documented",
+          "Requirement management patterns documented",
+          "Circular dependency prevention documented"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-27T21:22:02.983891Z",
+        "completed_at": "2025-12-27T21:23:15.692056Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T21:23:15.692128Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-2-3": {
+      "type": "task",
+      "title": "Update references/command-reference.md",
+      "status": "completed",
+      "parent": "phase-2",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add documentation for new dependency and requirement actions with parameters",
+        "file_path": "skills/sdd-update/references/command-reference.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "add-dependency action documented with parameters",
+          "remove-dependency action documented with parameters",
+          "add-requirement action documented with parameters"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-27T21:23:56.284062Z",
+        "completed_at": "2025-12-27T21:24:50.611322Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T21:24:50.611420Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-2-4": {
+      "type": "task",
+      "title": "Update references/mcp-patterns.md",
+      "status": "completed",
+      "parent": "phase-2",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add dependency query patterns and examples",
+        "file_path": "skills/sdd-update/references/mcp-patterns.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "Dependency query patterns documented",
+          "Example usage for dependency management included"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-27T22:02:48.429155Z",
+        "completed_at": "2025-12-27T22:04:00.947195Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T22:04:00.947288Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-2-1": {
+      "type": "verify",
+      "title": "Run tests",
+      "status": "completed",
+      "parent": "phase-2",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "run-tests",
+        "started_at": "2025-12-27T22:08:54.838280Z",
+        "completed_at": "2025-12-27T22:10:08.078415Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T22:10:08.078485Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-2-2": {
+      "type": "verify",
+      "title": "Fidelity review",
+      "status": "completed",
+      "parent": "phase-2",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "fidelity",
+        "started_at": "2025-12-27T22:18:44.997234Z",
+        "completed_at": "2025-12-27T22:21:08.150524Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-27T22:21:08.150595Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-3": {
+      "type": "phase",
+      "title": "Update sdd-validate with History & Advanced Validation",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-3-1",
+        "task-3-2",
+        "task-3-3",
+        "task-3-4",
+        "verify-3-1",
+        "verify-3-2"
+      ],
+      "total_tasks": 6,
+      "completed_tasks": 6,
+      "metadata": {
+        "purpose": "",
+        "description": "Add history tracking, completeness scoring, and duplicate detection to the validation skill",
+        "estimated_hours": 5.0,
+        "needs_journaling": true,
+        "completed_at": "2025-12-28T13:03:03.339824Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-4"
+        ],
+        "blocked_by": [
+          "phase-2"
+        ],
+        "depends": []
+      }
+    },
+    "task-3-1": {
+      "type": "task",
+      "title": "Update SKILL.md MCP Tooling table",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add new spec router actions: diff, history, completeness-check, duplicate-detection",
+        "file_path": "skills/sdd-validate/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "MCP Tooling table includes diff action",
+          "MCP Tooling table includes history action",
+          "MCP Tooling table includes completeness-check action",
+          "MCP Tooling table includes duplicate-detection action"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T00:09:17.783160Z",
+        "completed_at": "2025-12-28T00:10:10.120997Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T00:10:10.121088Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-3-2": {
+      "type": "task",
+      "title": "Update SKILL.md Command Reference section",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add command documentation for diff, history, completeness-check, duplicate-detection with usage examples and expected output",
+        "file_path": "skills/sdd-validate/SKILL.md",
+        "estimated_hours": 2.0,
+        "acceptance_criteria": [
+          "diff command documented with usage and output format",
+          "history command documented with filtering options",
+          "completeness-check documented with scoring criteria",
+          "duplicate-detection documented with resolution guidance"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T11:07:32.699628Z",
+        "completed_at": "2025-12-28T11:08:57.380546Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T11:08:57.380630Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-3-3": {
+      "type": "task",
+      "title": "Update references/issue-mapping.md",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add duplicate detection as a validation check category",
+        "file_path": "skills/sdd-validate/references/issue-mapping.md",
+        "estimated_hours": 0.5,
+        "acceptance_criteria": [
+          "Duplicate detection added to issue categories",
+          "Resolution patterns documented"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T11:11:09.853420Z",
+        "completed_at": "2025-12-28T11:12:08.788721Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T11:12:08.788797Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-3-4": {
+      "type": "task",
+      "title": "Create references/history-tracking.md",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Create new reference file documenting spec history viewing, diff comparison patterns, and rollback decision workflow",
+        "file_path": "skills/sdd-validate/references/history-tracking.md",
+        "estimated_hours": 1.5,
+        "acceptance_criteria": [
+          "Spec history viewing documented",
+          "Diff comparison patterns documented",
+          "Rollback decision workflow documented",
+          "Integration with sdd-modify rollback noted"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T11:15:48.332072Z",
+        "completed_at": "2025-12-28T11:17:18.561546Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T11:17:18.561614Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-3-1": {
+      "type": "verify",
+      "title": "Run tests",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "run-tests",
+        "started_at": "2025-12-28T11:29:52.439629Z",
+        "completed_at": "2025-12-28T11:30:06.621817Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T11:30:06.621894Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-3-2": {
+      "type": "verify",
+      "title": "Fidelity review",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "fidelity",
+        "started_at": "2025-12-28T13:01:56.446030Z",
+        "completed_at": "2025-12-28T13:03:03.339789Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:03:03.339859Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-4": {
+      "type": "phase",
+      "title": "Update sdd-plan with New MCP Actions",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-4-1",
+        "task-4-2",
+        "task-4-3",
+        "task-4-4",
+        "task-4-5",
+        "verify-4-1",
+        "verify-4-2"
+      ],
+      "total_tasks": 7,
+      "completed_tasks": 7,
+      "metadata": {
+        "purpose": "",
+        "description": "Update sdd-plan MCP Tooling tables to include new authoring, spec, and task router actions relevant to planning workflows",
+        "estimated_hours": 4.0,
+        "needs_journaling": true,
+        "completed_at": "2025-12-28T13:50:58.999450Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-5"
+        ],
+        "blocked_by": [
+          "phase-3"
+        ],
+        "depends": []
+      }
+    },
+    "task-4-1": {
+      "type": "task",
+      "title": "Update SKILL.md Authoring Router table",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add phase-move action to Authoring Router Actions table for reorganizing phases during plan creation",
+        "file_path": "skills/sdd-plan/SKILL.md",
+        "estimated_hours": 0.5,
+        "acceptance_criteria": [
+          "phase-move action added to Authoring Router Actions table"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T13:19:22.389044Z",
+        "completed_at": "2025-12-28T13:19:54.977583Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:19:54.977694Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-4-2": {
+      "type": "task",
+      "title": "Update SKILL.md Spec Router table",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add completeness-check and duplicate-detection actions to Spec Router Actions table for plan quality verification",
+        "file_path": "skills/sdd-plan/SKILL.md",
+        "estimated_hours": 0.5,
+        "acceptance_criteria": [
+          "completeness-check action added to Spec Router Actions table",
+          "duplicate-detection action added to Spec Router Actions table"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T13:21:58.503994Z",
+        "completed_at": "2025-12-28T13:22:11.794379Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:22:11.794454Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-4-3": {
+      "type": "task",
+      "title": "Update SKILL.md Task Router table",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add move, add-dependency, remove-dependency, add-requirement actions to Task Router Actions table",
+        "file_path": "skills/sdd-plan/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "move action added to Task Router Modification category",
+          "add-dependency action added to Task Router Modification category",
+          "remove-dependency action added to Task Router Modification category",
+          "add-requirement action added to Task Router Modification category"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T13:46:54.965397Z",
+        "completed_at": "2025-12-28T13:47:23.617729Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:47:23.617795Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-4-4": {
+      "type": "task",
+      "title": "Update references/phase-authoring.md",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add phase-move documentation with examples for reorganizing phases during plan creation",
+        "file_path": "skills/sdd-plan/references/phase-authoring.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "phase-move action documented with usage example",
+          "When to use phase-move vs recreating phases explained"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T13:47:36.501436Z",
+        "completed_at": "2025-12-28T13:48:11.564253Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:48:11.564354Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-4-5": {
+      "type": "task",
+      "title": "Update references/task-hierarchy.md",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add documentation for task movement and dependency management during planning",
+        "file_path": "skills/sdd-plan/references/task-hierarchy.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "Task move action documented for reorganization",
+          "Dependency management actions documented",
+          "Examples of setting up task dependencies included"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T13:48:24.780782Z",
+        "completed_at": "2025-12-28T13:49:12.725838Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:49:12.725930Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-4-1": {
+      "type": "verify",
+      "title": "Run tests",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "run-tests",
+        "started_at": "2025-12-28T13:49:31.662466Z",
+        "completed_at": "2025-12-28T13:49:43.144132Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:49:43.144231Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-4-2": {
+      "type": "verify",
+      "title": "Fidelity review",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "fidelity",
+        "started_at": "2025-12-28T13:50:10.917126Z",
+        "completed_at": "2025-12-28T13:50:58.999416Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:50:58.999485Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-5": {
+      "type": "phase",
+      "title": "Update sdd-fidelity-review with Spec Comparison",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-5-1",
+        "task-5-2",
+        "verify-5-1"
+      ],
+      "total_tasks": 3,
+      "completed_tasks": 3,
+      "metadata": {
+        "purpose": "",
+        "description": "Add spec diff and history actions for comparing spec requirements against implementation",
+        "estimated_hours": 2.0,
+        "needs_journaling": true,
+        "completed_at": "2025-12-28T13:54:28.721934Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-6"
+        ],
+        "blocked_by": [
+          "phase-4"
+        ],
+        "depends": []
+      }
+    },
+    "task-5-1": {
+      "type": "task",
+      "title": "Update SKILL.md MCP Tooling section",
+      "status": "completed",
+      "parent": "phase-5",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add spec:diff and spec:history actions to MCP Tooling table for spec-to-implementation comparison context",
+        "file_path": "skills/sdd-fidelity-review/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "spec:diff action documented",
+          "spec:history action documented",
+          "Usage context for fidelity review explained"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T13:51:40.413260Z",
+        "completed_at": "2025-12-28T13:52:19.135520Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:52:19.135591Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-5-2": {
+      "type": "task",
+      "title": "Update workflow documentation",
+      "status": "completed",
+      "parent": "phase-5",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add examples showing how to use diff and history to assess implementation deviations",
+        "file_path": "skills/sdd-fidelity-review/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "Workflow includes spec comparison step",
+          "Examples show deviation assessment using diff"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T13:52:32.558267Z",
+        "completed_at": "2025-12-28T13:53:40.525613Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:53:40.525696Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-5-1": {
+      "type": "verify",
+      "title": "Fidelity review",
+      "status": "completed",
+      "parent": "phase-5",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "fidelity",
+        "started_at": "2025-12-28T13:53:53.022690Z",
+        "completed_at": "2025-12-28T13:54:28.721890Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:54:28.721984Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-6": {
+      "type": "phase",
+      "title": "Update sdd-plan-review with Quality Checks",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-6-1",
+        "task-6-2",
+        "verify-6-1"
+      ],
+      "total_tasks": 3,
+      "completed_tasks": 3,
+      "metadata": {
+        "purpose": "",
+        "description": "Add completeness-check and duplicate-detection for plan quality assessment",
+        "estimated_hours": 2.0,
+        "needs_journaling": true,
+        "completed_at": "2025-12-28T13:57:52.706591Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-7"
+        ],
+        "blocked_by": [
+          "phase-5"
+        ],
+        "depends": []
+      }
+    },
+    "task-6-1": {
+      "type": "task",
+      "title": "Update SKILL.md MCP Tooling section",
+      "status": "completed",
+      "parent": "phase-6",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add spec:completeness-check and spec:duplicate-detection actions to support plan quality review dimensions",
+        "file_path": "skills/sdd-plan-review/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "spec:completeness-check action documented",
+          "spec:duplicate-detection action documented",
+          "Integration with review types explained"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T13:55:29.168862Z",
+        "completed_at": "2025-12-28T13:56:14.652466Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:56:14.652556Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-6-2": {
+      "type": "task",
+      "title": "Update review type documentation",
+      "status": "completed",
+      "parent": "phase-6",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Show how completeness and duplicate checks integrate with existing review types",
+        "file_path": "skills/sdd-plan-review/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "Completeness check integrated into review workflow",
+          "Duplicate detection usage documented"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T13:56:30.651437Z",
+        "completed_at": "2025-12-28T13:57:03.570944Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:57:03.571011Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-6-1": {
+      "type": "verify",
+      "title": "Fidelity review",
+      "status": "completed",
+      "parent": "phase-6",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "fidelity",
+        "started_at": "2025-12-28T13:57:17.876814Z",
+        "completed_at": "2025-12-28T13:57:52.706552Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T13:57:52.706632Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-7": {
+      "type": "phase",
+      "title": "Update sdd-pr with Spec Context",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-7-1",
+        "task-7-2",
+        "verify-7-1"
+      ],
+      "total_tasks": 3,
+      "completed_tasks": 3,
+      "metadata": {
+        "purpose": "",
+        "description": "Add spec history and diff for enriching PR descriptions with change context",
+        "estimated_hours": 2.0,
+        "needs_journaling": true,
+        "completed_at": "2025-12-28T14:01:43.802858Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-8"
+        ],
+        "blocked_by": [
+          "phase-6"
+        ],
+        "depends": []
+      }
+    },
+    "task-7-1": {
+      "type": "task",
+      "title": "Update SKILL.md MCP Tooling section",
+      "status": "completed",
+      "parent": "phase-7",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add spec:history and spec:diff actions for gathering context about spec evolution during implementation",
+        "file_path": "skills/sdd-pr/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "spec:history action documented",
+          "spec:diff action documented",
+          "PR context enrichment explained"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T13:59:53.939862Z",
+        "completed_at": "2025-12-28T14:00:30.760362Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T14:00:30.760485Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-7-2": {
+      "type": "task",
+      "title": "Update PR creation workflow",
+      "status": "completed",
+      "parent": "phase-7",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Show how to include spec diff summary in PR description for reviewer context",
+        "file_path": "skills/sdd-pr/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "Workflow includes spec change summary step",
+          "Example PR description shows spec evolution context"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T14:00:44.768861Z",
+        "completed_at": "2025-12-28T14:01:26.969098Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T14:01:26.969193Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-7-1": {
+      "type": "verify",
+      "title": "Fidelity review",
+      "status": "completed",
+      "parent": "phase-7",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "fidelity",
+        "started_at": "2025-12-28T14:01:35.376557Z",
+        "completed_at": "2025-12-28T14:01:43.802810Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T14:01:43.802912Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-8": {
+      "type": "phase",
+      "title": "Update sdd-next with Dependency Actions",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-8-1",
+        "verify-8-1"
+      ],
+      "total_tasks": 2,
+      "completed_tasks": 2,
+      "metadata": {
+        "purpose": "",
+        "description": "Add dependency and requirement actions for blocker handling workflow",
+        "estimated_hours": 1.0,
+        "needs_journaling": true,
+        "completed_at": "2025-12-28T14:09:29.393213Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-9"
+        ],
+        "blocked_by": [
+          "phase-7"
+        ],
+        "depends": []
+      }
+    },
+    "task-8-1": {
+      "type": "task",
+      "title": "Update SKILL.md MCP Tooling and blocker workflow",
+      "status": "completed",
+      "parent": "phase-8",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add task:add-dependency and task:add-requirement actions for discovering dependencies during implementation without exiting the task",
+        "file_path": "skills/sdd-next/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "add-dependency action documented in Task Router table",
+          "add-requirement action documented in Task Router table",
+          "HandleBlocker workflow updated to show dependency discovery"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T14:03:29.673380Z",
+        "completed_at": "2025-12-28T14:04:51.834799Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T14:04:51.834886Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-8-1": {
+      "type": "verify",
+      "title": "Fidelity review",
+      "status": "completed",
+      "parent": "phase-8",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "fidelity",
+        "started_at": "2025-12-28T14:08:52.266503Z",
+        "completed_at": "2025-12-28T14:09:29.393144Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T14:09:29.393274Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-9": {
+      "type": "phase",
+      "title": "Update run-tests with Requirement Discovery",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-9-1",
+        "verify-9-1"
+      ],
+      "total_tasks": 2,
+      "completed_tasks": 2,
+      "metadata": {
+        "purpose": "",
+        "description": "Add requirement action for discovering missing spec requirements during debugging",
+        "estimated_hours": 1.0,
+        "needs_journaling": true,
+        "completed_at": "2025-12-28T14:12:50.074409Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [
+          "phase-8"
+        ],
+        "depends": []
+      }
+    },
+    "task-9-1": {
+      "type": "task",
+      "title": "Update SKILL.md debugging workflow",
+      "status": "completed",
+      "parent": "phase-9",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add task:add-requirement action for documenting discovered requirements when tests reveal spec gaps",
+        "file_path": "skills/run-tests/SKILL.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "add-requirement action documented",
+          "Debugging workflow includes requirement discovery step"
+        ],
+        "task_category": "implementation",
+        "constraints": "Follow docs/04-skills.md & 11-mcp-consumption.md: SKILL.md <500 lines, refs 1 level deep, TOC if >50 lines, router+action pattern, progressive disclosure",
+        "started_at": "2025-12-28T14:10:55.728256Z",
+        "completed_at": "2025-12-28T14:12:02.210333Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T14:12:02.210412Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-9-1": {
+      "type": "verify",
+      "title": "Fidelity review",
+      "status": "completed",
+      "parent": "phase-9",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "verification_type": "fidelity",
+        "started_at": "2025-12-28T14:12:15.135829Z",
+        "completed_at": "2025-12-28T14:12:50.074346Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T14:12:50.074456Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    }
+  },
+  "journal": [
+    {
+      "timestamp": "2025-12-27T21:01:22.792614Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Updating MCP Tooling table with new router actions",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-1-1"
+    },
+    {
+      "timestamp": "2025-12-27T21:01:56.104525Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md MCP Tooling table",
+      "content": "Updated MCP Tooling table in skills/sdd-modify/SKILL.md. Added 'move' action to task router and 'phase-move', 'spec-find-replace', 'spec-rollback' actions to authoring router. Basic verification passed: valid markdown, file within 500 line limit (112 lines). Full testing deferred to verify-1-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-1-1"
+    },
+    {
+      "timestamp": "2025-12-27T21:04:08.519126Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Documenting move_task, move_phase, and find_replace operations",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-1-2"
+    },
+    {
+      "timestamp": "2025-12-27T21:05:01.436639Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update references/operations.md with new operations",
+      "content": "Updated references/operations.md with three new operations: move_task (task router move action), move_phase (authoring router phase-move action), find_replace (authoring router spec-find-replace action). Added entries to Supported Operations table and full documentation sections with JSON formats, MCP invocations, parameters, and response fields. File is 275 lines (under 500 limit). Full testing deferred to verify-1-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-1-2"
+    },
+    {
+      "timestamp": "2025-12-27T21:06:27.408291Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding 4 new workflow sections: task repositioning, phase reordering, find-replace, rollback recovery",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-1-3"
+    },
+    {
+      "timestamp": "2025-12-27T21:07:37.681999Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update references/workflow.md with new workflows",
+      "content": "Updated references/workflow.md with 4 new workflows: (1) Task Repositioning using task move action, (2) Phase Reordering using authoring phase-move action, (3) Bulk Find-Replace using authoring spec-find-replace action, (4) Rollback Recovery using spec history + authoring spec-rollback actions. Updated TOC with 4 new entries. File is 367 lines (under 500 limit). Full testing deferred to verify-1-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-1-3"
+    },
+    {
+      "timestamp": "2025-12-27T21:10:01.043726Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding rollback error scenarios and recovery patterns",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-1-4"
+    },
+    {
+      "timestamp": "2025-12-27T21:10:55.921329Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update references/troubleshooting.md",
+      "content": "Updated references/troubleshooting.md with rollback error scenarios (Backup Version Not Found, Backup File Corrupted, Rollback Conflicts) and recovery patterns (Failed Task Move, Failed Find-Replace, Failed Phase Move, General Recovery Pattern). File is 192 lines (under 500 limit). Full testing deferred to verify-1-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-1-4"
+    },
+    {
+      "timestamp": "2025-12-27T21:12:25.757961Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Running tests for Phase 1 sdd-modify updates",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-1-1"
+    },
+    {
+      "timestamp": "2025-12-27T21:13:10.183193Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Run tests",
+      "content": "Verification passed. All modified files under 500 line limit (SKILL.md: 111, operations.md: 275, workflow.md: 367, troubleshooting.md: 192). Spec validation passed with 0 errors and 0 warnings. No Python tests exist (documentation-only repository).",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-1-1"
+    },
+    {
+      "timestamp": "2025-12-27T21:13:54.489670Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Running fidelity review for Phase 1",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-1-2"
+    },
+    {
+      "timestamp": "2025-12-27T21:15:45.816114Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Fidelity review",
+      "content": "Fidelity review found 1 deviation - SKILL.md Supported Operations list was missing new operations. Fixed by adding move_task, move_phase, find_replace to the operations list. File remains at 111 lines (under 500 limit). Phase 1 now fully complete.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-1-2"
+    },
+    {
+      "timestamp": "2025-12-27T21:18:43.955908Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Starting implementation - adding dependency management actions to MCP Tooling table",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-2-1"
+    },
+    {
+      "timestamp": "2025-12-27T21:19:22.229150Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md MCP Tooling table",
+      "content": "Updated MCP Tooling table in skills/sdd-update/SKILL.md to include three new task router actions: add-dependency, remove-dependency, and add-requirement. Basic verification passed - markdown syntax valid, file at 80 lines (under 500 limit). Full testing deferred to verify-2-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-2-1"
+    },
+    {
+      "timestamp": "2025-12-27T21:22:02.983946Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Creating references/workflow-dependencies.md with dependency management workflows",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-2-2"
+    },
+    {
+      "timestamp": "2025-12-27T21:23:15.692128Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Create references/workflow-dependencies.md",
+      "content": "Created skills/sdd-update/references/workflow-dependencies.md (136 lines) documenting: dependency addition workflow (add-dependency action), dependency removal workflow (remove-dependency action), requirement management patterns (add-requirement action), and circular dependency prevention with resolution steps. Follows existing reference file style with code examples and best practices. Full testing deferred to verify-2-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-2-2"
+    },
+    {
+      "timestamp": "2025-12-27T21:23:56.284117Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Updating command-reference.md with dependency and requirement action documentation",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-2-3"
+    },
+    {
+      "timestamp": "2025-12-27T21:24:50.611420Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update references/command-reference.md",
+      "content": "Updated skills/sdd-update/references/command-reference.md to add three new task router actions: add-dependency (with depends_on parameter), remove-dependency (with depends_on parameter), and add-requirement (with requirement parameter). All actions documented with parameter syntax in the Task Router section. Full testing deferred to verify-2-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-2-3"
+    },
+    {
+      "timestamp": "2025-12-27T22:02:48.429221Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding dependency query patterns and examples to mcp-patterns.md",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-2-4"
+    },
+    {
+      "timestamp": "2025-12-27T22:04:00.947288Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update references/mcp-patterns.md",
+      "content": "Updated skills/sdd-update/references/mcp-patterns.md with new Dependency Management section (lines 68-126). Includes: query dependencies patterns, add/remove dependency examples, track discovered requirements, and common dependency patterns with practical usage examples. File now 140 lines. Full testing deferred to verify-2-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-2-4"
+    },
+    {
+      "timestamp": "2025-12-27T22:10:08.078485Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Run tests",
+      "content": "Verification passed. No Python tests in plugin workspace (documentation-only changes). Verified: all 4 modified files exist and readable, SKILL.md MCP Tooling table includes all 3 actions, command-reference.md documents all actions with parameters, mcp-patterns.md has Dependency Management section with examples, workflow-dependencies.md has complete workflows. Cross-file consistency verified - all actions documented consistently.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-2-1"
+    },
+    {
+      "timestamp": "2025-12-27T22:21:08.150595Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Fidelity review",
+      "content": "Fidelity review completed. AI multi-model review returned partial (gemini: pass, codex: partial due to sandbox file access limitations). Manual verification confirms ALL 12 acceptance criteria PASSED across 4 tasks. No deviations found. Phase 2 implementation matches spec requirements. Review saved to specs/.fidelity-reviews/.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-2-2"
+    },
+    {
+      "timestamp": "2025-12-28T00:09:17.783244Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Updating sdd-validate SKILL.md MCP Tooling table with new spec router actions",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-1"
+    },
+    {
+      "timestamp": "2025-12-28T00:10:10.121088Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md MCP Tooling table",
+      "content": "Added MCP Tooling table to skills/sdd-validate/SKILL.md (lines 47-49) with all 4 new spec router actions: diff, history, completeness-check, duplicate-detection. Also preserved existing actions: validate, fix, stats, analyze-deps. Basic verification passed. Full testing deferred to verify-3-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-1"
+    },
+    {
+      "timestamp": "2025-12-28T11:07:32.699707Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding command documentation for diff, history, completeness-check, duplicate-detection",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-2"
+    },
+    {
+      "timestamp": "2025-12-28T11:08:57.380630Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md Command Reference section",
+      "content": "Added Command Reference documentation for 4 new actions in skills/sdd-validate/SKILL.md: diff (lines 228-256, with usage and output format), history (lines 258-287, with filtering options: limit, since, until, entry_type), completeness-check (lines 289-318, with 4-category scoring criteria at 25% each), duplicate-detection (lines 320-360, with resolution guidance for exact/similar/overlapping). File now 417 lines (under 500 limit). Full testing deferred to verify-3-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-2"
+    },
+    {
+      "timestamp": "2025-12-28T11:11:09.853493Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding duplicate detection to issue categories in issue-mapping.md",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-3"
+    },
+    {
+      "timestamp": "2025-12-28T11:12:08.788797Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update references/issue-mapping.md",
+      "content": "Updated skills/sdd-validate/references/issue-mapping.md (now 74 lines): added 3 duplicate-related issues to Manual-Only Issues table (duplicate titles, similar descriptions, overlapping criteria), created new Duplicate Detection section with Issue Types table (4 types with severity), Resolution Patterns (3 detailed examples for exact/similar/overlapping), and When to Ignore guidance. Full testing deferred to verify-3-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-3"
+    },
+    {
+      "timestamp": "2025-12-28T11:15:48.332131Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Creating references/history-tracking.md with history viewing, diff patterns, and rollback workflow",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-4"
+    },
+    {
+      "timestamp": "2025-12-28T11:17:18.561614Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Create references/history-tracking.md",
+      "content": "Created skills/sdd-validate/references/history-tracking.md (192 lines) with 4 sections: Viewing Spec History (filtering options, entry types table), Diff Comparison Patterns (backup comparison, common scenarios), Rollback Decision Workflow (assessment steps, decision matrix, rollback indicators), Integration with sdd-modify Rollback (workflow diagram, backup locations, post-rollback verification). Full testing deferred to verify-3-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-4"
+    },
+    {
+      "timestamp": "2025-12-28T11:30:06.621894Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Run tests",
+      "content": "Verification passed. All Phase 3 files exist: SKILL.md (13859 bytes, 17 refs to new actions), issue-mapping.md (2758 bytes), history-tracking.md (5346 bytes). Documentation-only changes verified.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-3-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:01:56.446094Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Starting fidelity review for Phase 3 sdd-validate updates",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-3-2"
+    },
+    {
+      "timestamp": "2025-12-28T13:03:03.339859Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Fidelity review",
+      "content": "Fidelity review passed. Verified all 4 Phase 3 tasks against acceptance criteria: task-3-1 (MCP Tooling table - 4/4 criteria met), task-3-2 (Command Reference - 4/4 criteria met with diff, history, completeness-check, duplicate-detection documented), task-3-3 (issue-mapping.md - 2/2 criteria met with duplicate detection section), task-3-4 (history-tracking.md - 4/4 criteria met with history viewing, diff patterns, rollback workflow, sdd-modify integration). All implementations align with spec requirements.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-3-2"
+    },
+    {
+      "timestamp": "2025-12-28T13:19:22.389130Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding phase-move action to Authoring Router table",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:19:54.977694Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md Authoring Router table",
+      "content": "Added phase-move action to Authoring Router Actions table in skills/sdd-plan/SKILL.md:164. Basic verification: table syntax correct, file parses as valid markdown. Full testing deferred to verify-4-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:21:58.504049Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding completeness-check and duplicate-detection to Spec Router table",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-2"
+    },
+    {
+      "timestamp": "2025-12-28T13:22:11.794454Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md Spec Router table",
+      "content": "Added completeness-check and duplicate-detection actions to Spec Router Actions table in skills/sdd-plan/SKILL.md:177-178. Basic verification: table syntax correct. Full testing deferred to verify-4-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-2"
+    },
+    {
+      "timestamp": "2025-12-28T13:46:54.965483Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding move, add-dependency, remove-dependency, add-requirement to Task Router table",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-3"
+    },
+    {
+      "timestamp": "2025-12-28T13:47:23.617795Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md Task Router table",
+      "content": "Added 4 actions to Task Router Modification category in skills/sdd-plan/SKILL.md:200-207: move, add-dependency, remove-dependency, add-requirement. Basic verification: table syntax correct. Full testing deferred to verify-4-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-3"
+    },
+    {
+      "timestamp": "2025-12-28T13:47:36.501513Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding phase-move documentation to phase-authoring.md",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-4"
+    },
+    {
+      "timestamp": "2025-12-28T13:48:11.564354Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update references/phase-authoring.md",
+      "content": "Added Phase Reordering section to skills/sdd-plan/references/phase-authoring.md:101-137. Includes: phase-move usage examples, parameter table, decision matrix for when to use phase-move vs recreating phases, and behavior notes. Full testing deferred to verify-4-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-4"
+    },
+    {
+      "timestamp": "2025-12-28T13:48:24.780854Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding task move and dependency management documentation",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-5"
+    },
+    {
+      "timestamp": "2025-12-28T13:49:12.725930Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update references/task-hierarchy.md",
+      "content": "Added Task Reorganization (lines 114-142) and Dependency Management (lines 144-196) sections to skills/sdd-plan/references/task-hierarchy.md. Includes: task move action with parameters and use cases, add-dependency/remove-dependency actions, add-requirement action, and 3 example scenarios for setting up dependencies. Full testing deferred to verify-4-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-5"
+    },
+    {
+      "timestamp": "2025-12-28T13:49:31.662523Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Verifying Phase 4 documentation files",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-4-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:49:43.144231Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Run tests",
+      "content": "Verification passed. All Phase 4 files exist and are valid: SKILL.md (346 lines, under 500 limit), phase-authoring.md (149 lines), task-hierarchy.md (196 lines). Documentation-only changes - no code tests to run.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-4-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:50:10.917210Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Starting fidelity review for Phase 4",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-4-2"
+    },
+    {
+      "timestamp": "2025-12-28T13:50:58.999485Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Fidelity review",
+      "content": "Fidelity review passed. All 12 acceptance criteria verified: task-4-1 (1/1 - phase-move in Authoring table), task-4-2 (2/2 - completeness-check, duplicate-detection in Spec table), task-4-3 (4/4 - move, add-dependency, remove-dependency, add-requirement in Task table), task-4-4 (2/2 - phase-move docs with examples and decision matrix), task-4-5 (3/3 - task move, dependency management, and examples documented).",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-4-2"
+    },
+    {
+      "timestamp": "2025-12-28T13:51:40.413332Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding spec:diff and spec:history to MCP Tooling section",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-5-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:52:19.135591Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md MCP Tooling section",
+      "content": "Added Router Actions table (lines 75-83) with spec:diff and spec:history actions, plus \"Spec Comparison for Fidelity Context\" section (lines 85-99) explaining usage with examples and rationale for how these help fidelity review. Full testing deferred to verify-5-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-5-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:52:32.558332Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding spec comparison step and deviation assessment examples to workflow",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-5-2"
+    },
+    {
+      "timestamp": "2025-12-28T13:53:40.525696Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update workflow documentation",
+      "content": "Updated workflow with Step 2: Check Spec Changes (lines 112-136) including spec:diff and spec:history examples, deviation assessment using diff output example, and usage guidance. Updated flow diagram (lines 56-57) to include SpecChanges step. Renumbered subsequent steps (3\u21924, 4\u21925). Full testing deferred to verify-5-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-5-2"
+    },
+    {
+      "timestamp": "2025-12-28T13:53:53.022758Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Running fidelity review for Phase 5",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-5-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:54:28.721984Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Fidelity review",
+      "content": "Fidelity review passed. All 5 acceptance criteria verified: task-5-1 (3/3 - spec:diff at lines 84/93/123, spec:history at lines 85/96/120, usage context at lines 89-101), task-5-2 (2/2 - Step 2: Check Spec Changes at line 114, deviation assessment example at lines 126-136).",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-5-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:55:29.168926Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding completeness-check and duplicate-detection to MCP Tooling",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-6-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:56:14.652556Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md MCP Tooling section",
+      "content": "Added completeness-check and duplicate-detection to MCP Tooling table (line 48), plus Automated Quality Checks section (lines 56-80) with usage examples, review type integration table, and workflow integration guidance. Full testing deferred to verify-6-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-6-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:56:30.651512Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Integrating quality checks into review workflow",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-6-2"
+    },
+    {
+      "timestamp": "2025-12-28T13:57:03.571011Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update review type documentation",
+      "content": "Updated Core Workflow flow diagram (lines 108-109) to include QualityChecks step with completeness-check and duplicate-detection. Added Quality checks in workflow section (lines 117-120) explaining the 3-step integration: completeness-check, duplicate-detection, and including findings in AI review context. Full testing deferred to verify-6-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-6-2"
+    },
+    {
+      "timestamp": "2025-12-28T13:57:17.876907Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Running fidelity review for Phase 6",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-6-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:57:52.706632Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Fidelity review",
+      "content": "Fidelity review passed. All 5 acceptance criteria verified: task-6-1 (3/3 - completeness-check at lines 48/62/72/74, duplicate-detection at lines 48/65/75/80, review type integration at lines 70-80), task-6-2 (2/2 - workflow integration at lines 108/118, duplicate detection usage at lines 108/119/80).",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-6-1"
+    },
+    {
+      "timestamp": "2025-12-28T13:59:53.939923Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding spec:history and spec:diff for PR context",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-7-1"
+    },
+    {
+      "timestamp": "2025-12-28T14:00:30.760485Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md MCP Tooling section",
+      "content": "Added spec:history (line 32) and spec:diff (line 33) to Key tools list. Added PR Context Enrichment section (lines 35-54) with usage examples, explanation of how each enriches PRs, and guidance on what to include in PR descriptions. Full testing deferred to verify-7-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-7-1"
+    },
+    {
+      "timestamp": "2025-12-28T14:00:44.768917Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Adding spec change summary step and example PR",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-7-2"
+    },
+    {
+      "timestamp": "2025-12-28T14:01:26.969193Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update PR creation workflow",
+      "content": "Updated Essential Workflow (lines 73-74) with SpecChangeSummary step. Added Spec History and Spec Diff to Context Sources table (lines 91-92). Added Example: PR with Spec Evolution Context section (lines 96-114) showing Scope Evolution in PR description. Full testing deferred to verify-7-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-7-2"
+    },
+    {
+      "timestamp": "2025-12-28T14:01:35.376624Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Quick fidelity review for Phase 7",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-7-1"
+    },
+    {
+      "timestamp": "2025-12-28T14:01:43.802912Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Fidelity review",
+      "content": "Fidelity review passed. task-7-1: spec:history (line 32), spec:diff (line 33), PR context enrichment (lines 35-54). task-7-2: SpecChangeSummary workflow step (line 73), Scope Evolution example (lines 104-108).",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-7-1"
+    },
+    {
+      "timestamp": "2025-12-28T14:03:29.673439Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Starting implementation: adding add-dependency and add-requirement to SKILL.md",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-8-1"
+    },
+    {
+      "timestamp": "2025-12-28T14:04:51.834886Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md MCP Tooling and blocker workflow",
+      "content": "Updated skills/sdd-next/SKILL.md to add add-dependency and add-requirement actions. Changes: (1) Added MCP Tooling table with task router actions including add-dependency and add-requirement (line 53-56), (2) Updated HandleBlocker flow diagram to include dependency discovery path (line 39), (3) Added new \"Dependency Discovery During Implementation\" section with examples and use cases (lines 259-274). File at 321 lines (under 500 limit). Basic verification: markdown syntax valid. Full testing deferred to verify-8-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-8-1"
+    },
+    {
+      "timestamp": "2025-12-28T14:08:52.266597Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Starting fidelity review for phase-8",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-8-1"
+    },
+    {
+      "timestamp": "2025-12-28T14:09:29.393274Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Fidelity review",
+      "content": "Fidelity review passed. All 3/3 acceptance criteria verified for task-8-1: (1) add-dependency action in Task Router table (line 56), (2) add-requirement action in Task Router table (line 56), (3) HandleBlocker workflow updated with dependency discovery path (lines 37-39). Constraint check passed: SKILL.md at 321 lines (under 500 limit).",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-8-1"
+    },
+    {
+      "timestamp": "2025-12-28T14:10:55.728333Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Starting implementation: adding add-requirement to debugging workflow",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-9-1"
+    },
+    {
+      "timestamp": "2025-12-28T14:12:02.210412Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md debugging workflow",
+      "content": "Updated skills/run-tests/SKILL.md to add add-requirement action for requirement discovery during debugging. Changes: (1) Added \"Requirement discovery\" subsection to MCP Tooling with add-requirement action (line 34-35), (2) Added \"Requirement Discovery\" subsection to Phase 5: Fix & Verify with example, use cases, and guidance (lines 156-169). File at 198 lines (under 500 limit). Basic verification: markdown syntax valid. Full testing deferred to verify-9-1.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-9-1"
+    },
+    {
+      "timestamp": "2025-12-28T14:12:15.135889Z",
+      "entry_type": "status_change",
+      "title": "Status changed to in_progress",
+      "content": "Starting final fidelity review for phase-9",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-9-1"
+    },
+    {
+      "timestamp": "2025-12-28T14:12:50.074456Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Fidelity review",
+      "content": "Fidelity review passed. All 2/2 acceptance criteria verified for task-9-1: (1) add-requirement action documented in MCP Tooling section (lines 34-35), (2) Debugging workflow includes \"Requirement Discovery\" subsection in Phase 5 (lines 156-169). Constraint check passed: SKILL.md at 198 lines (under 500 limit).",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-9-1"
+    }
+  ]
+}

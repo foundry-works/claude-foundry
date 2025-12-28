@@ -25,7 +25,7 @@ description: Progress tracking for spec-driven development. Use to update task s
 
 | Router | Key Actions |
 |--------|-------------|
-| `task` | `complete`, `start`, `block`, `unblock`, `query` |
+| `task` | `complete`, `start`, `block`, `unblock`, `query`, `add-dependency`, `remove-dependency`, `add-requirement` |
 | `journal` | `add`, `list` |
 | `lifecycle` | `activate`, `move`, `complete` |
 

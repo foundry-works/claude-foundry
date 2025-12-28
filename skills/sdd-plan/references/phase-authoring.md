@@ -98,6 +98,44 @@ mcp__plugin_foundry_foundry-mcp__authoring action="phase-remove" spec_id="{spec-
 
 > Always use `dry_run=true` first to verify the scope of removal before executing.
 
+## Phase Reordering
+
+Reorganize phases during plan creation using `phase-move`. This is useful when you need to change the execution order without recreating phases.
+
+```bash
+# Move phase-3 to position 1 (making it the second phase, after phase-1)
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-move" spec_id="{spec-id}" phase_id="phase-3" position=1
+
+# Preview the move without applying
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-move" spec_id="{spec-id}" phase_id="phase-3" position=1 dry_run=true
+```
+
+**Parameters:**
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `spec_id` | Yes | Target specification ID |
+| `phase_id` | Yes | Phase identifier to move (e.g., `phase-3`) |
+| `position` | Yes | Zero-based target position in phase order |
+| `dry_run` | No | Preview the move without saving (default: false) |
+
+**When to use `phase-move` vs recreating phases:**
+
+| Scenario | Recommendation |
+|----------|----------------|
+| Simple reordering (e.g., swap phase 2 and 3) | Use `phase-move` |
+| Phase has many tasks with complex dependencies | Use `phase-move` to preserve structure |
+| Need to fundamentally restructure phase content | Recreate with `phase-add-bulk` |
+| Moving phase would break cross-phase dependencies | Resolve dependencies first, then move |
+
+**Behavior:**
+- Preserves all child tasks, subtasks, and verification nodes
+- Updates phase sequence indices automatically
+- Does NOT update cross-phase dependencies (review manually)
+- Use `dry_run=true` to preview changes before committing
+
+> Tip: After moving phases, run `mcp__plugin_foundry_foundry-mcp__spec action="validate"` to catch any dependency issues.
+
 ## AI Review of Phase Plans
 
 Before converting to JSON spec, get AI feedback to catch issues early:

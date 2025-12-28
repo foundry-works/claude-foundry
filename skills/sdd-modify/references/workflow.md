@@ -8,6 +8,10 @@ Step-by-step workflows for applying spec modifications.
 - [Preview Modifications](#workflow-2-preview-modifications)
 - [Apply Modifications](#workflow-3-apply-modifications)
 - [Direct Modifications](#workflow-4-direct-modifications-without-review-parsing)
+- [Task Repositioning](#workflow-5-task-repositioning)
+- [Phase Reordering](#workflow-6-phase-reordering)
+- [Bulk Find-Replace](#workflow-7-bulk-find-replace)
+- [Rollback Recovery](#workflow-8-rollback-recovery)
 
 ---
 
@@ -162,3 +166,202 @@ mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="my-spec-001" 
 - Programmatic spec modifications
 - Migrating specs with automated transformations
 - When you know exactly what changes to make
+
+---
+
+## Workflow 5: Task Repositioning
+
+Move tasks within a phase or between phases to reorganize work order.
+
+**Step 1:** Identify the task and target location:
+
+```bash
+# View current phase structure
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id="my-spec-001" parent_filter="phase-2"
+```
+
+**Step 2:** Preview the move with dry-run:
+
+```bash
+# Move task-2-3 to position 1 within same phase
+mcp__plugin_foundry_foundry-mcp__task action="move" spec_id="my-spec-001" task_id="task-2-3" position=1 dry_run=true
+
+# Move task to different phase
+mcp__plugin_foundry_foundry-mcp__task action="move" spec_id="my-spec-001" task_id="task-2-3" parent="phase-3" position=1 dry_run=true
+```
+
+**Step 3:** Apply the move:
+
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="move" spec_id="my-spec-001" task_id="task-2-3" parent="phase-3" position=1
+```
+
+**Example output:**
+```json
+{
+  "task_id": "task-2-3",
+  "old_parent": "phase-2",
+  "new_parent": "phase-3",
+  "old_position": 3,
+  "new_position": 1,
+  "is_reparenting": true,
+  "tasks_in_subtree": 1
+}
+```
+
+**When to use:**
+- Reordering tasks based on changing priorities
+- Moving related tasks to group them together
+- Restructuring phases after scope changes
+- Promoting subtasks to top-level tasks
+
+---
+
+## Workflow 6: Phase Reordering
+
+Change the execution order of phases within a specification.
+
+**Step 1:** View current phase order:
+
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="query" spec_id="my-spec-001" node_type="phase"
+```
+
+**Step 2:** Preview the reorder with dry-run:
+
+```bash
+# Move phase-3 to first position
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-move" spec_id="my-spec-001" phase_id="phase-3" position=1 dry_run=true
+```
+
+**Step 3:** Apply the reorder:
+
+```bash
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-move" spec_id="my-spec-001" phase_id="phase-3" position=1
+```
+
+**Example output:**
+```json
+{
+  "phase_id": "phase-3",
+  "phase_title": "Infrastructure Setup",
+  "old_position": 3,
+  "new_position": 1,
+  "moved": true
+}
+```
+
+**When to use:**
+- Adjusting phase order based on dependency changes
+- Moving foundational work earlier in the spec
+- Deferring phases that become lower priority
+- Reorganizing after review feedback
+
+---
+
+## Workflow 7: Bulk Find-Replace
+
+Replace text across multiple nodes in a specification.
+
+**Step 1:** Preview changes with dry-run:
+
+```bash
+# Replace across all text fields
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-find-replace" spec_id="my-spec-001" find="old-api" replace="new-api" scope="all" dry_run=true
+
+# Replace only in titles
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-find-replace" spec_id="my-spec-001" find="v1" replace="v2" scope="titles" dry_run=true
+
+# Case-insensitive regex replacement
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-find-replace" spec_id="my-spec-001" find="API" replace="REST API" scope="descriptions" case_sensitive=false dry_run=true
+```
+
+**Step 2:** Review the preview output:
+
+```json
+{
+  "total_replacements": 6,
+  "nodes_affected": 4,
+  "changes": [
+    {
+      "node_id": "task-1-2",
+      "field": "title",
+      "old": "Implement old-api endpoints",
+      "new": "Implement new-api endpoints"
+    }
+  ]
+}
+```
+
+**Step 3:** Apply the replacement:
+
+```bash
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-find-replace" spec_id="my-spec-001" find="old-api" replace="new-api" scope="all"
+```
+
+**Scope options:**
+- `all` - Search titles and descriptions
+- `titles` - Only search task/phase titles
+- `descriptions` - Only search descriptions
+
+**When to use:**
+- Renaming technologies or APIs across the spec
+- Updating version numbers
+- Fixing consistent typos
+- Standardizing terminology
+
+---
+
+## Workflow 8: Rollback Recovery
+
+Restore a specification to a previous state using automatic backups.
+
+**Step 1:** List available backups:
+
+```bash
+mcp__plugin_foundry_foundry-mcp__spec action="history" spec_id="my-spec-001"
+```
+
+**Example output:**
+```json
+{
+  "spec_id": "my-spec-001",
+  "entries": [
+    {
+      "type": "backup",
+      "timestamp": "2025-12-27T21-05-01.437327",
+      "file_path": "specs/.backups/my-spec-001/2025-12-27T21-05-01.437327.json"
+    },
+    {
+      "type": "backup",
+      "timestamp": "2025-12-27T20-54-48.149929",
+      "file_path": "specs/.backups/my-spec-001/2025-12-27T20-54-48.149929.json"
+    }
+  ],
+  "backup_count": 10
+}
+```
+
+**Step 2:** Preview the rollback with dry-run:
+
+```bash
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-rollback" spec_id="my-spec-001" version="2025-12-27T20-54-48.149929" dry_run=true
+```
+
+**Step 3:** Apply the rollback:
+
+```bash
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-rollback" spec_id="my-spec-001" version="2025-12-27T20-54-48.149929"
+```
+
+**When to use:**
+- Recovering from unintended modifications
+- Reverting experimental changes that didn't work out
+- Restoring state after failed bulk operations
+- Undoing changes when requirements change back
+
+**Recovery notes:**
+- Backups are created automatically before each modification
+- The version parameter uses the backup timestamp
+- Rollback creates a new backup before restoring (safe to undo)
+- Use dry-run to verify which version you're restoring

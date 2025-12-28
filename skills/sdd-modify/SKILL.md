@@ -30,8 +30,8 @@ Use `Skill(foundry:sdd-modify)` to:
 |--------|-------------|
 | `spec` | `apply-plan`, `validate`, `validate-fix` |
 | `review` | `parse-feedback` |
-| `authoring` | `task-add`, `task-remove` |
-| `task` | `update-metadata` |
+| `authoring` | `task-add`, `task-remove`, `phase-move`, `spec-find-replace`, `spec-rollback` |
+| `task` | `update-metadata`, `move` |
 
 **Critical Rules:**
 - **ALWAYS** use MCP tools for spec operations
@@ -79,7 +79,7 @@ mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="{spec-id}" mo
 
 ## Supported Operations
 
-Operations: `update_task`, `add_verification`, `update_metadata`, `batch_update`, `add_node`, `remove_node`
+Operations: `update_task`, `add_verification`, `update_metadata`, `batch_update`, `add_node`, `remove_node`, `move_task`, `move_phase`, `find_replace`
 
 > For operation formats and examples, see `references/operations.md`
 

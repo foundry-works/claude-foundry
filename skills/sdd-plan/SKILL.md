@@ -161,6 +161,7 @@ This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Too
 | `spec-update-frontmatter` | Update top-level metadata fields |
 | `phase-template` | Apply a pre-configured phase template |
 | `phase-add-bulk` | Add a phase with tasks atomically |
+| `phase-move` | Reorganize phases during plan creation |
 
 ### Spec Router Actions
 
@@ -173,6 +174,8 @@ This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Too
 | `stats` | Get spec statistics |
 | `analyze` | Analyze spec directory |
 | `get` | Get raw spec JSON (minified) |
+| `completeness-check` | Analyze spec completeness and quality |
+| `duplicate-detection` | Detect duplicate tasks in spec |
 
 ### Task Router Actions
 
@@ -194,10 +197,14 @@ This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Too
 | | `list-blocked` | List blocked tasks |
 | **Modification** | `add` | Add a new task |
 | | `remove` | Remove a task |
+| | `move` | Move a task to a different parent |
 | | `update-estimate` | Update estimated effort |
 | | `update-metadata` | Update task metadata fields |
 | | `metadata-batch` | Batch update metadata across multiple nodes |
 | | `fix-verification-types` | Fix invalid/missing verification types |
+| | `add-dependency` | Add a dependency to a task |
+| | `remove-dependency` | Remove a dependency from a task |
+| | `add-requirement` | Add an acceptance requirement to a task |
 
 **Critical Rules:**
 - **NEVER** read spec JSON files directly with `Read()` or shell commands

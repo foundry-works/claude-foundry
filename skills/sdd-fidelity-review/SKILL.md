@@ -53,6 +53,8 @@ sdd-plan → sdd-next → Implementation → sdd-update → sdd-fidelity-review 
 - **Entry** → [Familiar with code?]
   - [no] → Explore subagent (optional)
   - [yes] → skip
+- SpecChanges → `spec action="diff"` + `spec action="history"`
+  - Identify changed requirements, new tasks
 - LSP PreCheck → `documentSymbol` → [structures exist?]
   - [fail] → early exit with findings
   - [pass] → continue
@@ -72,6 +74,32 @@ This skill uses the Foundry MCP server with router+action pattern: `mcp__plugin_
 - **NEVER** use `Read()` on spec JSON files
 - **NEVER** use shell commands (`cat`, `grep`, `jq`) on specs
 
+### Router Actions
+
+| Router | Action | Purpose |
+|--------|--------|---------|
+| `review` | `fidelity` | Run AI-powered fidelity analysis |
+| `task` | `query` | List tasks for review scope |
+| `task` | `info` | Get task details and acceptance criteria |
+| `spec` | `diff` | Compare spec versions to understand changes |
+| `spec` | `history` | View spec modification timeline |
+
+### Spec Comparison for Fidelity Context
+
+Use `spec:diff` and `spec:history` to understand what changed before reviewing implementation:
+
+```bash
+# See what changed since last review
+mcp__plugin_foundry_foundry-mcp__spec action="diff" spec_id="{spec-id}" compare_to="specs/.backups/{spec-id}-previous.json"
+
+# View modification history to understand evolution
+mcp__plugin_foundry_foundry-mcp__spec action="history" spec_id="{spec-id}" limit=5
+```
+
+**Why this helps fidelity review:**
+- **diff**: Identifies which requirements changed, helping focus review on modified tasks
+- **history**: Shows when requirements were added/modified, explaining apparent deviations that were actually spec updates
+
 ## Core Workflow
 
 The fidelity review workflow integrates LSP verification with MCP AI analysis:
@@ -83,7 +111,33 @@ For unfamiliar code, use Explore subagent to find implementation files:
 Explore agent (medium thoroughness): Find all files in phase-1, related tests, config files
 ```
 
-### Step 2: LSP Structural Pre-Check
+### Step 2: Check Spec Changes
+
+Before reviewing, understand what changed in the spec since the last review:
+
+```bash
+# Check recent spec modifications
+mcp__plugin_foundry_foundry-mcp__spec action="history" spec_id="{spec-id}" limit=5
+
+# Compare current spec against last backup
+mcp__plugin_foundry_foundry-mcp__spec action="diff" spec_id="{spec-id}" compare_to="specs/.backups/{spec-id}-last-review.json"
+```
+
+**Deviation assessment using diff:**
+```
+📊 Spec Diff: user-auth-001
+
+Tasks:
+  ~ task-1-2: Acceptance criteria updated (added "support OAuth2")
+  + task-1-4: New task added after initial implementation
+
+Use this to:
+- Focus review on changed requirements (task-1-2)
+- Flag new tasks as "not yet implemented" rather than "deviation" (task-1-4)
+- Explain apparent deviations that reflect spec evolution
+```
+
+### Step 3: LSP Structural Pre-Check
 
 Before the AI review, verify structural requirements with LSP:
 
@@ -97,7 +151,7 @@ symbols = LSP(operation="documentSymbol", filePath="src/auth/service.py", line=1
 
 **Why:** Catches missing implementations in seconds before 5-minute AI review.
 
-### Step 3: MCP Fidelity Review
+### Step 4: MCP Fidelity Review
 
 Run the AI-powered fidelity analysis:
 
@@ -111,7 +165,7 @@ mcp__plugin_foundry_foundry-mcp__review action="fidelity" spec_id="{spec-id}" ta
 
 The MCP tool handles spec loading, implementation analysis, AI consultation, and report generation.
 
-### Step 4: LSP-Assisted Investigation
+### Step 5: LSP-Assisted Investigation
 
 For deviations found, use LSP to investigate:
 
