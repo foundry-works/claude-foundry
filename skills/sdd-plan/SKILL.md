@@ -162,6 +162,7 @@ This skill operates entirely through the Foundry MCP server (`foundry-mcp`). Too
 | `phase-template` | Apply a pre-configured phase template |
 | `phase-add-bulk` | Add a phase with tasks atomically |
 | `phase-move` | Reorganize phases during plan creation |
+| `phase-update-metadata` | Quick refinements to phase description, purpose, or hours |
 
 ### Spec Router Actions
 

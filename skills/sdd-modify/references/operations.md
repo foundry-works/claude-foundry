@@ -9,6 +9,7 @@ Detailed JSON structures for each modification operation.
 | `update_task` | Modify task title, description, file_path, category |
 | `add_verification` | Add verification step to task |
 | `update_metadata` | Update task metadata (hours, priority, etc.) |
+| `update_phase_metadata` | Update phase metadata (description, purpose, hours) |
 | `batch_update` | Apply same change to multiple nodes |
 | `add_node` | Add new task/subtask/verify node |
 | `remove_node` | Remove node (optionally cascading) |
@@ -91,6 +92,42 @@ Update task metadata (hours, priority, etc.):
   }
 }
 ```
+
+---
+
+## update_phase_metadata
+
+Update phase metadata (description, purpose, estimated_hours):
+
+```json
+{
+  "operation": "update_phase_metadata",
+  "phase_id": "phase-2",
+  "metadata": {
+    "description": "Updated phase description",
+    "purpose": "Clarified purpose statement",
+    "estimated_hours": 8.5
+  }
+}
+```
+
+**MCP invocation:**
+```bash
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id={spec-id} phase_id="phase-2" description="Updated description" estimated_hours=8.5
+```
+
+**Parameters:**
+- `spec_id` (required) - Target specification ID
+- `phase_id` (required) - Phase to update
+- `description` (optional) - Phase description text
+- `purpose` (optional) - Phase purpose statement
+- `estimated_hours` (optional) - Estimated hours for the phase
+- `dry_run` (optional) - Preview changes without applying (default: false)
+
+**Response fields:**
+- `phase_id` - The updated phase ID
+- `updated_fields` - List of fields that were modified
+- `old_values` / `new_values` - Previous and new values for each field
 
 ---
 

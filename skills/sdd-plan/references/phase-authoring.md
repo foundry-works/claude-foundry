@@ -67,6 +67,32 @@ mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spe
 
 > The macro creates all nodes atomically - either the entire phase succeeds or nothing is created.
 
+## Quick Phase Refinements
+
+After creating a phase with `phase-add-bulk`, you may need to adjust phase-level metadata without invoking `sdd-modify`. Use `phase-update-metadata` for lightweight refinements:
+
+```bash
+# Adjust estimated hours after reviewing task breakdown
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id="{spec-id}" phase_id="phase-2" estimated_hours=6.5
+
+# Refine phase description and purpose
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id="{spec-id}" phase_id="phase-2" description="Core API implementation with auth" purpose="Establish authenticated endpoints"
+
+# Preview changes before applying
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id="{spec-id}" phase_id="phase-2" estimated_hours=4.0 dry_run=true
+```
+
+**When to use `phase-update-metadata` vs `sdd-modify`:**
+
+| Scenario | Recommendation |
+|----------|----------------|
+| Adjust phase hours, description, or purpose | Use `phase-update-metadata` |
+| Add/remove/reorder tasks within a phase | Use `sdd-modify` |
+| Bulk changes across multiple phases | Use `sdd-modify` |
+| Quick post-creation tweaks | Use `phase-update-metadata` |
+
+> This action is ideal for iterative refinement during spec creation without leaving the planning workflow.
+
 ## Phase Removal
 
 Remove phases that are no longer needed using `phase-remove`. This action removes a phase and all its child tasks.
