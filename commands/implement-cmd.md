@@ -1,9 +1,9 @@
 ---
-name: next-cmd
+name: implement-cmd
 description: Resume or start spec-driven development work by detecting active tasks and providing interactive options
 ---
 
-# SDD Next Command
+# SDD Implement Command
 
 When invoked, follow these steps:
 
@@ -14,12 +14,12 @@ Use `mcp__plugin_foundry_foundry-mcp__spec action="list"` with status "active" t
 ## Step 2: Route Based on Results
 
 ### If active specs exist:
-Pass the active spec context to the `sdd-next` skill. The skill will proceed directly to task selection - it does NOT need to re-check for active specs.
+Pass the active spec context to the `sdd-implement` skill. The skill will proceed directly to task selection - it does NOT need to re-check for active specs.
 
 **IMPORTANT:** Do NOT invoke this command or skill recursively. The skill handles the full workflow.
 
 ```
-Skill(sdd-next) "Active spec detected via /next-cmd command. Skip Step 3.1 (spec detection) and proceed directly to Step 3.2 (task selection)."
+Skill(sdd-implement) "Active spec detected via /implement-cmd command. Skip Step 3.1 (spec detection) and proceed directly to Step 3.2 (task selection)."
 ```
 
 ### If no active specs exist:
@@ -36,7 +36,7 @@ Inform user no specifications exist and offer options:
 
 ## Step 3: Hand Off to Skill
 
-Once routing is determined, the sdd-next skill handles the full workflow:
+Once routing is determined, the sdd-implement skill handles the full workflow:
 - Task preparation and context gathering
 - Implementation guidance
 - Progress tracking and verification

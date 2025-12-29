@@ -63,20 +63,19 @@ claude-foundry/
 
 Skills are invoked via `Skill(foundry:skill-name)`:
 
-- `foundry:sdd-plan` - Create detailed specifications before coding
-- `foundry:sdd-next` - Find and prepare the next actionable task
-- `foundry:sdd-update` - Track progress and update task status
+- `foundry:sdd-plan` - Create detailed specifications before coding (includes review, modification, validation)
+- `foundry:sdd-implement` - Find next task, implement, and track progress
+- `foundry:sdd-review` - Verify implementation matches specification
 - `foundry:run-tests` - Run tests with debugging support
-- `foundry:sdd-validate` - Validate spec structure and dependencies
 - `foundry:sdd-pr` - Create PRs with AI-enhanced descriptions
-- `foundry:sdd-review` - Review specs for quality and issues
+- `foundry:sdd-refactor` - LSP-powered refactoring with impact analysis
 
 ### Commands
 
 Slash commands for common workflows:
 
 - `/setup-cmd` - First-time setup and guided tour of plugin features
-- `/next-cmd` - Resume or start spec-driven development work
+- `/implement-cmd` - Resume or start spec-driven development work
 
 ### Agents
 

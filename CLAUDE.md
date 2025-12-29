@@ -5,7 +5,7 @@ Spec-driven development (SDD) toolkit for Claude Code. Plan before code, verify 
 ## Workflow
 
 ```
-sdd-plan → sdd-next → [IMPLEMENT] → sdd-review → run-tests → sdd-pr
+sdd-plan → sdd-implement → [CODE] → sdd-review → run-tests → sdd-pr
 ```
 
 **Supporting skill:** sdd-refactor (LSP-powered refactoring)
@@ -15,7 +15,7 @@ sdd-plan → sdd-next → [IMPLEMENT] → sdd-review → run-tests → sdd-pr
 | When you need to... | Use |
 |---------------------|-----|
 | Create/review/modify a spec | `sdd-plan` |
-| Find next task, implement, track progress | `sdd-next` |
+| Find next task, implement, track progress | `sdd-implement` |
 | Verify implementation matches spec | `sdd-review` |
 | Run tests and debug failures | `run-tests` |
 | Create PR with spec context | `sdd-pr` |
@@ -43,9 +43,9 @@ sdd-plan → sdd-next → [IMPLEMENT] → sdd-review → run-tests → sdd-pr
 3. Activate spec (moves to `specs/active/`)
 
 ### Resuming Active Work
-1. Use `sdd-next` to find next actionable task
+1. Use `sdd-implement` to find next actionable task
 2. Implement the task
-3. Complete task via `sdd-next` workflow (tracks progress automatically)
+3. Complete task via `sdd-implement` workflow (tracks progress automatically)
 4. Continue until phase complete
 
 ### Completing a Phase

@@ -60,7 +60,7 @@ This skill combines planning, review, modification, and validation into a unifie
 - Simple one-file changes or bug fixes
 - Trivial modifications or formatting changes
 - Exploratory prototyping or spikes
-- Finding next task or tracking progress (use `sdd-next`)
+- Finding next task or tracking progress (use `sdd-implement`)
 
 ## MCP Tooling
 

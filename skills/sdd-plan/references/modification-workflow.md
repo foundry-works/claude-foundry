@@ -21,9 +21,9 @@ Apply spec modifications with automatic backup, preview (dry-run), validation, a
 - Interactive spec updates with preview and validation
 
 **Do NOT use for:**
-- Status tracking or task completion (use `sdd-update`)
+- Status tracking or task completion (use `sdd-implement`)
 - Creating new specifications (during initial planning)
-- Finding next actionable task (use `sdd-next`)
+- Finding next actionable task (use `sdd-implement`)
 
 ## MCP Tooling
 
@@ -167,5 +167,5 @@ Status: PASSED
 
 ### Next Steps
 - Review changes in context
-- Continue with sdd-next if ready for implementation
+- Continue with sdd-implement if ready for implementation
 ```

@@ -40,7 +40,7 @@ mcp__plugin_foundry_foundry-mcp__lifecycle action="activate" spec_id={spec-id}
 This:
 - Moves spec file to `specs/active/`
 - Updates metadata status to "active"
-- Makes spec visible to sdd-next
+- Makes spec visible to sdd-implement
 
 ## Complete a Spec
 

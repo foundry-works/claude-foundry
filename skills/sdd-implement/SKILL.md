@@ -1,15 +1,15 @@
 ---
-name: sdd-next
-description: Task preparation skill for spec-driven workflows. Reads specifications, identifies next actionable tasks, and creates detailed execution plans. Use when ready to implement a task from an existing spec - bridges the gap between planning and coding.
+name: sdd-implement
+description: Task implementation skill for spec-driven workflows. Reads specifications, identifies next actionable tasks, and creates detailed execution plans. Use when ready to implement a task from an existing spec - bridges the gap between planning and coding.
 ---
 
-# SDD-Next: Concise Playbook
+# SDD-Implement: Concise Playbook
 
 ## Overview
 
 - **Purpose:** Task execution workflow - select tasks, plan implementation, and track progress within an active spec.
 - **Scope:** Single-task execution with user approval at key checkpoints.
-- **Entry:** Invoked by `/next-cmd` command after spec has been identified.
+- **Entry:** Invoked by `/implement-cmd` command after spec has been identified.
 
 ### Flow
 
@@ -91,11 +91,11 @@ Direct JSON access (`Read()`, `cat`, `jq`, `grep`, etc.) is prohibited.
 
 ### Anti-Recursion Rule (NEVER VIOLATE)
 
-This skill must NEVER invoke itself or `Skill(sdd-next)`. The only valid callers are:
-- The `/next-cmd` command (entry point)
+This skill must NEVER invoke itself or `Skill(sdd-implement)`. The only valid callers are:
+- The `/implement-cmd` command (entry point)
 - Direct user invocation
 
-If you find yourself about to call `Skill(sdd-next)` from within this skill, **STOP** and proceed with the workflow instead. The skill handles the complete task lifecycle - there is no need to re-invoke it.
+If you find yourself about to call `Skill(sdd-implement)` from within this skill, **STOP** and proceed with the workflow instead. The skill handles the complete task lifecycle - there is no need to re-invoke it.
 
 > For detailed context gathering patterns, see `references/context-gathering.md`
 > For agent delegation patterns (when to use sdd-planner), see `references/agent-delegation.md`

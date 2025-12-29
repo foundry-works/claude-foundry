@@ -28,7 +28,7 @@ The `sdd-review` skill compares actual implementation against SDD specification 
 Part of the **Spec-Driven Development** quality assurance family:
 
 ```
-sdd-plan → sdd-next → [IMPLEMENT] → sdd-review (this skill) → run-tests → sdd-pr
+sdd-plan → sdd-implement → [CODE] → sdd-review (this skill) → run-tests → sdd-pr
 ```
 
 ## When to Use This Skill
@@ -41,7 +41,7 @@ sdd-plan → sdd-next → [IMPLEMENT] → sdd-review (this skill) → run-tests 
 
 **Do NOT use for:**
 - Creating specifications (use `sdd-plan`)
-- Finding next tasks or tracking progress (use `sdd-next`)
+- Finding next tasks or tracking progress (use `sdd-implement`)
 - Running tests (use `run-tests`)
 
 ### Flow

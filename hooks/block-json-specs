@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # PreToolUse hook to block reading .json spec files
-# Forces use of sdd-next skill instead of direct file reading
+# Forces use of sdd-implement skill instead of direct file reading
 
 set -euo pipefail
 
@@ -42,10 +42,8 @@ HOW TO FIX:
 
   PRIMARY: Use Skills (recommended)
   ─────────────────────────────────
-  Skill(sdd-next)      - Get next task with full implementation context
-  Skill(sdd-update)    - Update task status, complete tasks, add journals
-  Skill(sdd-validate)  - Validate spec and auto-fix issues
-  Skill(sdd-modify)    - Add/remove tasks, apply structural changes
+  Skill(sdd-implement) - Get next task with full implementation context
+  Skill(sdd-plan)      - Create specs, apply modifications, validate
 
   ALTERNATIVE: MCP tools (for granular operations)
   ────────────────────────────────────────────────
@@ -60,10 +58,10 @@ HOW TO FIX:
 
 EXAMPLES:
   Reading: Instead of Read(specs/active/my-spec.json)
-    Use: Skill(sdd-next) OR mcp__plugin_foundry_foundry-mcp__task action="prepare" spec_id="my-spec"
+    Use: Skill(sdd-implement) OR mcp__plugin_foundry_foundry-mcp__task action="prepare" spec_id="my-spec"
 
   Status update: Instead of editing JSON directly
-    Use: Skill(sdd-update) OR mcp__plugin_foundry_foundry-mcp__task action="update-status" spec_id="..." task_id="..." status="completed"
+    Use: mcp__plugin_foundry_foundry-mcp__task action="update-status" spec_id="..." task_id="..." status="completed"
 
 ⚠️  CRITICAL: Do not use Python, cat, jq, Read(), or any other method to bypass this
    restriction. ALL spec file access must go through Skills or MCP tools.

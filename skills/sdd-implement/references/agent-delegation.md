@@ -24,9 +24,9 @@ Task Ready
     +-- Ambiguous? --> AskUserQuestion
 ```
 
-## NEVER Delegate Back to sdd-next
+## NEVER Delegate Back to sdd-implement
 
-The anti-recursion rule is critical. If you find yourself about to call `Skill(sdd-next)` from within this skill:
+The anti-recursion rule is critical. If you find yourself about to call `Skill(sdd-implement)` from within this skill:
 
 1. **STOP** - This indicates a workflow error
 2. **Review** - Check if you're trying to surface the next task
