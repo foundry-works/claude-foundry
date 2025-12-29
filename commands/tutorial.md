@@ -1,5 +1,5 @@
 ---
-name: tutorial-cmd
+name: tutorial
 description: Interactive tutorial for Spec-Driven Development with claude-foundry
 ---
 

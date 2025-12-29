@@ -1,5 +1,5 @@
 ---
-name: implement-cmd
+name: implement
 description: Resume or start spec-driven development work by detecting active tasks and providing interactive options
 ---
 
@@ -19,7 +19,7 @@ Pass the active spec context to the `sdd-implement` skill. The skill will procee
 **IMPORTANT:** Do NOT invoke this command or skill recursively. The skill handles the full workflow.
 
 ```
-Skill(sdd-implement) "Active spec detected via /implement-cmd command. Skip Step 3.1 (spec detection) and proceed directly to Step 3.2 (task selection)."
+Skill(sdd-implement) "Active spec detected via /implement command. Skip Step 3.1 (spec detection) and proceed directly to Step 3.2 (task selection)."
 ```
 
 ### If no active specs exist:

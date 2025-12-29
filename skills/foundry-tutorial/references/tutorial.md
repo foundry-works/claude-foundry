@@ -114,7 +114,7 @@ Based on the user's state, recommend the most logical next action:
 > "You're all set! Your sample spec is active and ready. Try asking me to run `sdd-implement` - I'll show you how task preparation works and walk you through completing your first task."
 
 **If they have existing specs:**
-> "You're all set! I see you already have specs in your workspace. Run `/implement-cmd` anytime to pick up where you left off, or ask me to create a new spec with `sdd-plan`."
+> "You're all set! I see you already have specs in your workspace. Run `/implement` anytime to pick up where you left off, or ask me to create a new spec with `sdd-plan`."
 
 **If they have a clean workspace:**
 > "You're all set! When you're ready to start a feature, just describe what you want to build and ask me to use `sdd-plan`. I'll create a detailed spec and we can work through it together."
@@ -123,8 +123,8 @@ Based on the user's state, recommend the most logical next action:
 
 > "A few resources if you want to go deeper:
 >
-> - **Re-run tutorial:** `/tutorial-cmd` is safe to run anytime if you need a refresher
-> - **Re-run setup:** `/setup-cmd` to check or update your configuration
+> - **Re-run tutorial:** `/tutorial` is safe to run anytime if you need a refresher
+> - **Re-run setup:** `/setup` to check or update your configuration
 >
 > Feel free to ask me questions anytime - I'm here to help you get the most out of SDD!"
 

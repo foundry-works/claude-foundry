@@ -92,7 +92,7 @@ Direct JSON access (`Read()`, `cat`, `jq`, `grep`, etc.) is prohibited.
 ### Anti-Recursion Rule (NEVER VIOLATE)
 
 This skill must NEVER invoke itself or `Skill(sdd-implement)`. The only valid callers are:
-- The `/implement-cmd` command (entry point)
+- The `/implement` command (entry point)
 - Direct user invocation
 
 If you find yourself about to call `Skill(sdd-implement)` from within this skill, **STOP** and proceed with the workflow instead. The skill handles the complete task lifecycle - there is no need to re-invoke it.

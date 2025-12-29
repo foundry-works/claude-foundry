@@ -45,16 +45,16 @@ mcp__plugin_foundry_foundry-mcp__lifecycle action="activate" spec_id={spec-id}
 1. Complete current task
 2. Mark task complete with journal
 3. Run `/clear`
-4. Resume with `/next-cmd`
+4. Resume with `/implement`
 
-## SDD Tools in Minimal Mode
+## MCP Tools Not Responding
 
 **Error:** MCP tools not responding
 
 **Resolution:**
-1. Run `/on-cmd`
-2. Restart Claude
-3. Run `/next-cmd` again
+1. Check foundry-mcp is installed: `python -m foundry_mcp.server --help`
+2. Restart Claude Code
+3. Run `/implement` again
 
 ## Quick Reference
 

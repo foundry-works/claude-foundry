@@ -1,5 +1,5 @@
 ---
-name: setup-cmd
+name: setup
 description: First-time setup for the claude-foundry plugin
 argument-hint: [--check]
 ---

@@ -74,8 +74,9 @@ Skills are invoked via `Skill(foundry:skill-name)`:
 
 Slash commands for common workflows:
 
-- `/setup-cmd` - First-time setup and guided tour of plugin features
-- `/implement-cmd` - Resume or start spec-driven development work
+- `/setup` - First-time setup and guided tour of plugin features
+- `/implement` - Resume or start spec-driven development work
+- `/tutorial` - Interactive tutorial for Spec-Driven Development
 
 ### Agents
 

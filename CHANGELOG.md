@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `sdd-plan` now includes: AI review, modification, and validation (absorbed `sdd-plan-review`, `sdd-modify`, `sdd-validate`)
   - `sdd-next` renamed to `sdd-implement` and now includes: auto-completion and journaling (absorbed `sdd-update`)
   - `sdd-fidelity-review` renamed to `sdd-review` for consistency
-  - `next-cmd` renamed to `implement-cmd`
+  - Commands simplified: `next-cmd` → `implement`, `setup-cmd` → `setup`, `tutorial-cmd` → `tutorial`
   - Updated `CLAUDE.md` with simplified 6-skill workflow: `sdd-plan → sdd-implement → sdd-review → run-tests → sdd-pr`
 
 ### Added
