@@ -5,6 +5,39 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-12-29
+
+### Changed
+
+- **Skill consolidation**: Reduced 10 SDD skills to 5+1 core skills for reduced cognitive overhead
+  - `sdd-plan` now includes: AI review, modification, and validation (absorbed `sdd-plan-review`, `sdd-modify`, `sdd-validate`)
+  - `sdd-next` renamed to `sdd-implement` and now includes: auto-completion and journaling (absorbed `sdd-update`)
+  - `sdd-fidelity-review` renamed to `sdd-review` for consistency
+  - Commands simplified: `next-cmd` → `implement`, `setup-cmd` → `setup`, `tutorial-cmd` → `tutorial`
+  - Updated `CLAUDE.md` with simplified 6-skill workflow: `sdd-plan → sdd-implement → sdd-review → run-tests → sdd-pr`
+
+### Added
+
+- **New reference files for sdd-plan**:
+  - `plan-review-workflow.md`, `plan-review-dimensions.md`, `plan-review-consensus.md`
+  - `modification-workflow.md`, `modification-operations.md`
+  - `validation-workflow.md`, `validation-fixes.md`, `validation-issues.md`
+
+- **New reference files for sdd-implement**:
+  - `task-lifecycle.md`, `progress-tracking.md`, `journaling.md`, `spec-lifecycle.md`
+
+### Removed
+
+- **Retired skills** (functionality consolidated):
+  - `sdd-plan-review` → merged into `sdd-plan`
+  - `sdd-modify` → merged into `sdd-plan`
+  - `sdd-validate` → merged into `sdd-plan`
+  - `sdd-update` → merged into `sdd-implement`
+
+- **Archived completed specs**:
+  - `incorporate-mcp-capabilities-2025-12-27-001.json`
+  - `sdd-plan-fixes-2025-12-24-001.json`
+
 ## [1.0.18] - 2025-12-28
 
 ### Added

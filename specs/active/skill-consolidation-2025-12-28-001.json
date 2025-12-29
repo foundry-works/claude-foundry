@@ -1,0 +1,730 @@
+{
+  "spec_id": "skill-consolidation-2025-12-28-001",
+  "title": "skill-consolidation",
+  "generated": "2025-12-28T22:42:44.361138Z",
+  "last_updated": "2025-12-29T12:26:00.381429Z",
+  "metadata": {
+    "description": "",
+    "mission": "Consolidate 10 SDD skills into 5 core user-invoked skills plus 1 optional utility to reduce cognitive overhead",
+    "objectives": [],
+    "complexity": "medium",
+    "estimated_hours": 15,
+    "assumptions": [],
+    "owner": "",
+    "category": "implementation",
+    "template": "medium"
+  },
+  "progress_percentage": 100,
+  "status": "completed",
+  "current_phase": null,
+  "hierarchy": {
+    "spec-root": {
+      "type": "spec",
+      "title": "skill-consolidation",
+      "status": "completed",
+      "parent": null,
+      "children": [
+        "phase-3",
+        "phase-4",
+        "phase-5",
+        "phase-6",
+        "phase-7"
+      ],
+      "total_tasks": 15,
+      "completed_tasks": 15,
+      "metadata": {
+        "purpose": "",
+        "category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-3": {
+      "type": "phase",
+      "title": "sdd-plan Consolidation",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-3-1",
+        "task-3-2",
+        "task-3-3",
+        "task-3-4",
+        "task-3-5"
+      ],
+      "total_tasks": 5,
+      "completed_tasks": 5,
+      "metadata": {
+        "purpose": "",
+        "description": "Absorb sdd-plan-review, sdd-modify, and sdd-validate into sdd-plan",
+        "needs_journaling": true,
+        "completed_at": "2025-12-28T23:02:05.976951Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-4"
+        ],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-3-1": {
+      "type": "task",
+      "title": "Create plan-review reference files",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Extract core workflow and key references from sdd-plan-review into new reference files for sdd-plan",
+        "file_path": "skills/sdd-plan/references/plan-review-workflow.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "plan-review-workflow.md created with core review workflow",
+          "plan-review-dimensions.md created",
+          "plan-review-consensus.md created"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-28T22:49:39.168047Z",
+        "completed_at": "2025-12-28T22:51:29.519187Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T22:51:29.519239Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-3-2": {
+      "type": "task",
+      "title": "Create modification reference files",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Extract core workflow and operations from sdd-modify into reference files",
+        "file_path": "skills/sdd-plan/references/modification-workflow.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "modification-workflow.md created",
+          "modification-operations.md created"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-28T22:52:21.833830Z",
+        "completed_at": "2025-12-28T22:54:06.081103Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T22:54:06.081165Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-3-3": {
+      "type": "task",
+      "title": "Create validation reference files",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Extract validation workflow and fix patterns from sdd-validate into reference files",
+        "file_path": "skills/sdd-plan/references/validation-workflow.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "validation-workflow.md created",
+          "validation-fixes.md created",
+          "validation-issues.md created"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-28T22:55:21.539728Z",
+        "completed_at": "2025-12-28T22:57:16.815028Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T22:57:16.815115Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-3-4": {
+      "type": "task",
+      "title": "Rewrite sdd-plan SKILL.md",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Integrate review, modify, and validate into unified planning workflow. Review always runs automatically.",
+        "file_path": "skills/sdd-plan/SKILL.md",
+        "estimated_hours": 2.0,
+        "acceptance_criteria": [
+          "SKILL.md under 500 lines",
+          "Flow includes automatic AI review step",
+          "Flow includes modification application",
+          "Flow includes validation step",
+          "All new references linked"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-28T22:58:28.791971Z",
+        "completed_at": "2025-12-28T23:00:16.637919Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T23:00:16.637971Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-3-5": {
+      "type": "task",
+      "title": "Delete absorbed skill directories",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Remove sdd-plan-review, sdd-modify, and sdd-validate directories",
+        "file_path": "skills/sdd-plan-review/SKILL.md",
+        "estimated_hours": 0.5,
+        "acceptance_criteria": [
+          "sdd-plan-review directory deleted",
+          "sdd-modify directory deleted",
+          "sdd-validate directory deleted"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-28T23:01:46.791685Z",
+        "completed_at": "2025-12-28T23:02:05.976918Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T23:02:05.976975Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-4": {
+      "type": "phase",
+      "title": "sdd-next Consolidation",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-4-1",
+        "task-4-2",
+        "task-4-3"
+      ],
+      "total_tasks": 3,
+      "completed_tasks": 3,
+      "metadata": {
+        "purpose": "",
+        "description": "Absorb sdd-update into sdd-next with auto-completion",
+        "needs_journaling": true,
+        "completed_at": "2025-12-28T23:31:10.749015Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-5"
+        ],
+        "blocked_by": [
+          "phase-3"
+        ],
+        "depends": []
+      }
+    },
+    "task-4-1": {
+      "type": "task",
+      "title": "Create update reference files",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Extract task lifecycle, progress tracking, journaling, and spec lifecycle from sdd-update into reference files",
+        "file_path": "skills/sdd-next/references/task-lifecycle.md",
+        "estimated_hours": 1.0,
+        "acceptance_criteria": [
+          "task-lifecycle.md created with status transitions",
+          "progress-tracking.md created",
+          "journaling.md created",
+          "spec-lifecycle.md created"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-28T23:02:41.548275Z",
+        "completed_at": "2025-12-28T23:04:46.892956Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T23:04:46.893003Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-4-2": {
+      "type": "task",
+      "title": "Update sdd-next SKILL.md",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Integrate auto-completion after implementation. When task is done, automatically mark complete and journal.",
+        "file_path": "skills/sdd-next/SKILL.md",
+        "estimated_hours": 1.5,
+        "acceptance_criteria": [
+          "SKILL.md includes post-implementation auto-complete step",
+          "Flow shows task:complete and journal:add integration",
+          "References to sdd-update removed",
+          "New reference files linked"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-28T23:22:35.283562Z",
+        "completed_at": "2025-12-28T23:23:53.802332Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T23:23:53.802394Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-4-3": {
+      "type": "task",
+      "title": "Delete sdd-update directory",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Remove sdd-update skill directory entirely",
+        "file_path": "skills/sdd-update/SKILL.md",
+        "estimated_hours": 0.25,
+        "acceptance_criteria": [
+          "sdd-update directory deleted"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-28T23:30:59.210947Z",
+        "completed_at": "2025-12-28T23:31:10.748987Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T23:31:10.749062Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-5": {
+      "type": "phase",
+      "title": "sdd-review Rename",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-5-1",
+        "task-5-2"
+      ],
+      "total_tasks": 2,
+      "completed_tasks": 2,
+      "metadata": {
+        "purpose": "",
+        "description": "Rename sdd-fidelity-review to sdd-review for consistency",
+        "needs_journaling": true,
+        "completed_at": "2025-12-28T23:47:19.949701Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-6"
+        ],
+        "blocked_by": [
+          "phase-4"
+        ],
+        "depends": []
+      }
+    },
+    "task-5-1": {
+      "type": "task",
+      "title": "Rename skill directory",
+      "status": "completed",
+      "parent": "phase-5",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Rename sdd-fidelity-review directory to sdd-review",
+        "file_path": "skills/sdd-fidelity-review/SKILL.md",
+        "estimated_hours": 0.25,
+        "acceptance_criteria": [
+          "Directory renamed to skills/sdd-review"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-28T23:46:55.246880Z",
+        "completed_at": "2025-12-28T23:47:02.044310Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T23:47:02.044371Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-5-2": {
+      "type": "task",
+      "title": "Update SKILL.md frontmatter",
+      "status": "completed",
+      "parent": "phase-5",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Update name field in frontmatter from sdd-fidelity-review to sdd-review",
+        "file_path": "skills/sdd-review/SKILL.md",
+        "estimated_hours": 0.25,
+        "acceptance_criteria": [
+          "name: sdd-review in frontmatter",
+          "Description updated to remove 'fidelity' terminology"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-28T23:47:07.464888Z",
+        "completed_at": "2025-12-28T23:47:19.949670Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T23:47:19.949724Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-6": {
+      "type": "phase",
+      "title": "Documentation Updates",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-6-1",
+        "task-6-2"
+      ],
+      "total_tasks": 2,
+      "completed_tasks": 2,
+      "metadata": {
+        "purpose": "",
+        "description": "Update CLAUDE.md and related docs to reflect consolidated skill structure",
+        "needs_journaling": true,
+        "completed_at": "2025-12-29T12:07:41.379265Z"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-7"
+        ],
+        "blocked_by": [
+          "phase-5"
+        ],
+        "depends": []
+      }
+    },
+    "task-6-1": {
+      "type": "task",
+      "title": "Update CLAUDE.md workflow",
+      "status": "completed",
+      "parent": "phase-6",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Update workflow diagram and skill selection table to show 5+1 consolidated skills",
+        "file_path": "CLAUDE.md",
+        "estimated_hours": 0.5,
+        "acceptance_criteria": [
+          "Workflow shows: sdd-plan \u2192 sdd-next \u2192 sdd-review \u2192 run-tests \u2192 sdd-pr",
+          "Skill table lists only 6 skills",
+          "References to deleted skills removed"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-28T23:50:28.163572Z",
+        "completed_at": "2025-12-28T23:51:11.178086Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-28T23:51:11.178146Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-6-2": {
+      "type": "task",
+      "title": "Update next-cmd references",
+      "status": "completed",
+      "parent": "phase-6",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Update next-cmd skill to reference consolidated skills",
+        "file_path": "skills/next-cmd/SKILL.md",
+        "estimated_hours": 0.25,
+        "acceptance_criteria": [
+          "References to sdd-update removed",
+          "Workflow reflects sdd-next handling completion"
+        ],
+        "task_category": "refactoring",
+        "started_at": "2025-12-29T12:05:54.353842Z",
+        "completed_at": "2025-12-29T12:07:41.379227Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-29T12:07:41.379291Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-7": {
+      "type": "phase",
+      "title": "Verification",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "verify-7-1",
+        "verify-7-2",
+        "verify-7-3"
+      ],
+      "total_tasks": 3,
+      "completed_tasks": 3,
+      "metadata": {
+        "purpose": "",
+        "description": "Verify consolidated skills work correctly",
+        "needs_journaling": true,
+        "completed_at": "2025-12-29T12:26:00.381278Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [
+          "phase-6"
+        ],
+        "depends": []
+      }
+    },
+    "verify-7-1": {
+      "type": "verify",
+      "title": "Test sdd-plan workflow",
+      "status": "completed",
+      "parent": "phase-7",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Verify sdd-plan creates spec with automatic review, modification, and validation",
+        "verification_type": "manual",
+        "started_at": "2025-12-29T12:20:25.930306Z",
+        "completed_at": "2025-12-29T12:21:12.233154Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-29T12:21:12.233208Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-7-2": {
+      "type": "verify",
+      "title": "Test sdd-next workflow",
+      "status": "completed",
+      "parent": "phase-7",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Verify sdd-next implements task and auto-completes with journaling",
+        "verification_type": "manual",
+        "started_at": "2025-12-29T12:22:19.541762Z",
+        "completed_at": "2025-12-29T12:22:59.657534Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-29T12:22:59.657588Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-7-3": {
+      "type": "verify",
+      "title": "Test sdd-review invocation",
+      "status": "completed",
+      "parent": "phase-7",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Verify sdd-review skill activates correctly with new name",
+        "verification_type": "manual",
+        "started_at": "2025-12-29T12:24:57.239822Z",
+        "completed_at": "2025-12-29T12:26:00.381239Z",
+        "needs_journaling": false,
+        "journaled_at": "2025-12-29T12:26:00.381308Z"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    }
+  },
+  "journal": [
+    {
+      "timestamp": "2025-12-28T22:51:29.519239Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Create plan-review reference files",
+      "content": "Created 3 plan-review reference files in skills/sdd-plan/references/: plan-review-workflow.md (5517 bytes - core workflow, review types, decision matrix, MCP tooling), plan-review-dimensions.md (1811 bytes - 6 review dimensions), plan-review-consensus.md (3480 bytes - consensus levels, priority assignment, synthesis algorithm). All acceptance criteria met.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-1"
+    },
+    {
+      "timestamp": "2025-12-28T22:54:06.081165Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Create modification reference files",
+      "content": "Created 2 modification reference files in skills/sdd-plan/references/: modification-workflow.md (5026 bytes - core workflow, common workflows, safety features), modification-operations.md (5368 bytes - all 10 operation formats with JSON structures and MCP invocations). All acceptance criteria met.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-2"
+    },
+    {
+      "timestamp": "2025-12-28T22:57:16.815115Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Create validation reference files",
+      "content": "Created 3 validation reference files in skills/sdd-plan/references/: validation-workflow.md (4280 bytes - core workflow, commands, exit codes), validation-fixes.md (3788 bytes - auto-fix and manual fix patterns), validation-issues.md (3662 bytes - issue categories, severity, completeness scoring). All acceptance criteria met.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-3"
+    },
+    {
+      "timestamp": "2025-12-28T23:00:16.637971Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Rewrite sdd-plan SKILL.md",
+      "content": "Rewrote sdd-plan SKILL.md (298 lines, under 500 limit). Integrated workflow includes: Step 5 automatic AI review, Step 6 modification application, Step 7 validation. All 8 new references linked in Detailed Reference section. Description updated to reflect integrated capabilities.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-4"
+    },
+    {
+      "timestamp": "2025-12-28T23:02:05.976975Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Delete absorbed skill directories",
+      "content": "Deleted 3 absorbed skill directories: sdd-plan-review, sdd-modify, sdd-validate. All content has been consolidated into sdd-plan/references/. Verified directories no longer exist.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-3-5"
+    },
+    {
+      "timestamp": "2025-12-28T23:04:46.893003Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Create update reference files",
+      "content": "Created 4 update reference files in skills/sdd-next/references/: task-lifecycle.md (3028 bytes - status transitions, start/complete/block), progress-tracking.md (3212 bytes - estimates, verification), journaling.md (3019 bytes - entry types, best practices), spec-lifecycle.md (2438 bytes - folder structure, activate/complete/archive). All acceptance criteria met.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-1"
+    },
+    {
+      "timestamp": "2025-12-28T23:23:53.802394Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update sdd-next SKILL.md",
+      "content": "Updated sdd-next SKILL.md with integrated auto-completion. Changes: (1) PostImpl now shows task action=complete with auto-journal, (2) MCP table includes journal and lifecycle routers, (3) After implementation section uses direct MCP calls, (4) Completion examples use task action=complete, (5) All sdd-update references removed (0 remaining), (6) New reference files linked in Detailed Reference section.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-2"
+    },
+    {
+      "timestamp": "2025-12-28T23:31:10.749062Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Delete sdd-update directory",
+      "content": "Deleted sdd-update directory. Content has been consolidated into sdd-next/references/ (task-lifecycle.md, progress-tracking.md, journaling.md, spec-lifecycle.md). Phase 4 complete.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-4-3"
+    },
+    {
+      "timestamp": "2025-12-28T23:47:02.044371Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Rename skill directory",
+      "content": "Renamed skills/sdd-fidelity-review to skills/sdd-review. Directory verified.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-5-1"
+    },
+    {
+      "timestamp": "2025-12-28T23:47:19.949724Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update SKILL.md frontmatter",
+      "content": "Updated SKILL.md frontmatter: name changed from sdd-fidelity-review to sdd-review. Phase 5 complete.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-5-2"
+    },
+    {
+      "timestamp": "2025-12-28T23:51:11.178146Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update CLAUDE.md workflow",
+      "content": "Updated CLAUDE.md workflow diagram from 9-skill chain to simplified 6-skill chain (sdd-plan \u2192 sdd-next \u2192 sdd-review \u2192 run-tests \u2192 sdd-pr). Updated skill selection table to show 6 consolidated skills. Removed all references to deleted skills (sdd-plan-review, sdd-modify, sdd-update, sdd-fidelity-review, sdd-validate). Updated Common Workflows section to reflect consolidated skill capabilities.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-6-1"
+    },
+    {
+      "timestamp": "2025-12-29T12:07:41.379291Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Update next-cmd references",
+      "content": "Updated sdd-next references to remove sdd-update dependency. Changed checklist.md, troubleshooting.md, and verification.md to use `task action=\\\"complete\\\"` directly instead of `Skill(foundry:sdd-update)`. Also updated sdd-modify reference to sdd-plan and sdd-fidelity-review references to sdd-review. All sdd-update references removed from sdd-next skill directory.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-6-2"
+    },
+    {
+      "timestamp": "2025-12-29T12:21:12.233208Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Test sdd-plan workflow",
+      "content": "Verified sdd-plan has integrated workflow with automatic review, modification, and validation. SKILL.md clearly documents: (1) AI review via review action=spec-review, (2) modification via spec action=apply-plan, (3) validation via spec action=validate/fix. All 16 reference docs present. Fixed stale sdd-update reference on line 63.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-7-1"
+    },
+    {
+      "timestamp": "2025-12-29T12:22:59.657588Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Test sdd-next workflow",
+      "content": "Verified sdd-next implements task workflow with auto-completion and journaling. MCP tooling table includes task router with complete action. Flow diagram shows PostImpl uses task action=complete + auto-journal. Implementation Handoff section (lines 213-223) documents atomic complete behavior. 11 reference docs present including task-lifecycle.md and journaling.md. No sdd-update references remain.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-7-2"
+    },
+    {
+      "timestamp": "2025-12-29T12:26:00.381308Z",
+      "entry_type": "status_change",
+      "title": "Task Completed: Test sdd-review invocation",
+      "content": "Verified sdd-review skill activates with new name. Fixed stale references: updated Overview to use sdd-review, updated Skill Family workflow to consolidated 6-skill chain, removed sdd-update from Do NOT use section, fixed example invocation, updated examples.md and integration.md references. Frontmatter correctly shows name: sdd-review. No stale references remain.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "verify-7-3"
+    }
+  ]
+}

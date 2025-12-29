@@ -40,10 +40,8 @@ HOW TO FIX:
 
   PRIMARY: Use Skills (recommended)
   ─────────────────────────────────
-  Skill(sdd-next)      - Get next task with full implementation context
-  Skill(sdd-update)    - Update task status, complete tasks, add journals
-  Skill(sdd-validate)  - Validate spec and auto-fix issues
-  Skill(sdd-modify)    - Add/remove tasks, apply structural changes
+  Skill(sdd-implement) - Get next task with full implementation context
+  Skill(sdd-plan)      - Create specs, apply modifications, validate
 
   ALTERNATIVE: MCP tools (for granular operations)
   ────────────────────────────────────────────────
@@ -57,13 +55,13 @@ HOW TO FIX:
 
 EXAMPLES:
   Querying: Instead of python -c "import json; ..." or jq on specs
-    Use: Skill(sdd-next) OR mcp__plugin_foundry_foundry-mcp__task action="query" spec_id="my-spec" status="pending"
+    Use: Skill(sdd-implement) OR mcp__plugin_foundry_foundry-mcp__task action="query" spec_id="my-spec" status="pending"
 
   Modifying: Instead of Python script or sed/awk on spec JSON
-    Use: Skill(sdd-modify) OR mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="..."
+    Use: Skill(sdd-plan) OR mcp__plugin_foundry_foundry-mcp__spec action="apply-plan" spec_id="..."
 
   Reading: Instead of cat specs/active/my-spec.json
-    Use: Skill(sdd-next) OR mcp__plugin_foundry_foundry-mcp__task action="prepare" spec_id="my-spec"
+    Use: Skill(sdd-implement) OR mcp__plugin_foundry_foundry-mcp__task action="prepare" spec_id="my-spec"
 
 ⚠️  CRITICAL: ALL spec file access must go through Skills or MCP tools.
    If Read() is blocked, Bash file I/O is also blocked. Use the tools above.

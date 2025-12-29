@@ -26,27 +26,24 @@ Explain each stage of the workflow and how they connect:
 
 ```
 - **Entry** → sdd-plan (Create spec)
-  - → sdd-plan-review (Refine)
-  - → sdd-next (Find task)
-  - → [Implement] (Write code)
-  - → sdd-update (Track progress)
+  - → sdd-implement (Find task)
+  - → [CODE] (Write code)
+  - → sdd-review (Verify implementation)
   - → run-tests (Verify quality)
   - → sdd-pr → **Exit**
 ```
 
 For each stage, explain its purpose conversationally:
 
-1. **Planning** - "This is where you describe what you want to build. The sdd-plan skill helps Claude create a structured spec with phases, tasks, and acceptance criteria."
+1. **Planning** - "This is where you describe what you want to build. The sdd-plan skill helps Claude create a structured spec with phases, tasks, and acceptance criteria. It includes automatic AI review, modification, and validation."
 
-2. **Review** - "Before implementing, it's worth having the spec reviewed. sdd-plan-review can consult multiple AI models to catch issues early."
+2. **Implementation** - "Now you work through tasks one by one. sdd-implement finds your next task, gives you context, and tracks completion automatically."
 
-3. **Implementation** - "Now you work through tasks one by one. sdd-next finds your next task and gives you all the context you need."
+3. **Review** - "sdd-review verifies your implementation matches the spec requirements."
 
-4. **Progress Tracking** - "As you complete tasks, sdd-update marks them done and journals your decisions. This creates an audit trail."
+4. **Quality** - "run-tests validates your code passes tests and helps debug failures."
 
-5. **Quality** - "run-tests and sdd-fidelity-review help verify your code matches the spec and passes tests."
-
-6. **Delivery** - "When ready, sdd-pr creates a comprehensive PR description from your spec and journal entries."
+5. **Delivery** - "When ready, sdd-pr creates a comprehensive PR description from your spec and journal entries."
 
 ---
 
@@ -90,16 +87,14 @@ If yes:
   - "Delete it - I understand the concept now"
 
 4. Execute the chosen action:
-   - If "activate and walk through": Call `mcp__plugin_foundry_foundry-mcp__lifecycle action="activate"`, then invoke `Skill(sdd-next) "Sample spec activated via /foundry-tutorial. Walk the user through their first task to demonstrate the SDD workflow."`
+   - If "activate and walk through": Call `mcp__plugin_foundry_foundry-mcp__lifecycle action="activate"`, then invoke `Skill(sdd-implement) "Sample spec activated via /foundry-tutorial. Walk the user through their first task to demonstrate the SDD workflow."`
    - If "keep in pending": Just confirm it's saved
    - If "delete": Remove it and confirm
 
 5. After demonstrating task preparation, explain that this was a simplified introduction:
 
-> "This tutorial showed the core workflow: `sdd-plan` to create specs and `sdd-next` to prepare tasks. The full SDD workflow also includes:
-> - `sdd-plan-review` - Get AI feedback on your spec before implementing
-> - `sdd-update` - Track progress and journal decisions as you work
-> - `sdd-fidelity-review` - Verify your implementation matches the spec
+> "This tutorial showed the core workflow: `sdd-plan` to create specs and `sdd-implement` to prepare and complete tasks. The full SDD workflow also includes:
+> - `sdd-review` - Verify your implementation matches the spec
 > - `run-tests` - Run and debug tests
 > - `sdd-pr` - Create a PR with full context from your spec and journal
 >
@@ -116,10 +111,10 @@ If yes:
 Based on the user's state, recommend the most logical next action:
 
 **If they created and activated a sample spec:**
-> "You're all set! Your sample spec is active and ready. Try asking me to run `sdd-next` - I'll show you how task preparation works and walk you through completing your first task."
+> "You're all set! Your sample spec is active and ready. Try asking me to run `sdd-implement` - I'll show you how task preparation works and walk you through completing your first task."
 
 **If they have existing specs:**
-> "You're all set! I see you already have specs in your workspace. Run `/next-cmd` anytime to pick up where you left off, or ask me to create a new spec with `sdd-plan`."
+> "You're all set! I see you already have specs in your workspace. Run `/implement` anytime to pick up where you left off, or ask me to create a new spec with `sdd-plan`."
 
 **If they have a clean workspace:**
 > "You're all set! When you're ready to start a feature, just describe what you want to build and ask me to use `sdd-plan`. I'll create a detailed spec and we can work through it together."
@@ -128,8 +123,8 @@ Based on the user's state, recommend the most logical next action:
 
 > "A few resources if you want to go deeper:
 >
-> - **Re-run tutorial:** `/tutorial-cmd` is safe to run anytime if you need a refresher
-> - **Re-run setup:** `/setup-cmd` to check or update your configuration
+> - **Re-run tutorial:** `/tutorial` is safe to run anytime if you need a refresher
+> - **Re-run setup:** `/setup` to check or update your configuration
 >
 > Feel free to ask me questions anytime - I'm here to help you get the most out of SDD!"
 

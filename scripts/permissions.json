@@ -3,7 +3,7 @@
   "version": "2.1.0",
   "categories": {
     "skills": {
-      "description": "All foundry plugin skills (sdd-plan, sdd-next, etc.)",
+      "description": "All foundry plugin skills (sdd-plan, sdd-implement, etc.)",
       "allow": [
         "Skill(foundry:*)"
       ]

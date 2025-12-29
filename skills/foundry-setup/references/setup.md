@@ -273,7 +273,7 @@ To enable multi-model features like plan reviews, install one of:
 - opencode CLI: https://github.com/opencode-ai/opencode
 - codex CLI: https://github.com/openai/codex
 
-Then re-run `/setup-cmd` or manually edit foundry-mcp.toml.
+Then re-run `/setup` or manually edit foundry-mcp.toml.
 ```
 
 ---
@@ -371,7 +371,7 @@ Summarize what was configured:
 - Test runner configured (runner name, or note if skipped/already configured)
 
 **Important:** If permissions were added or modified, display:
-> "**Restart Claude Code** for the permission changes to take effect. After restarting, run `/tutorial-cmd` if this is your first time using the plugin."
+> "**Restart Claude Code** for the permission changes to take effect. After restarting, run `/tutorial` if this is your first time using the plugin."
 
 If no permissions were changed, end with:
-> "Setup complete! If this is your first time using the plugin, run `/tutorial-cmd` to learn about Spec-Driven Development and see the workflow in action."
+> "Setup complete! If this is your first time using the plugin, run `/tutorial` to learn about Spec-Driven Development and see the workflow in action."

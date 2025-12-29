@@ -5,24 +5,21 @@ Spec-driven development (SDD) toolkit for Claude Code. Plan before code, verify 
 ## Workflow
 
 ```
-sdd-plan → sdd-plan-review → sdd-modify → sdd-next → [IMPLEMENT] → sdd-update → sdd-fidelity-review → run-tests → sdd-pr
+sdd-plan → sdd-implement → [CODE] → sdd-review → run-tests → sdd-pr
 ```
 
-**Supporting skills:** sdd-validate (spec validation)
+**Supporting skill:** sdd-refactor (LSP-powered refactoring)
 
 ## Skill Selection
 
 | When you need to... | Use |
 |---------------------|-----|
-| Create a spec for new work | `sdd-plan` |
-| Get AI feedback on a spec | `sdd-plan-review` |
-| Apply review feedback to spec | `sdd-modify` |
-| Find the next task to implement | `sdd-next` |
-| Mark tasks complete/track progress | `sdd-update` |
-| Verify implementation matches spec | `sdd-fidelity-review` |
+| Create/review/modify a spec | `sdd-plan` |
+| Find next task, implement, track progress | `sdd-implement` |
+| Verify implementation matches spec | `sdd-review` |
 | Run tests and debug failures | `run-tests` |
 | Create PR with spec context | `sdd-pr` |
-| Validate spec JSON structure | `sdd-validate` |
+| Safe refactoring with LSP | `sdd-refactor` |
 
 ## Key Patterns
 
@@ -42,18 +39,17 @@ sdd-plan → sdd-plan-review → sdd-modify → sdd-next → [IMPLEMENT] → sdd
 
 ### Starting New Work
 1. Invoke `sdd-plan` - creates spec in `specs/pending/`
-2. Run `sdd-plan-review` for AI feedback
-3. Apply fixes with `sdd-modify`
-4. Activate spec (moves to `specs/active/`)
+2. Review and refine spec (plan-review and modify are built into sdd-plan)
+3. Activate spec (moves to `specs/active/`)
 
 ### Resuming Active Work
-1. Use `sdd-next` to find next actionable task
+1. Use `sdd-implement` to find next actionable task
 2. Implement the task
-3. Update status with `sdd-update` (uses `task action="complete"`)
+3. Complete task via `sdd-implement` workflow (tracks progress automatically)
 4. Continue until phase complete
 
 ### Completing a Phase
-1. Run `sdd-fidelity-review` to verify implementation
+1. Run `sdd-review` to verify implementation matches spec
 2. Execute `run-tests` to validate functionality
 3. Create PR with `sdd-pr` when ready
 
