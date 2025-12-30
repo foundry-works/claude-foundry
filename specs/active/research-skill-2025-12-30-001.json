@@ -1,0 +1,572 @@
+{
+  "spec_id": "research-skill-2025-12-30-001",
+  "title": "research-skill",
+  "generated": "2025-12-30T19:11:28.105886Z",
+  "last_updated": "2025-12-30T20:20:25.808475+00:00",
+  "metadata": {
+    "description": "",
+    "mission": "Create a new research skill and /research command for claude-foundry that leverages the foundry-mcp research router with four AI-powered workflows (chat, consensus, thinkdeep, ideate) and persistent thread management.",
+    "objectives": [],
+    "complexity": "medium",
+    "estimated_hours": 15,
+    "assumptions": [],
+    "owner": "",
+    "category": "implementation",
+    "template": "medium"
+  },
+  "progress_percentage": 100,
+  "status": "completed",
+  "current_phase": "phase-1",
+  "hierarchy": {
+    "spec-root": {
+      "type": "spec",
+      "title": "research-skill",
+      "status": "completed",
+      "parent": null,
+      "children": [
+        "phase-3",
+        "phase-4",
+        "phase-5",
+        "phase-6"
+      ],
+      "total_tasks": 13,
+      "completed_tasks": 0,
+      "metadata": {
+        "purpose": "",
+        "category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-3": {
+      "type": "phase",
+      "title": "Core Skill Infrastructure",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-3-1",
+        "task-3-2",
+        "verify-3-1"
+      ],
+      "total_tasks": 3,
+      "completed_tasks": 3,
+      "metadata": {
+        "purpose": "",
+        "description": "Create the main SKILL.md file and command entry point with routing logic"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-4"
+        ],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-3-1": {
+      "type": "task",
+      "title": "Create skills/research/SKILL.md",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Main skill file with frontmatter (name, description), overview of four capabilities, MCP tooling table, flow notation, workflow selection table, user gates list, and reference links. Body must be < 2000 chars.",
+        "file_path": "skills/research/SKILL.md",
+        "acceptance_criteria": [
+          "Frontmatter has name='research' and description <= 1024 chars",
+          "Body includes MCP tooling table for research router",
+          "Flow notation shows auto-route vs explicit workflow dispatch",
+          "Workflow selection table maps intent signals to workflows",
+          "User gates section lists mandatory AskUserQuestion points",
+          "Reference links to all workflow and supporting docs",
+          "MCP Contract section with actions, required/optional params, and error codes",
+          "Output format templates for each workflow type"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-3-2": {
+      "type": "task",
+      "title": "Create commands/research.md",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Command entry point with argument parsing and routing logic for explicit workflows, thread resume, auto-routing, and thread management sub-commands.",
+        "file_path": "commands/research.md",
+        "acceptance_criteria": [
+          "Frontmatter with name, description, argument-hint",
+          "Routes explicit workflow keywords (chat, consensus, thinkdeep, ideate)",
+          "Routes 'threads' to thread management sub-commands (list, get, delete)",
+          "Detects thread-* IDs for resume with regex validation",
+          "Falls back to auto-route for natural prompts",
+          "Uses AskUserQuestion when no arguments provided",
+          "Behavior matrix mapping input patterns to expected responses and error handling",
+          "Ambiguity gate UX with standard prompt format"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-3-1": {
+      "type": "verify",
+      "title": "Verify core skill structure",
+      "status": "completed",
+      "parent": "phase-3",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Verify SKILL.md and command follow established patterns",
+        "verification_type": "manual",
+        "acceptance_criteria": [
+          "SKILL.md body < 2000 chars",
+          "Frontmatter matches schema",
+          "Command routing logic is complete",
+          "Canonical test prompts for each workflow with expected routing",
+          "Negative test cases: missing args, invalid thread ID, ambiguous routing"
+        ]
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-4": {
+      "type": "phase",
+      "title": "Workflow References",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-4-1",
+        "task-4-2",
+        "task-4-3",
+        "task-4-4",
+        "verify-4-1"
+      ],
+      "total_tasks": 5,
+      "completed_tasks": 5,
+      "metadata": {
+        "purpose": "",
+        "description": "Create detailed reference documentation for each of the four research workflows"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-5"
+        ],
+        "blocked_by": [
+          "phase-3"
+        ],
+        "depends": []
+      }
+    },
+    "task-4-1": {
+      "type": "task",
+      "title": "Create references/chat-workflow.md",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Document single-model conversation workflow with thread persistence",
+        "file_path": "skills/research/references/chat-workflow.md",
+        "acceptance_criteria": [
+          "When to use section (follow-ups, iterative refinement)",
+          "MCP usage with action='chat' parameters",
+          "Parameters table (prompt, thread_id, model)",
+          "Session flow with continuation gate"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-4-2": {
+      "type": "task",
+      "title": "Create references/consensus-workflow.md",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Document multi-model parallel consultation with synthesis strategies",
+        "file_path": "skills/research/references/consensus-workflow.md",
+        "acceptance_criteria": [
+          "When to use section (multiple perspectives, validation)",
+          "Synthesis strategies table (all_responses, synthesize, majority, first_valid)",
+          "MCP usage with action='consensus' parameters",
+          "User gate for strategy selection",
+          "Result presentation formats for each strategy",
+          "Fallback policy for unavailable models (drop, retry smaller set, or ask user)"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-4-3": {
+      "type": "task",
+      "title": "Create references/thinkdeep-workflow.md",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Document hypothesis-driven systematic investigation workflow",
+        "file_path": "skills/research/references/thinkdeep-workflow.md",
+        "acceptance_criteria": [
+          "When to use section (complex problems, debugging, root cause)",
+          "Confidence levels table (speculation -> confirmed)",
+          "MCP usage with action='thinkdeep' parameters",
+          "Investigation flow diagram",
+          "Findings format template"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-4-4": {
+      "type": "task",
+      "title": "Create references/ideate-workflow.md",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Document creative brainstorming with four-phase structure",
+        "file_path": "skills/research/references/ideate-workflow.md",
+        "acceptance_criteria": [
+          "When to use section (brainstorming, creative problem-solving)",
+          "Four phases table (divergent, convergent, selection, elaboration)",
+          "MCP usage with action='ideate' parameters",
+          "User gates at phase transitions",
+          "Phase-specific guidance for each phase"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-4-1": {
+      "type": "verify",
+      "title": "Verify workflow references",
+      "status": "completed",
+      "parent": "phase-4",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Verify all workflow reference files are complete and consistent",
+        "verification_type": "manual"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-5": {
+      "type": "phase",
+      "title": "Supporting References",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-5-1",
+        "task-5-2",
+        "task-5-3"
+      ],
+      "total_tasks": 3,
+      "completed_tasks": 3,
+      "metadata": {
+        "purpose": "",
+        "description": "Create supporting reference documentation for thread management, auto-routing, and troubleshooting"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-6"
+        ],
+        "blocked_by": [
+          "phase-4"
+        ],
+        "depends": []
+      }
+    },
+    "task-5-1": {
+      "type": "task",
+      "title": "Create references/thread-management.md",
+      "status": "completed",
+      "parent": "phase-5",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Document thread persistence operations and lifecycle",
+        "file_path": "skills/research/references/thread-management.md",
+        "acceptance_criteria": [
+          "Thread lifecycle (created -> active -> archived -> deleted)",
+          "MCP operations (thread-list, thread-get, thread-delete)",
+          "Deletion confirmation gate",
+          "Surfacing threads as interactive choices",
+          "Auto-cleanup behavior documentation",
+          "Thread ownership: foundry-mcp is single source of truth",
+          "Storage interface and cache/refresh rules (always read from MCP on resume)",
+          "Data handling policy: retention duration, hard vs soft delete, redaction guidance",
+          "Thread ID format with regex pattern and invalid ID handling"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-5-2": {
+      "type": "task",
+      "title": "Create references/auto-routing.md",
+      "status": "completed",
+      "parent": "phase-5",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Document workflow detection and routing logic",
+        "file_path": "skills/research/references/auto-routing.md",
+        "acceptance_criteria": [
+          "Signal detection per workflow (chat, consensus, thinkdeep, ideate)",
+          "Routing algorithm with score-based confidence threshold",
+          "Ambiguity gate when scores are close",
+          "Default to chat fallback behavior",
+          "Auto-routing lives in skill (SKILL.md), not MCP router",
+          "Shared logic pattern between command and skill documented"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-5-3": {
+      "type": "task",
+      "title": "Create references/troubleshooting.md",
+      "status": "completed",
+      "parent": "phase-5",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Document common issues and solutions for all workflows",
+        "file_path": "skills/research/references/troubleshooting.md",
+        "acceptance_criteria": [
+          "Thread issues (not found, corruption)",
+          "Consensus issues (model unavailable, synthesis failure)",
+          "ThinkDeep issues (investigation loops)",
+          "Ideate issues (stuck in phase, idea overflow)",
+          "General issues (context bloat, timeouts)"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-6": {
+      "type": "phase",
+      "title": "Integration",
+      "status": "completed",
+      "parent": "spec-root",
+      "children": [
+        "task-6-1",
+        "verify-6-1"
+      ],
+      "total_tasks": 2,
+      "completed_tasks": 2,
+      "metadata": {
+        "purpose": "",
+        "description": "Update project documentation to include the new research skill"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [
+          "phase-5"
+        ],
+        "depends": []
+      }
+    },
+    "task-6-1": {
+      "type": "task",
+      "title": "Update CLAUDE.md skill selection table",
+      "status": "completed",
+      "parent": "phase-6",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Add research skill to the skill selection table in CLAUDE.md",
+        "file_path": "CLAUDE.md",
+        "acceptance_criteria": [
+          "Add row for research skill with appropriate 'When you need to...' description",
+          "Follows existing table format"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-6-1": {
+      "type": "verify",
+      "title": "End-to-end skill verification",
+      "status": "completed",
+      "parent": "phase-6",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 1,
+      "metadata": {
+        "description": "Verify the complete research skill is functional",
+        "verification_type": "manual",
+        "acceptance_criteria": [
+          "/research command invokes skill correctly",
+          "Auto-routing detects workflow intent",
+          "Explicit sub-commands work (chat, consensus, thinkdeep, ideate, threads)",
+          "Thread persistence works across invocations",
+          "E2E scenario checklist with pass/fail criteria",
+          "Test prompts: 'What are the pros and cons of X' -> consensus",
+          "Test prompts: 'Why is my code failing' -> thinkdeep",
+          "Test prompts: 'Ideas for improving Y' -> ideate",
+          "Test prompts: 'Tell me about Z' -> chat",
+          "Negative tests: invalid thread resume, unavailable model handling"
+        ]
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    }
+  },
+  "journal": [
+    {
+      "timestamp": "2025-12-30T19:33:38.803619+00:00",
+      "type": "task_completion",
+      "task_id": "task-3-1",
+      "note": "Created skills/research/SKILL.md with all 8 acceptance criteria met: frontmatter (name, description 248 chars), MCP tooling table, flow notation showing auto-route vs explicit dispatch, workflow selection table, user gates section, reference links, MCP contract with params/errors, output format templates. Body: 1998 chars (under 2000 limit)."
+    },
+    {
+      "timestamp": "2025-12-30T19:51:07.021850+00:00",
+      "type": "task_completion",
+      "task_id": "task-3-2",
+      "note": "Created commands/research.md with all 8 acceptance criteria met: frontmatter (name, description, argument-hint), explicit workflow routing (chat/consensus/thinkdeep/ideate), threads sub-commands (list/get/delete), thread-* regex detection for resume, auto-route fallback, AskUserQuestion for no args, behavior matrix with error handling, ambiguity gate UX."
+    },
+    {
+      "timestamp": "2025-12-30T19:53:22.018962+00:00",
+      "type": "task_completion",
+      "task_id": "verify-3-1",
+      "note": "Verification passed: SKILL.md body 1998 chars (<2000), frontmatter schema valid for both files, all 8 routes present in command, behavior matrix covers all workflows, negative cases (missing args, invalid thread, ambiguity) handled."
+    },
+    {
+      "timestamp": "2025-12-30T19:56:37.243633+00:00",
+      "type": "task_completion",
+      "task_id": "task-4-1",
+      "note": "Created chat-workflow.md with: When to Use section, MCP usage with action=chat, parameters table (prompt/thread_id/model), session flow with continuation gate."
+    },
+    {
+      "timestamp": "2025-12-30T19:57:20.272431+00:00",
+      "type": "task_completion",
+      "task_id": "task-4-2",
+      "note": "Created consensus-workflow.md with: When to Use, synthesis strategies table (4 strategies), MCP usage, user gate for strategy selection, result presentation formats for each strategy, fallback policy with user prompts."
+    },
+    {
+      "timestamp": "2025-12-30T19:58:00.131242+00:00",
+      "type": "task_completion",
+      "task_id": "task-4-3",
+      "note": "Created thinkdeep-workflow.md with: When to Use, confidence levels table (4 levels), MCP usage, investigation flow diagram (5 stages), findings format template with hypotheses/conclusion/next_steps."
+    },
+    {
+      "timestamp": "2025-12-30T19:58:40.454761+00:00",
+      "type": "task_completion",
+      "task_id": "task-4-4",
+      "note": "Created ideate-workflow.md with: When to Use, four phases table, MCP usage, user gates at all 3 phase transitions, phase-specific guidance for all 4 phases."
+    },
+    {
+      "timestamp": "2025-12-30T19:59:25.772050+00:00",
+      "type": "task_completion",
+      "task_id": "verify-4-1",
+      "note": "Verified all 4 workflow references: chat (5 sections), consensus (6 sections), thinkdeep (5 sections), ideate (5 sections). All required sections present."
+    },
+    {
+      "timestamp": "2025-12-30T20:12:45.038489+00:00",
+      "type": "task_completion",
+      "task_id": "task-5-1",
+      "note": "Created thread-management.md with all 9 criteria: lifecycle states, MCP operations, deletion gate, interactive choices, auto-cleanup, ownership, storage interface, data handling policy, thread ID format with regex."
+    },
+    {
+      "timestamp": "2025-12-30T20:13:23.949140+00:00",
+      "type": "task_completion",
+      "task_id": "task-5-2",
+      "note": "Created auto-routing.md with: signal detection per workflow, routing algorithm with thresholds, ambiguity gate, chat fallback, shared logic pattern documented."
+    },
+    {
+      "timestamp": "2025-12-30T20:14:03.190517+00:00",
+      "type": "task_completion",
+      "task_id": "task-5-3",
+      "note": "Created troubleshooting.md covering: thread issues (not found, corruption), consensus issues (no models, synthesis failure), thinkdeep issues (loops, max depth), ideate issues (stuck, overflow), general issues (context bloat, timeouts)."
+    },
+    {
+      "timestamp": "2025-12-30T20:19:34.858738+00:00",
+      "type": "task_completion",
+      "task_id": "task-6-1",
+      "note": "Added research skill to CLAUDE.md skill selection table: \"AI research (chat, consensus, thinkdeep, ideate) | /research\""
+    },
+    {
+      "timestamp": "2025-12-30T20:20:25.808489+00:00",
+      "type": "task_completion",
+      "task_id": "verify-6-1",
+      "note": "End-to-end verification passed: all 9 files exist, command routes to skill correctly, auto-routing signals documented for all 4 workflows, test prompt patterns covered, negative test handling documented, cross-references valid, CLAUDE.md integration complete."
+    },
+    {
+      "timestamp": "2025-12-30T20:20:25.808492+00:00",
+      "type": "spec_completion",
+      "note": "Spec research-skill-2025-12-30-001 completed. Created /research skill with 4 workflows (chat, consensus, thinkdeep, ideate), persistent thread management, auto-routing, and full documentation."
+    }
+  ]
+}
