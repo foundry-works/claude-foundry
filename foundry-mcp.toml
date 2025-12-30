@@ -16,6 +16,7 @@ version = "0.3.3"
 
 [features]
 research_tools = true
+intake_tools = true
 
 [workflow]
 mode = "task"
