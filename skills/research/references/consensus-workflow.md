@@ -2,6 +2,16 @@
 
 Multi-model parallel consultation with configurable synthesis strategies.
 
+## Contents
+
+- When to Use
+- MCP Usage
+- Parameters
+- Synthesis Strategies
+- User Gate: Strategy Selection
+- Result Presentation
+- Fallback Policy
+
 ## When to Use
 
 - **Multiple perspectives** needed on a question

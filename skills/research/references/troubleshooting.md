@@ -2,6 +2,16 @@
 
 Common issues and resolutions for research workflows.
 
+## Contents
+
+- Thread Issues
+- Consensus Issues
+- ThinkDeep Issues
+- Ideate Issues
+- Deep Research Issues
+- General Issues
+- Error Code Reference
+
 ## Thread Issues
 
 ### THREAD_NOT_FOUND
@@ -102,6 +112,60 @@ Common issues and resolutions for research workflows.
 2. Apply quick filter: "Keep only top 20 by feasibility"
 3. Split into multiple ideation sessions by theme
 
+## Deep Research Issues
+
+### RESEARCH_NOT_FOUND
+**Symptom:** Error when checking status or getting report.
+
+**Causes:**
+- Research session was deleted
+- Typo in research ID
+- Session expired
+
+**Resolution:**
+1. Verify research ID format: `research-[alphanumeric]`
+2. List available sessions: `/research sessions list type=research`
+3. Start new research if original unavailable
+
+### RESEARCH_TIMEOUT
+**Symptom:** Research task exceeded time limit.
+
+**Causes:**
+- Query too broad, generating many sub-queries
+- Slow source responses
+- Network issues
+
+**Resolution:**
+1. Retry with higher `task_timeout` parameter
+2. Narrow query scope
+3. Reduce `max_iterations` or `max_sub_queries`
+
+### NO_SOURCES_FOUND
+**Symptom:** Research completes but with no useful sources.
+
+**Causes:**
+- Query too narrow or obscure
+- Search terms not web-friendly
+- Sources blocked or unavailable
+
+**Resolution:**
+1. Broaden query terms
+2. Rephrase as natural search query
+3. Try alternative phrasing
+
+### Incomplete Report
+**Symptom:** Report missing sections or has low confidence.
+
+**Causes:**
+- Research interrupted before completion
+- Insufficient sources found
+- Conflicting information in sources
+
+**Resolution:**
+1. Check session status for actual state
+2. Resume research if `failed` state
+3. Accept partial findings or start new session with refined query
+
 ## General Issues
 
 ### Context Bloat
@@ -149,3 +213,7 @@ Common issues and resolutions for research workflows.
 | `MAX_DEPTH_EXCEEDED` | ThinkDeep hit depth limit | Conclude or narrow scope |
 | `INVALID_PHASE` | Unknown ideate phase | Use: divergent, convergent, selection, elaboration |
 | `INVALID_THREAD_ID` | Malformed thread ID | Check format: thread-[alphanumeric] |
+| `RESEARCH_NOT_FOUND` | Research ID invalid or deleted | List sessions, start new |
+| `RESEARCH_TIMEOUT` | Deep research exceeded timeout | Increase timeout or narrow query |
+| `NO_SOURCES_FOUND` | No web sources found | Broaden or rephrase query |
+| `RATE_LIMITED` | Too many concurrent requests | Wait and retry |

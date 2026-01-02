@@ -1,0 +1,251 @@
+{
+  "spec_id": "simplify-run-tests-skill-2026-01-02-001",
+  "title": "simplify-run-tests-skill",
+  "generated": "2026-01-02T20:16:47.777963Z",
+  "last_updated": "2026-01-02T20:17:21.689733Z",
+  "metadata": {
+    "description": "",
+    "mission": "Simplify run-tests skill to use language-agnostic framework auto-detection via Bash instead of MCP test tool",
+    "objectives": [],
+    "complexity": "low",
+    "estimated_hours": 0,
+    "assumptions": [],
+    "owner": "",
+    "category": "implementation",
+    "template": "empty"
+  },
+  "progress_percentage": 0,
+  "status": "pending",
+  "current_phase": null,
+  "hierarchy": {
+    "spec-root": {
+      "type": "spec",
+      "title": "simplify-run-tests-skill",
+      "status": "pending",
+      "parent": null,
+      "children": [
+        "phase-1",
+        "phase-2"
+      ],
+      "total_tasks": 7,
+      "completed_tasks": 0,
+      "metadata": {
+        "purpose": "",
+        "category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-1": {
+      "type": "phase",
+      "title": "Rewrite SKILL.md",
+      "status": "pending",
+      "parent": "spec-root",
+      "children": [
+        "task-1-1",
+        "task-1-2",
+        "task-1-3",
+        "task-1-4",
+        "task-1-5"
+      ],
+      "total_tasks": 5,
+      "completed_tasks": 0,
+      "metadata": {
+        "purpose": "",
+        "description": "Major rewrite of run-tests skill to remove MCP test tool dependency and add framework auto-detection"
+      },
+      "dependencies": {
+        "blocks": [
+          "phase-2"
+        ],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-1-1": {
+      "type": "task",
+      "title": "Remove MCP test tool references",
+      "status": "pending",
+      "parent": "phase-1",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 0,
+      "metadata": {
+        "description": "Remove MCP Tooling section, test presets section, mandatory consultation workflow, mcp__task references, and pytest-specific description",
+        "file_path": "skills/run-tests/SKILL.md",
+        "acceptance_criteria": [
+          "No mcp__test references remain",
+          "No pytest-specific presets (quick, unit, integration, full)",
+          "No mandatory consultation requirement"
+        ],
+        "task_category": "refactoring"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-1-2": {
+      "type": "task",
+      "title": "Add framework detection section",
+      "status": "pending",
+      "parent": "phase-1",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 0,
+      "metadata": {
+        "description": "Add language-agnostic framework detection table covering Node.js, Python, Rust, Go, Java, .NET with detection order",
+        "file_path": "skills/run-tests/SKILL.md",
+        "acceptance_criteria": [
+          "Detection table includes 7+ ecosystems",
+          "Detection order prioritizes Makefile then language-specific configs",
+          "Includes guidance to ask user if ambiguous"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-1-3": {
+      "type": "task",
+      "title": "Add test execution section",
+      "status": "pending",
+      "parent": "phase-1",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 0,
+      "metadata": {
+        "description": "Add section showing Bash execution with timeout and framework-specific syntax for targeting specific tests",
+        "file_path": "skills/run-tests/SKILL.md",
+        "acceptance_criteria": [
+          "Shows Bash command with timeout",
+          "Includes examples for Node.js, Python, Go, Rust"
+        ],
+        "task_category": "implementation"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-1-4": {
+      "type": "task",
+      "title": "Simplify core workflow",
+      "status": "pending",
+      "parent": "phase-1",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 0,
+      "metadata": {
+        "description": "Reduce workflow to: DetectFramework \u2192 RunTests (Bash) \u2192 Pass/Fail \u2192 Investigate \u2192 Fix \u2192 Verify",
+        "file_path": "skills/run-tests/SKILL.md",
+        "acceptance_criteria": [
+          "Workflow is simplified from 5-phase to streamlined flow",
+          "No mandatory external tool dependencies"
+        ],
+        "task_category": "refactoring"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "task-1-5": {
+      "type": "task",
+      "title": "Make AI consultation optional",
+      "status": "pending",
+      "parent": "phase-1",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 0,
+      "metadata": {
+        "description": "Change AI consultation from mandatory to optional, provide guidance on when to use vs skip",
+        "file_path": "skills/run-tests/SKILL.md",
+        "acceptance_criteria": [
+          "Consultation marked as optional",
+          "Clear guidance on when to use (complex issues) vs skip (obvious fixes)"
+        ],
+        "task_category": "refactoring"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "phase-2": {
+      "type": "phase",
+      "title": "Update Related Files",
+      "status": "pending",
+      "parent": "spec-root",
+      "children": [
+        "task-2-1",
+        "verify-2-1"
+      ],
+      "total_tasks": 2,
+      "completed_tasks": 0,
+      "metadata": {
+        "purpose": "",
+        "description": "Update files that reference the MCP test tool"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [
+          "phase-1"
+        ],
+        "depends": []
+      }
+    },
+    "task-2-1": {
+      "type": "task",
+      "title": "Update modification-operations.md verification example",
+      "status": "pending",
+      "parent": "phase-2",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 0,
+      "metadata": {
+        "description": "Change verification example from mcp_tool reference to generic description",
+        "file_path": "skills/sdd-plan/references/modification-operations.md",
+        "acceptance_criteria": [
+          "No mcp__test reference in verification example",
+          "Uses generic 'Run test suite via detected test command' description"
+        ],
+        "task_category": "refactoring"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    },
+    "verify-2-1": {
+      "type": "verify",
+      "title": "Verify reference files coherence",
+      "status": "pending",
+      "parent": "phase-2",
+      "children": [],
+      "total_tasks": 1,
+      "completed_tasks": 0,
+      "metadata": {
+        "description": "Review run-tests reference files to ensure they are still coherent with the simplified skill",
+        "verification_type": "manual"
+      },
+      "dependencies": {
+        "blocks": [],
+        "blocked_by": [],
+        "depends": []
+      }
+    }
+  },
+  "journal": []
+}

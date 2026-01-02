@@ -1,6 +1,6 @@
 ---
 name: research
-description: AI-powered research skill with four workflows - chat (single-model conversation), consensus (multi-model synthesis), thinkdeep (systematic investigation), and ideate (creative brainstorming). Supports persistent threads for conversation continuity.
+description: AI-powered research skill with five workflows - chat (single-model conversation), consensus (multi-model synthesis), thinkdeep (systematic investigation), ideate (creative brainstorming), and deep (multi-phase web research). Supports persistent threads and research sessions.
 ---
 
 # Research Skill
@@ -8,7 +8,7 @@ description: AI-powered research skill with four workflows - chat (single-model 
 ## Overview
 
 - **Purpose:** AI-powered research with multiple reasoning strategies
-- **Scope:** Four workflows, persistent thread management
+- **Scope:** Five workflows, persistent thread and session management
 - **Entry:** `/research` command or `Skill(foundry:research)`
 
 ### Flow
@@ -17,15 +17,17 @@ description: AI-powered research skill with four workflows - chat (single-model 
 
 ```
 - **Entry** → [explicit?] → Dispatch | [thread-id?] → Resume
-  | [threads?] → ThreadMgmt | [no args?] → (GATE) | AutoRoute
+  | [research-id?] → SessionMgmt | [sessions?] → ListSessions
+  | [no args?] → (GATE) | AutoRoute
 - **Dispatch** → Execute → PersistThread → Response + thread_id
+- **Deep** → Start → Poll → Report (background execution)
 ```
 
 ## MCP Tooling
 
 | Router | Actions |
 |--------|---------|
-| `research` | `chat`, `consensus`, `thinkdeep`, `ideate`, `thread-list`, `thread-get`, `thread-delete` |
+| `research` | `chat`, `consensus`, `thinkdeep`, `ideate`, `deep-research`, `deep-research-status`, `deep-research-report`, `deep-research-list`, `deep-research-delete`, `thread-list`, `thread-get`, `thread-delete` |
 
 ## MCP Contract
 
@@ -35,6 +37,11 @@ description: AI-powered research skill with four workflows - chat (single-model 
 | `consensus` | `prompt` | `models[]`, `strategy` | `NO_MODELS_AVAILABLE` |
 | `thinkdeep` | `prompt` | `thread_id`, `depth` | `MAX_DEPTH_EXCEEDED` |
 | `ideate` | `prompt` | `thread_id`, `phase` | `INVALID_PHASE` |
+| `deep-research` | `query` | `max_iterations`, `max_sub_queries`, `follow_links` | `RESEARCH_TIMEOUT` |
+| `deep-research-status` | `research_id` | - | `RESEARCH_NOT_FOUND` |
+| `deep-research-report` | `research_id` | - | `RESEARCH_NOT_FOUND` |
+| `deep-research-list` | - | `limit`, `completed_only` | - |
+| `deep-research-delete` | `research_id` | - | `RESEARCH_NOT_FOUND` |
 | `thread-*` | `thread_id` | `limit` | `THREAD_NOT_FOUND` |
 
 ## Workflow Selection
@@ -45,6 +52,7 @@ description: AI-powered research skill with four workflows - chat (single-model 
 | Multiple perspectives | `consensus` |
 | Complex problem | `thinkdeep` |
 | Brainstorming | `ideate` |
+| Comprehensive research, multiple sources | `deep` |
 
 ## User Gates
 
@@ -52,6 +60,7 @@ description: AI-powered research skill with four workflows - chat (single-model 
 - Ambiguous: clarify before auto-route
 - Consensus: strategy selection
 - Ideate: phase transition
+- Deep: progress updates during background execution
 
 ## Output Formats
 
@@ -61,9 +70,10 @@ description: AI-powered research skill with four workflows - chat (single-model 
 | `consensus` | `{responses[], synthesis, strategy}` |
 | `thinkdeep` | `{findings[], confidence, thread_id}` |
 | `ideate` | `{ideas[], phase, selected[]}` |
+| `deep` | `{research_id, status, report{summary, findings[], sources[]}}` |
 
 ## References
 
-- [Chat](./references/chat-workflow.md) | [Consensus](./references/consensus-workflow.md)
+- [Chat](./references/chat-workflow.md) | [Consensus](./references/consensus-workflow.md) | [Deep](./references/deep-research-workflow.md)
 - [ThinkDeep](./references/thinkdeep-workflow.md) | [Ideate](./references/ideate-workflow.md)
-- [Threads](./references/thread-management.md) | [Auto-Route](./references/auto-routing.md)
+- [Sessions](./references/session-management.md) | [Auto-Route](./references/auto-routing.md)

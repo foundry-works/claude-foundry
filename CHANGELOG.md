@@ -5,6 +5,30 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-01-02
+
+### Added
+
+- **Deep research workflow**: Multi-phase iterative research with query decomposition
+  - New `deep` workflow in `/research` command for comprehensive investigation
+  - Query decomposition into sub-queries with parallel source gathering
+  - Iterative refinement with configurable max iterations
+  - Background execution support with status tracking
+  - New reference: `skills/research/references/deep-research-workflow.md`
+
+### Changed
+
+- **Session management**: Renamed `thread-management.md` to `session-management.md`
+  - Broader scope covering all session types (threads, investigations, ideations, deep-research)
+  - Updated SKILL.md references accordingly
+  - New reference: `skills/research/references/session-management.md`
+
+- **Research skill updates**: Enhanced documentation for all workflows
+  - Updated `commands/research.md` with deep-research routing
+  - Updated `SKILL.md` with deep workflow in MCP contract
+  - Updated `auto-routing.md` with deep-research intent patterns
+  - Updated `troubleshooting.md` with deep-research error handling
+
 ## [1.3.1] - 2025-12-30
 
 ### Added

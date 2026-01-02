@@ -21,7 +21,7 @@ sdd-plan → sdd-implement → [CODE] → sdd-review → run-tests → sdd-pr
 | Create PR with spec context | `sdd-pr` |
 | Safe refactoring with LSP | `sdd-refactor` |
 | Quick capture ideas/issues | `/bikelane` |
-| AI research (chat, consensus, thinkdeep, ideate) | `/research` |
+| AI research (chat, consensus, thinkdeep, ideate, deep) | `/research` |
 
 ## Key Patterns
 

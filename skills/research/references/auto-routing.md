@@ -2,6 +2,18 @@
 
 Intent-based workflow selection from natural language prompts.
 
+## Contents
+
+- Architecture
+- Shared Logic Pattern
+- Signal Detection Per Workflow
+- Routing Algorithm
+- Score Calculation
+- Confidence Threshold
+- Ambiguity Gate
+- Default Fallback Behavior
+- Edge Cases
+
 ## Architecture
 
 **Auto-routing lives in the skill (SKILL.md), not the MCP router.** The MCP research router only executes workflows; it does not analyze intent.
@@ -33,6 +45,7 @@ commands/research.md           skills/research/SKILL.md
 | `consensus` | Comparison, validation, multiple viewpoints | "best approach", "compare", "which is better", "opinions on" |
 | `thinkdeep` | Problem investigation, root cause, debugging | "why is", "how come", "root cause", "debug", "investigate" |
 | `ideate` | Creative, brainstorming, possibilities | "ideas for", "how might we", "brainstorm", "creative ways" |
+| `deep` | Comprehensive research, multiple sources, thorough | "research", "comprehensive", "in-depth", "survey of", "state of the art", "literature review" |
 
 ## Routing Algorithm
 
@@ -42,7 +55,8 @@ def auto_route(prompt: str) -> tuple[str, float]:
         'chat': score_chat_signals(prompt),
         'consensus': score_consensus_signals(prompt),
         'thinkdeep': score_thinkdeep_signals(prompt),
-        'ideate': score_ideate_signals(prompt)
+        'ideate': score_ideate_signals(prompt),
+        'deep': score_deep_signals(prompt)
     }
 
     top_workflow = max(scores, key=scores.get)
@@ -99,7 +113,7 @@ Options:
 
 When no clear signals detected:
 1. Default to `chat` workflow
-2. Include notice: "Using chat mode. For specific workflows, try `/research consensus|thinkdeep|ideate`"
+2. Include notice: "Using chat mode. For specific workflows, try `/research consensus|thinkdeep|ideate|deep`"
 3. Allow user to switch mid-conversation
 
 ## Edge Cases

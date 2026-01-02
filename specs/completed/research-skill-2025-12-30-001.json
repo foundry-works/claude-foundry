@@ -2,7 +2,7 @@
   "spec_id": "research-skill-2025-12-30-001",
   "title": "research-skill",
   "generated": "2025-12-30T19:11:28.105886Z",
-  "last_updated": "2025-12-30T20:20:25.808475+00:00",
+  "last_updated": "2026-01-02T20:36:41.433853Z",
   "metadata": {
     "description": "",
     "mission": "Create a new research skill and /research command for claude-foundry that leverages the foundry-mcp research router with four AI-powered workflows (chat, consensus, thinkdeep, ideate) and persistent thread management.",
@@ -567,6 +567,15 @@
       "timestamp": "2025-12-30T20:20:25.808492+00:00",
       "type": "spec_completion",
       "note": "Spec research-skill-2025-12-30-001 completed. Created /research skill with 4 workflows (chat, consensus, thinkdeep, ideate), persistent thread management, auto-routing, and full documentation."
+    },
+    {
+      "timestamp": "2026-01-02T20:34:22.704555Z",
+      "entry_type": "deviation",
+      "title": "File renamed: thread-management.md \u2192 session-management.md",
+      "content": "During implementation, `thread-management.md` was renamed to `session-management.md` to better reflect content scope (covers all session types including threads, investigations, ideations, and deep-research sessions). The SKILL.md references were updated accordingly. User approved keeping the renamed file during fidelity review.",
+      "author": "foundry-mcp",
+      "metadata": {},
+      "task_id": "task-5-1"
     }
   ]
 }

@@ -2,6 +2,16 @@
 
 Creative brainstorming with structured four-phase approach.
 
+## Contents
+
+- When to Use
+- MCP Usage
+- Parameters
+- Four Phases
+- User Gates at Phase Transitions
+- Phase-Specific Guidance
+- Response Format
+
 ## When to Use
 
 - **Brainstorming** new features or solutions
