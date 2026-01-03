@@ -5,6 +5,19 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-01-03
+
+### Changed
+
+- **Default disabled_tools**: Now disables `error`, `metrics`, and `health` by default
+  - Reduces context token usage for common workflows
+  - Health tool only needed during initial `/setup`
+  - Error and metrics tools only needed for dashboard features
+
+- **Setup workflow**: Removed Step 5 (health check validation) from Phase 2.7
+  - Health check after TOML creation is unnecessary
+  - Allows health tool to be disabled by default
+
 ## [1.5.0] - 2026-01-03
 
 ### Added

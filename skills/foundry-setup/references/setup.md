@@ -190,48 +190,7 @@ Report what was created or skipped.
 
 ---
 
-## Phase 2.1: Feature Flags Configuration
-
-**Only run this phase if foundry-mcp.toml was created in Phase 2.**
-
-This phase ensures required feature flags are enabled in the `[features]` section.
-
-### Step 1: Check Existing Configuration
-
-Read the `foundry-mcp.toml` file and check if it contains a `[features]` section with the required flags.
-
-Required feature flags:
-- `research_tools = true` - Enables the research skill workflows
-- `intake_tools = true` - Enables bikelane intake queue
-
-### Step 2: Add or Update Features Section
-
-**If `[features]` section doesn't exist:** Append it after `[server]`:
-
-```toml
-
-[features]
-research_tools = true
-intake_tools = true
-```
-
-**If `[features]` section exists but is missing flags:** Add the missing flags.
-
-Use the Edit tool to update the file.
-
-### Step 3: Display Results
-
-```
-## Feature Flags
-
-Enabled features:
-- research_tools: AI-powered research workflows (chat, consensus, thinkdeep, ideate)
-- intake_tools: Bikelane fast-capture intake queue
-```
-
----
-
-## Phase 2.2: Context Configuration
+## Phase 2.1: Context Configuration
 
 **Only run this phase if foundry-mcp.toml was created in Phase 2.**
 
@@ -244,7 +203,7 @@ Read the `foundry-mcp.toml` file and check if it already contains a `[context]` 
 **If `[context]` section exists:** Skip this phase and display:
 > "Context configuration already present in foundry-mcp.toml. Your existing settings are preserved."
 
-Continue to Phase 2.5.
+Continue to Phase 2.2.
 
 ### Step 2: Add Context Section
 
@@ -270,6 +229,70 @@ Enabled context settings:
 - auto_compact: true (context monitor uses 155k denominator)
 
 Note: Set auto_compact = false in foundry-mcp.toml if you've disabled auto-compaction in Claude Code settings (uses 200k denominator).
+```
+
+---
+
+## Phase 2.2: Implement Configuration
+
+**Only run this phase if foundry-mcp.toml exists (either created in Phase 2 or already present).**
+
+This phase configures the `[implement]` section for the `/implement` command's default execution mode.
+
+### Step 1: Check Existing Configuration
+
+Read the `foundry-mcp.toml` file and check if it already contains an `[implement]` section.
+
+**If `[implement]` section exists:** Skip this phase and display:
+> "Implement configuration already present in foundry-mcp.toml. Your existing settings are preserved."
+
+Continue to Phase 2.5.
+
+### Step 2: Ask User for Preferred Defaults
+
+Use `AskUserQuestion` to determine preferred execution mode:
+
+```
+"How should /implement behave by default?"
+Options:
+- "Interactive, inline (default)" → auto=false, delegate=false, parallel=false
+- "Autonomous, inline" → auto=true, delegate=false, parallel=false
+- "Interactive, delegated" → auto=false, delegate=true, parallel=false
+- "Autonomous, delegated (recommended)" → auto=true, delegate=true, parallel=false
+- "Autonomous, parallel" → auto=true, delegate=true, parallel=true
+```
+
+### Step 3: Append Implement Section to TOML
+
+Read the existing `foundry-mcp.toml` file content.
+
+Append the implement configuration section after `[workflow]`:
+
+```toml
+
+[implement]
+# Default flags for /implement command (can be overridden via CLI flags)
+auto = {auto_value}      # --auto: skip prompts between tasks
+delegate = {delegate_value}  # --delegate: use subagent(s) for implementation
+parallel = {parallel_value}  # --parallel: run subagents concurrently (implies delegate)
+```
+
+Use the Edit tool to update the file.
+
+### Step 4: Display Results
+
+```
+## Implement Configuration
+
+Configured /implement defaults:
+
+| Flag | Default | Effect |
+|------|---------|--------|
+| --auto | {auto_value} | Skip prompts between tasks |
+| --delegate | {delegate_value} | Use subagent(s) for implementation |
+| --parallel | {parallel_value} | Run subagents concurrently |
+
+You can override these via CLI flags, e.g., `/implement --auto --delegate`.
 ```
 
 ---
@@ -366,7 +389,7 @@ Then re-run `/setup` or manually edit foundry-mcp.toml.
 
 **Only run this phase if foundry-mcp.toml exists (either created in Phase 2 or already present).**
 
-This phase configures the `[research]` section for the research skill (chat, consensus, thinkdeep, ideate workflows).
+This phase configures the `[research]` and `[research.deep]` sections for the research skill (chat, consensus, thinkdeep, ideate, deep workflows).
 
 ### Step 1: Check Existing Configuration
 
@@ -387,7 +410,7 @@ Reuse the priority entries already built in Phase 2.5 for the consultation secti
 
 Select the default provider (first entry from consultation priority list).
 
-Build consensus_providers list from the first 3 entries in the consultation priority list.
+Build consensus_providers list from all entries in the consultation priority list (same as `[consultation].priority`).
 
 ### Step 3: Append Research Section to TOML
 
@@ -398,14 +421,28 @@ Append the research configuration section:
 ```toml
 
 [research]
-# Research tool configuration (chat, consensus, thinkdeep, ideate)
+# Research tool configuration (chat, consensus, thinkdeep, ideate, deep)
 # Uses same format as consultation: "[cli]provider:model"
 default_provider = "[cli]{provider}:{model}"
+# Same list as [consultation].priority
 consensus_providers = [
     "[cli]{provider1}:{model1}",
     "[cli]{provider2}:{model2}",
-    "[cli]{provider3}:{model3}",
+    ...
 ]
+max_retries = 2
+retry_delay = 5.0
+fallback_enabled = true
+cache_ttl = 3600
+
+[research.deep]
+# Deep research workflow settings
+max_iterations = 3
+max_sub_queries = 5
+max_sources_per_query = 5
+follow_links = true
+max_concurrent = 3
+timeout_per_operation = 120
 ```
 
 Use the Write tool to save the updated file.
@@ -420,9 +457,17 @@ Configured research defaults:
 | Setting | Value |
 |---------|-------|
 | Default Provider | [cli]{provider}:{model} |
-| Consensus Providers | (list of up to 3 providers) |
+| Consensus Providers | (same as consultation priority list) |
 
-Research workflows (chat, consensus, thinkdeep, ideate) are now configured.
+Deep research defaults:
+
+| Setting | Value |
+|---------|-------|
+| max_iterations | 3 |
+| max_sub_queries | 5 |
+| max_sources_per_query | 5 |
+
+Research workflows (chat, consensus, thinkdeep, ideate, deep) are now configured.
 ```
 
 ---
@@ -502,12 +547,6 @@ Use the Write tool to save the updated file.
 Display:
 > "Added [test] section to foundry-mcp.toml with default_runner = \"{recommended_default}\""
 
-### Step 5: Verify TOML is Valid
-
-After appending, read the file back and verify it's valid TOML by checking that `mcp__plugin_foundry_foundry-mcp__health action="readiness"` doesn't report configuration errors.
-
-**If validation fails:** Warn the user that the file may need manual review.
-
 ---
 
 ## Setup Complete
@@ -516,10 +555,10 @@ Summarize what was configured:
 - Pre-flight check results (what passed/failed)
 - Permissions status (created/updated/skipped)
 - Workspace setup (specs directory, foundry-mcp.toml)
-- Feature flags enabled (research_tools, intake_tools)
 - Context settings (auto_compact value, or note if already configured)
+- Implement defaults (auto/delegate/parallel flags, or note if already configured)
 - AI providers configured (list providers added to consultation priority, or note if skipped)
-- Research configuration (default provider and consensus providers, or note if skipped/already configured)
+- Research configuration (default provider, consensus providers, deep research settings, or note if skipped/already configured)
 - Test runner configured (runner name, or note if skipped/already configured)
 
 **Important:** If permissions were added or modified, display:

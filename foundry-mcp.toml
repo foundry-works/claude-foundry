@@ -10,13 +10,6 @@ bikelane = "/bikelane"
 level = "INFO"
 structured = true
 
-[server]
-name = "foundry-mcp"
-
-[features]
-research_tools = true
-intake_tools = true
-
 [context]
 # Auto-compact mode affects context percentage calculation
 # true (default): denominator is 155k (Claude compacts before hitting limit)
@@ -26,14 +19,22 @@ auto_compact = true
 [tools]
 # Disable specific tools to reduce context window usage
 # List tool names (without mcp__plugin_foundry_foundry-mcp__ prefix)
-# Example: disabled_tools = ["metrics", "error"]
-disabled_tools = []
+# Available: health, plan, pr, error, metrics, journal, authoring, review,
+#            spec, task, provider, environment, lifecycle, verification,
+#            server, test, research
+disabled_tools = ["error", "metrics", "health"]
 # Environment variable alternative: FOUNDRY_MCP_DISABLED_TOOLS (comma-separated)
 
 [workflow]
 mode = "task"
 auto_validate = true
 journal_enabled = true
+
+[implement]
+# Default flags for /implement command (can be overridden via CLI flags)
+auto = false      # --auto: skip prompts between tasks
+delegate = true   # --delegate: use subagent(s) for implementation
+parallel = false  # --parallel: run subagents concurrently (implies delegate)
 
 [consultation]
 # Provider priority list - first available provider wins
@@ -50,7 +51,7 @@ priority = [
 default_timeout = 300
 
 [research]
-# Research tool configuration (chat, consensus, thinkdeep, ideate)
+# Research tool configuration (chat, consensus, thinkdeep, ideate, deep)
 # Uses same format as consultation: "[cli]provider:model"
 default_provider = "[cli]codex:gpt-5.2-codex"
 consensus_providers = [
@@ -64,6 +65,15 @@ max_retries = 2
 retry_delay = 5.0
 fallback_enabled = true
 cache_ttl = 3600
+
+[research.deep]
+# Deep research workflow settings
+max_iterations = 3
+max_sub_queries = 5
+max_sources_per_query = 5
+follow_links = true
+max_concurrent = 3
+timeout_per_operation = 120
 
 # Per-workflow consultation configuration
 # Each workflow can specify min_models for consensus and timeout override
