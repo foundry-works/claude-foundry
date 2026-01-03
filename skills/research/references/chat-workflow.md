@@ -12,7 +12,7 @@ Single-model conversational research with thread persistence.
 ## MCP Usage
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__research action="chat" prompt="Your question" thread_id="thread-abc123" model="claude-sonnet"
+mcp__plugin_foundry_foundry-mcp__research action="chat" prompt="Your question" thread_id="thread-abc123"
 ```
 
 ## Parameters
@@ -21,7 +21,6 @@ mcp__plugin_foundry_foundry-mcp__research action="chat" prompt="Your question" t
 |-----------|----------|---------|-------------|
 | `prompt` | Yes | - | The question or follow-up |
 | `thread_id` | No | New thread | Resume existing conversation |
-| `model` | No | claude-sonnet | Model to use for response |
 
 ## Session Flow
 

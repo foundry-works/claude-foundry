@@ -5,6 +5,49 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-01-03
+
+### Added
+
+- **Research nodes**: New `type: "research"` task type for AI-powered investigation in specs
+  - Five research workflows: `chat`, `consensus`, `thinkdeep`, `ideate`, `deep-research`
+  - Blocking modes: `none`, `soft` (default), `hard`
+  - New reference: `skills/sdd-plan/references/task-hierarchy.md` (Research Nodes section)
+  - New reference: `skills/sdd-implement/references/research-workflow.md`
+
+- **TOML-based implement defaults**: Mode flags configurable via `foundry-mcp.toml`
+  - `[implement]` section with `auto`, `delegate`, `parallel` defaults
+  - `[git]` section accessible for commit cadence decisions
+  - Uses `environment action="get-config"` at entry
+
+- **Orthogonal flag model**: `--auto`, `--delegate`, `--parallel` can be combined
+  - `--auto` skips prompts (autonomous execution)
+  - `--delegate` uses subagent(s) for implementation
+  - `--parallel` runs subagents concurrently (implies `--delegate`)
+  - Six distinct mode combinations documented
+
+### Changed
+
+- **run-tests skill refactored**: Simplified to focus on systematic debugging
+  - Removed LSP pre-flight phase (import errors surface naturally)
+  - Uses native test commands (`pytest`, `go test`, `npm test`) instead of MCP test tool
+  - Switched from `provider action="execute"` to `research action="chat"` for AI consultation
+  - Added `research action="consensus"` option for multi-perspective analysis
+  - Renamed "Fixture" failure category to "Setup"
+
+- **sdd-implement**: Updated execution mode documentation
+  - Added `research` and `environment` routers to MCP tooling table
+  - Cleaner flag interaction matrix in SKILL.md and command
+
+- **disabled_tools**: Re-enabled `environment` tool (removed from default disabled list)
+  - Needed for TOML config loading at implement entry
+
+### Documentation
+
+- Expanded reference files across skills with additional examples and patterns
+- Updated `skills/foundry-setup/references/setup.md` with setup workflow details
+- Enhanced failure category documentation in `skills/run-tests/references/`
+
 ## [1.5.2] - 2026-01-03
 
 ### Changed

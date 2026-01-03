@@ -20,7 +20,8 @@ Spec
     └── Task Group (optional: task-group-1-1, ...)
         └── Task (task-1-1, task-1-2, ...)
             └── Subtask (optional: subtask-1-1-1, ...)
-            └── Verify (verify-1-1, ...)
+        └── Research (research-1-1, ...)
+        └── Verify (verify-1-1, ...)
 ```
 
 ## Node Types
@@ -31,6 +32,7 @@ Spec
 | `task-group` | `task-group-{phase}-{n}` | Optional task grouping |
 | `task` | `task-{phase}-{n}` | Actionable work item |
 | `subtask` | `subtask-{phase}-{task}-{n}` | Task breakdown |
+| `research` | `research-{phase}-{n}` | AI-powered research/investigation |
 | `verify` | `verify-{phase}-{n}` | Verification step |
 
 ## Task Categories
@@ -71,6 +73,103 @@ For `template="complex"` and `template="security"` specs, every `type: "task"` m
       "verification_type": "fidelity",
       "scope": "phase",
       "target": "phase-1"
+    }
+  }
+}
+```
+
+## Research Nodes
+
+Research nodes use AI-powered workflows for investigation, ideation, and consensus-building before or during implementation.
+
+### Research Types
+
+| Type | Workflow | Use Case |
+|------|----------|----------|
+| `chat` | Single-model conversation | Follow-up questions, iteration |
+| `consensus` | Multi-model parallel synthesis | Multiple perspectives, validation |
+| `thinkdeep` | Hypothesis-driven investigation | Complex problems, systematic analysis |
+| `ideate` | Creative brainstorming with clustering | Generating options, design exploration |
+| `deep-research` | Multi-phase web research | Comprehensive external research |
+
+### Blocking Modes
+
+| Mode | Behavior |
+|------|----------|
+| `none` | Research never blocks dependents |
+| `soft` (default) | Informational - dependents can start without waiting |
+| `hard` | Must complete before dependent tasks can start |
+
+### Research Node Structure
+
+```json
+{
+  "research-1-1": {
+    "title": "Research authentication patterns",
+    "type": "research",
+    "status": "pending",
+    "metadata": {
+      "research_type": "consensus",
+      "blocking_mode": "soft",
+      "query": "What authentication patterns are used in similar projects?"
+    }
+  }
+}
+```
+
+### When to Use Research Nodes
+
+**Use `type: "research"` when:**
+- Need AI-powered multi-model consensus before decisions
+- Systematic investigation with hypothesis testing required
+- Creative ideation with structured clustering
+- External web research with source synthesis
+
+**Use `task_category: "investigation"` when:**
+- Simple codebase exploration (use Explore subagent)
+- Reading documentation or existing code
+- No AI workflow needed, just file searching
+
+### Research Node Patterns
+
+**Pattern 1: Blocking Research (before implementation)**
+```json
+{
+  "research-1-1": {
+    "title": "Research API design patterns",
+    "type": "research",
+    "metadata": {
+      "research_type": "consensus",
+      "blocking_mode": "hard",
+      "query": "What REST API patterns should we use for this service?"
+    }
+  },
+  "task-1-1": {
+    "title": "Implement API endpoints",
+    "type": "task",
+    "depends_on": ["research-1-1"]
+  }
+}
+```
+
+**Pattern 2: Parallel Research (soft dependency)**
+```json
+{
+  "research-1-1": {
+    "title": "Research performance optimizations",
+    "type": "research",
+    "metadata": {
+      "research_type": "thinkdeep",
+      "blocking_mode": "soft",
+      "query": "What performance bottlenecks might exist?"
+    }
+  },
+  "task-1-1": {
+    "title": "Implement core feature",
+    "type": "task",
+    "metadata": {
+      "soft_depends_on": ["research-1-1"],
+      "notes": "Research findings may inform optimization"
     }
   }
 }

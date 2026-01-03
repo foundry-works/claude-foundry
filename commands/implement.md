@@ -1,6 +1,7 @@
 ---
 name: implement
 description: Resume or start spec-driven development work by detecting active tasks and providing interactive options
+argument-hint: [--auto] [--delegate] [--parallel]
 ---
 
 # SDD Implement Command
@@ -9,14 +10,56 @@ When invoked, follow these steps:
 
 ## Step 0: Flag Parsing and Session Check
 
+### Load TOML Defaults
+
+Call the environment tool to read configuration (returns both `implement` and `git` sections):
+
+```bash
+mcp__plugin_foundry_foundry-mcp__environment action="get-config"
+```
+
+This returns:
+```json
+{
+  "success": true,
+  "data": {
+    "sections": {
+      "implement": {"auto": false, "delegate": false, "parallel": false},
+      "git": {"enabled": true, "commit_cadence": "task", ...}
+    }
+  }
+}
+```
+
+Use `implement` values as the baseline. CLI flags override TOML values.
+The `git` section is available for commit cadence decisions during implementation.
+
+**If the config file is missing or section not found:** Use defaults (all false for implement).
+
 ### Parse Command Flags
 
-| Flag | Description | Mode |
-|------|-------------|------|
-| `--auto` | Autonomous execution - continue tasks without prompts | Autonomous |
-| `--parallel` | Parallel execution - run independent tasks concurrently | Parallel |
-| `--delegate` | Interactive with delegation - subagent implements each task | Delegated |
-| (none) | Interactive single-task mode (default) | Interactive |
+Three orthogonal flags that can be combined:
+
+| Flag | Effect |
+|------|--------|
+| `--auto` | Skip prompts between tasks (autonomous execution) |
+| `--delegate` | Use subagent(s) for implementation |
+| `--parallel` | Run subagents concurrently (implies `--delegate`) |
+
+**Resolution order:** TOML defaults → CLI flags (CLI wins)
+
+**Resulting modes from combinations:**
+
+| Flags | Subagent | Concurrent | Prompts | Description |
+|-------|----------|------------|---------|-------------|
+| (none) | ❌ | ❌ | ✅ | Interactive, inline |
+| `--auto` | ❌ | ❌ | ❌ | Autonomous, inline |
+| `--delegate` | ✅ | ❌ | ✅ | Interactive, sequential subagent |
+| `--auto --delegate` | ✅ | ❌ | ❌ | Autonomous, sequential subagent |
+| `--delegate --parallel` | ✅ | ✅ | ✅ | Interactive, concurrent subagents |
+| `--auto --delegate --parallel` | ✅ | ✅ | ❌ | Autonomous, concurrent subagents |
+
+Note: `--parallel` without `--delegate` implies `--delegate`.
 
 ### Check for Existing Session
 
@@ -42,20 +85,22 @@ Warn user that a session is already running. Offer to view status or exit.
 **If session is `idle` or no session:**
 Proceed to Step 1.
 
-### Interactive Fallback (No Flags)
+### Interactive Fallback (No Flags and No TOML Defaults)
 
-When no flags provided, offer mode selection:
+When no CLI flags provided AND TOML defaults are all false, offer mode selection:
 
 ```
 AskUserQuestion:
 "Select execution mode:"
 Options:
-- "Interactive (single task)" → Proceed to Step 1
-- "Interactive with delegation (--delegate)" → Proceed to Step 1 with delegation enabled
-- "Autonomous (--auto)" → Start autonomous session
-- "Parallel (--parallel)" → Start parallel session
-- "Exit"
+- "Interactive, inline (default)" → Proceed to Step 1
+- "Autonomous, inline (--auto)" → Proceed with --auto
+- "Interactive, delegated (--delegate)" → Proceed with --delegate
+- "Autonomous, delegated (--auto --delegate)" → Proceed with --auto --delegate
+- "Autonomous, parallel (--auto --delegate --parallel)" → Proceed with all flags
 ```
+
+**If TOML has defaults set:** Skip this prompt and use TOML values directly.
 
 ## Step 1: Check for Active Specifications
 

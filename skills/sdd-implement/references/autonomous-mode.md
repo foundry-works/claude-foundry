@@ -1,10 +1,11 @@
-# Autonomous Mode
+# Autonomous Behavior (`--auto`)
 
-Execute multiple tasks without user prompts between each task. Enabled with `--auto` flag.
+Skip prompts between tasks for continuous execution. Combinable with `--delegate` and/or `--parallel`.
 
 ## Contents
 
 - [Overview](#overview)
+- [Flag Combinations](#flag-combinations)
 - [Enabling Autonomous Mode](#enabling-autonomous-mode)
 - [Pause Triggers](#pause-triggers)
 - [Recovery Patterns](#recovery-patterns)
@@ -13,7 +14,7 @@ Execute multiple tasks without user prompts between each task. Enabled with `--a
 
 ## Overview
 
-Autonomous mode allows the skill to execute tasks continuously without requiring user approval between each task. The system automatically:
+The `--auto` flag enables continuous task execution without requiring user approval between each task. The system automatically:
 
 1. Completes the current task
 2. Selects the next recommended task
@@ -39,22 +40,48 @@ Autonomous mode uses session-config to track state:
 
 > See [session-management.md](./session-management.md) for session-config MCP action details.
 
+## Flag Combinations
+
+`--auto` is orthogonal and combinable with `--delegate` and `--parallel`:
+
+| Flags | Behavior |
+|-------|----------|
+| `--auto` | Autonomous, inline (same context) |
+| `--auto --delegate` | Autonomous, sequential subagent per task |
+| `--auto --delegate --parallel` | Autonomous, concurrent subagents |
+
+**Defaults:** Loaded from `[implement]` section in `foundry-mcp.toml`. CLI flags override.
+
 ## Enabling Autonomous Mode
 
 ### Via Command Flag
 
 ```bash
-/implement --auto
+/implement --auto                         # Inline execution
+/implement --auto --delegate              # Delegate to subagent
+/implement --auto --delegate --parallel   # Concurrent subagents
+```
+
+### Via TOML Defaults
+
+Set in `foundry-mcp.toml`:
+```toml
+[implement]
+auto = true       # Always skip prompts
+delegate = true   # Always use subagent
+parallel = false  # Sequential by default
 ```
 
 ### Via Interactive Selection
 
-When running `/implement` without flags:
+When running `/implement` without flags and no TOML defaults:
 ```
 "Select execution mode:"
-- "Interactive (single task)"
-- "Autonomous (--auto)" ← Select this
-- "Parallel (--parallel)"
+- "Interactive, inline (default)"
+- "Autonomous, inline (--auto)"
+- "Interactive, delegated (--delegate)"
+- "Autonomous, delegated (--auto --delegate)"
+- "Autonomous, parallel (--auto --delegate --parallel)"
 ```
 
 ### Resuming a Paused Session
@@ -247,6 +274,48 @@ Even in autonomous mode, these gates require interaction:
 | Task selection | Use `task action="prepare"` recommendation |
 | Plan details | Accept generated plan |
 | Continue prompt | Proceed immediately |
+
+## Auto-Commit Behavior
+
+After marking a task complete, check the response for `suggest_commit`:
+
+### When `suggest_commit: true` and `commit_scope: "task"`
+
+The git cadence is set to "task" - commit after each task:
+
+1. Stage all changes: `git add -A`
+2. Commit with message from `commit_message_hint` (e.g., "task: Implement user validation")
+3. Do NOT prompt - this is silent auto-commit per user config
+4. Continue to next task
+
+### When `suggest_commit: true` and `commit_scope: "phase"`
+
+The git cadence is set to "phase" and a phase just completed:
+
+1. Stage all changes: `git add -A`
+2. Commit with message from `commit_message_hint` (e.g., "phase: Core API Implementation")
+3. Do NOT prompt - this is silent auto-commit per user config
+4. Continue to next task
+
+### When `suggest_commit: false`
+
+No commit action needed. The git cadence is either "manual" or no phase boundary was crossed. Continue to next task.
+
+### Example Task Completion Response
+
+```json
+{
+  "status": "success",
+  "data": {
+    "task_id": "task-1-2",
+    "completed_at": "2025-01-03T10:00:00Z",
+    "progress": {"completed_tasks": 5, "total_tasks": 12, "percentage": 42},
+    "suggest_commit": true,
+    "commit_scope": "task",
+    "commit_message_hint": "task: Add input validation"
+  }
+}
+```
 
 ## Best Practices
 

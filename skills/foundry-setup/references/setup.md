@@ -549,6 +549,177 @@ Display:
 
 ---
 
+## Phase 2.8: Git Configuration
+
+**Only run this phase if foundry-mcp.toml exists (either created in Phase 2 or already present).**
+
+This phase configures the `[git]` section for automatic commit behavior during spec-driven workflows.
+
+### Step 1: Check Existing Configuration
+
+Read the `foundry-mcp.toml` file and check if it already contains a `[git]` section.
+
+**If `[git]` section exists:** Skip this phase and display:
+> "Git configuration already present in foundry-mcp.toml. Your existing settings are preserved."
+
+Continue to Setup Complete.
+
+### Step 2: Check Git Repository Status
+
+Run `git rev-parse --is-inside-work-tree` to verify this is a git repository.
+
+**If not a git repo:** Display:
+> "Not a git repository. Skipping git configuration."
+
+Continue to Setup Complete.
+
+### Step 3: Ask User for Commit Cadence
+
+Use `AskUserQuestion`:
+- Question: "When should foundry auto-commit your changes?"
+- Options:
+  - "Manual (default)" → commit_cadence = "manual"
+  - "After each task" → commit_cadence = "task"
+  - "After each phase" → commit_cadence = "phase"
+
+### Step 4: Append Git Section to TOML
+
+Read the existing `foundry-mcp.toml` file content.
+
+Append the git configuration section:
+
+```toml
+
+[git]
+# Git workflow configuration
+enabled = true
+commit_cadence = "{selected_cadence}"
+```
+
+Use the Edit tool to update the file.
+
+### Step 5: Display Results
+
+```
+## Git Configuration
+
+Configured git settings:
+
+| Setting | Value |
+|---------|-------|
+| enabled | true |
+| commit_cadence | {selected_cadence} |
+
+Commits will be created automatically {cadence_description}.
+```
+
+Where `cadence_description` is:
+- manual: "only when you explicitly request them"
+- task: "after each task is completed"
+- phase: "after each phase is completed"
+
+---
+
+## Phase 3: CLAUDE.md Configuration
+
+This phase creates or updates the project's CLAUDE.md file with Foundry SDD workflow guidance. This helps ensure Claude uses the correct skills and tools for spec-driven development.
+
+### Step 1: Check for Existing CLAUDE.md
+
+Use the Read tool to check if `CLAUDE.md` exists in the project root.
+
+**If file exists:** Check if it contains the `<!-- foundry-sdd-start -->` marker.
+
+### Step 2: Handle Based on Status
+
+**If no CLAUDE.md exists:**
+
+Use `AskUserQuestion`:
+- Question: "Create CLAUDE.md with Foundry SDD workflow guidance?"
+- Options:
+  - "Yes, create it (recommended)"
+  - "No, skip"
+
+**If "Yes":** Create the file with the template content below.
+
+---
+
+**If CLAUDE.md exists but no marker:**
+
+Use `AskUserQuestion`:
+- Question: "Append Foundry SDD section to existing CLAUDE.md?"
+- Options:
+  - "Yes, append (recommended)"
+  - "No, skip"
+
+**If "Yes":** Append the template content below to the end of the existing file.
+
+---
+
+**If marker already exists:**
+
+Display:
+> "Foundry SDD guidance already present in CLAUDE.md. Skipping."
+
+Continue to Setup Complete.
+
+### Template Content
+
+Use marker comments for idempotent updates:
+
+```markdown
+<!-- foundry-sdd-start -->
+## Foundry SDD Workflow
+
+| When you need to... | Use |
+|---------------------|-----|
+| Create/review/modify a spec | `sdd-plan` skill |
+| Find next task, implement | `sdd-implement` skill |
+| Verify implementation | `sdd-review` skill |
+| Run tests and debug | `run-tests` skill |
+| Create PR with spec context | `sdd-pr` skill |
+| Safe refactoring with LSP | `sdd-refactor` skill |
+
+### Key Rules
+
+**Always use skills over direct MCP calls:**
+- Skills provide workflow orchestration, error handling, and context
+- Do NOT call `mcp__plugin_foundry_foundry-mcp__authoring` directly
+- Do NOT call `mcp__plugin_foundry_foundry-mcp__task` directly
+- For phases with tasks, use `phase-add-bulk` (not `phase-add`)
+
+**Use Explore subagent before skills:**
+- Before `sdd-plan`: Understand codebase architecture and existing patterns
+- Before `sdd-implement`: Find related code, test files, dependencies
+- Thoroughness levels: `quick` (single file), `medium` (related files), `very thorough` (subsystem)
+
+**Task completion gates - NEVER mark complete if:**
+- Tests are failing (unless phase has separate verify task)
+- Implementation is partial or incomplete
+- Unresolved errors encountered
+- Required files or dependencies missing
+- Instead: keep `in_progress` and document blocker
+
+**LSP pre-checks for speed:**
+- Use `documentSymbol` before expensive AI reviews (sdd-review)
+- Use `findReferences` to assess impact before refactoring (sdd-refactor)
+- LSP catches structural issues in seconds vs minutes for full analysis
+<!-- foundry-sdd-end -->
+```
+
+### Step 3: Display Results
+
+**If created:**
+> "Created CLAUDE.md with Foundry SDD workflow guidance."
+
+**If appended:**
+> "Appended Foundry SDD section to existing CLAUDE.md."
+
+**If skipped:**
+> "CLAUDE.md configuration skipped."
+
+---
+
 ## Setup Complete
 
 Summarize what was configured:
@@ -560,6 +731,8 @@ Summarize what was configured:
 - AI providers configured (list providers added to consultation priority, or note if skipped)
 - Research configuration (default provider, consensus providers, deep research settings, or note if skipped/already configured)
 - Test runner configured (runner name, or note if skipped/already configured)
+- Git configuration (commit_cadence value, or note if skipped/already configured)
+- CLAUDE.md (created/updated/skipped)
 
 **Important:** If permissions were added or modified, display:
 > "**Restart Claude Code** for the permission changes to take effect. After restarting, run `/tutorial` if this is your first time using the plugin."

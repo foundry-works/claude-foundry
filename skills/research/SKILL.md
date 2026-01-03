@@ -27,14 +27,14 @@ description: AI-powered research skill with five workflows - chat (single-model 
 
 | Router | Actions |
 |--------|---------|
-| `research` | `chat`, `consensus`, `thinkdeep`, `ideate`, `deep-research`, `deep-research-status`, `deep-research-report`, `deep-research-list`, `deep-research-delete`, `thread-list`, `thread-get`, `thread-delete` |
+| `research` | `chat`, `consensus`, `thinkdeep`, `ideate`, `deep-research`, `deep-research-status`, `deep-research-report`, `deep-research-list`, `deep-research-delete`, `thread-list`, `thread-get`, `thread-delete`, `node-execute`, `node-record`, `node-status`, `node-findings` |
 
 ## MCP Contract
 
 | Action | Required | Optional | Errors |
 |--------|----------|----------|--------|
-| `chat` | `prompt` | `thread_id`, `model` | `THREAD_NOT_FOUND` |
-| `consensus` | `prompt` | `models[]`, `strategy` | `NO_MODELS_AVAILABLE` |
+| `chat` | `prompt` | `thread_id`, `provider_id` | `THREAD_NOT_FOUND` |
+| `consensus` | `prompt` | `providers`, `strategy` | `NO_MODELS_AVAILABLE` |
 | `thinkdeep` | `prompt` | `thread_id`, `depth` | `MAX_DEPTH_EXCEEDED` |
 | `ideate` | `prompt` | `thread_id`, `phase` | `INVALID_PHASE` |
 | `deep-research` | `query` | `max_iterations`, `max_sub_queries`, `follow_links` | `RESEARCH_TIMEOUT` |
@@ -43,6 +43,10 @@ description: AI-powered research skill with five workflows - chat (single-model 
 | `deep-research-list` | - | `limit`, `completed_only` | - |
 | `deep-research-delete` | `research_id` | - | `RESEARCH_NOT_FOUND` |
 | `thread-*` | `thread_id` | `limit` | `THREAD_NOT_FOUND` |
+| `node-status` | `spec_id`, `research_node_id` | - | `NODE_NOT_FOUND` |
+| `node-execute` | `spec_id`, `research_node_id` | `prompt` | `NODE_NOT_FOUND`, `INVALID_TYPE` |
+| `node-record` | `spec_id`, `research_node_id`, `result` | `summary`, `key_insights`, `recommendations`, `confidence` | `NODE_NOT_FOUND` |
+| `node-findings` | `spec_id`, `research_node_id` | - | `NODE_NOT_FOUND`, `NO_FINDINGS` |
 
 ## Workflow Selection
 

@@ -16,10 +16,10 @@ description: Task implementation skill for spec-driven workflows. Reads specific
 > `[x?]`=decision · `(GATE)`=user approval · `→`=sequence · `↻`=loop · `§`=section ref
 
 ```
-- **Entry** → ModeDispatch
-  - [--auto?] → §AutonomousMode (see references/autonomous-mode.md)
-  - [--parallel?] → §ParallelMode (see references/parallel-mode.md)
-  - [--delegate?] → §DelegatedMode
+- **Entry** → LoadConfig → ModeDispatch
+  - LoadConfig: Call `environment action="get-config"` (returns implement + git), merge with CLI flags
+  - [--delegate or --parallel?] → §DelegatedMode / §ParallelMode
+  - [--auto?] → Skip user gates (autonomous execution)
   - [interactive] → SelectTask
   - [recommend] → `task action="prepare"` → ShowRecommendation
   - [browse] → `task action="query"` → (GATE: task selection)
@@ -68,10 +68,12 @@ This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools u
 | Router | Key Actions |
 |--------|-------------|
 | `task` | `prepare`, `query`, `info`, `start`, `complete`, `update-status`, `block`, `unblock`, `add-dependency`, `add-requirement`, `session-config`, `prepare-batch`, `start-batch`, `complete-batch`, `reset-batch` |
+| `research` | `node-status`, `node-execute`, `node-record`, `node-findings` |
 | `journal` | `add`, `list` |
 | `lifecycle` | `activate`, `move`, `complete` |
 | `spec` | `find`, `list` |
 | `intake` | `add`, `list`, `dismiss` |
+| `environment` | `get-config` |
 
 **Critical Rules:**
 - The agent never invokes the CLI directly
@@ -82,20 +84,30 @@ This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools u
 
 ## Execution Modes
 
-The skill supports four execution modes, selected at entry via flags or interactive prompt.
+Three orthogonal flags control execution behavior. Defaults loaded via `environment action="get-config"`, CLI flags override.
 
-| Mode | Flag | Behavior | Use Case |
-|------|------|----------|----------|
-| Interactive | (default) | Single task with user gates | Exploratory work, unclear requirements |
-| Delegated | `--delegate` | Interactive + subagent implementation | Large tasks, context preservation |
-| Autonomous | `--auto` | Continuous execution until pause trigger | Well-defined specs, batch work |
-| Parallel | `--parallel` | Multiple tasks concurrently | Independent tasks, large phases |
+**Config Loading:** At entry, call the environment tool to read configuration from `foundry-mcp.toml`. Returns both `implement` (mode flags) and `git` (commit cadence) sections. If the config file is missing or section not found, use defaults (all false for implement).
 
-### Autonomous Mode
+| Flag | Effect |
+|------|--------|
+| `--auto` | Skip prompts between tasks (autonomous execution) |
+| `--delegate` | Use subagent(s) for implementation |
+| `--parallel` | Run subagents concurrently (implies `--delegate`) |
+
+**Resulting combinations:**
+
+| Flags | Subagent | Concurrent | Prompts | Description |
+|-------|----------|------------|---------|-------------|
+| (none) | ❌ | ❌ | ✅ | Interactive, inline |
+| `--auto` | ❌ | ❌ | ❌ | Autonomous, inline |
+| `--delegate` | ✅ | ❌ | ✅ | Interactive, sequential subagent |
+| `--auto --delegate` | ✅ | ❌ | ❌ | Autonomous, sequential subagent |
+| `--delegate --parallel` | ✅ | ✅ | ✅ | Interactive, concurrent subagents |
+| `--auto --delegate --parallel` | ✅ | ✅ | ❌ | Autonomous, concurrent subagents |
+
+### Autonomous Behavior (`--auto`)
 
 Executes tasks continuously without user prompts between each task. Session state persists across `/clear` boundaries.
-
-**Entry:** `/implement --auto` or select "Autonomous" when prompted.
 
 **Key behaviors:**
 - Auto-selects recommended tasks via `task action="prepare"`
@@ -108,11 +120,9 @@ Executes tasks continuously without user prompts between each task. Session stat
 > Full documentation: [references/autonomous-mode.md](./references/autonomous-mode.md)
 > Session management: [references/session-management.md](./references/session-management.md)
 
-### Parallel Mode
+### Parallel Behavior (`--delegate --parallel`)
 
 Spawns multiple subagents to execute independent tasks concurrently. File-path conflicts are detected and excluded.
-
-**Entry:** `/implement --parallel` or select "Parallel" when prompted.
 
 **Key behaviors:**
 - Uses `task action="prepare-batch"` to identify eligible tasks
@@ -125,17 +135,15 @@ Spawns multiple subagents to execute independent tasks concurrently. File-path c
 
 > Full documentation: [references/parallel-mode.md](./references/parallel-mode.md)
 
-### Delegated Mode
+### Delegation Behavior (`--delegate`)
 
-Interactive mode with implementation delegated to a subagent. All user gates preserved, but fresh context for implementation.
-
-**Entry:** `/implement --delegate` or select "Interactive with delegation" when prompted.
+Uses subagent(s) for implementation. Fresh context per task while main agent handles orchestration.
 
 **Key behaviors:**
-- Same gates as interactive (task selection, plan approval, continuation)
-- After plan approval, spawns `Task(general-purpose)` for implementation
-- Waits for subagent completion (sequential, not background)
+- Spawns `Task(general-purpose)` for each task implementation
+- Sequential by default; concurrent with `--parallel`
 - Main agent handles task lifecycle (status updates, journaling)
+- With `--auto`: skips user gates; without: preserves all gates
 
 **Subagent receives:**
 - Task details, file path, acceptance criteria
@@ -209,9 +217,10 @@ After selecting a task, check its type to determine the workflow path.
 | Task Type | Workflow Path |
 |-----------|---------------|
 | `type: "verify"` | Go to **Verification Task Workflow** |
+| `type: "research"` | Go to **Research Node Workflow** |
 | `type: "task"` (default) | Continue to **Deep Dive & Plan Approval** |
 
-**CRITICAL:** Verification tasks must NOT go through the implementation workflow. They require MCP tool invocation, not code changes.
+**CRITICAL:** Verification and research tasks must NOT go through the implementation workflow. They require MCP tool invocation, not code changes.
 
 ### Deep Dive & Plan Approval (Implementation Tasks Only)
 
@@ -419,6 +428,27 @@ mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id="my-spec-001" ta
 
 ---
 
+## Research Node Workflow
+
+**Entry:** Routed here from Task Type Dispatch when task has `type: "research"`
+
+Research nodes use AI-powered workflows (chat, consensus, thinkdeep, ideate, deep-research) to investigate questions, gather perspectives, or generate ideas before or during implementation.
+
+**Key actions:**
+1. Check status: `research action="node-status"`
+2. Execute workflow: `research action="node-execute"`
+3. Record findings: `research action="node-record"`
+4. Retrieve findings: `research action="node-findings"`
+
+**Blocking modes:**
+- `hard`: Research must complete before dependents can start
+- `soft` (default): Informational - dependents can proceed
+- `none`: Research never blocks
+
+> For the complete research workflow (status check, execute, review findings, record, handle blocking), see [references/research-workflow.md](./references/research-workflow.md)
+
+---
+
 ## Detailed Reference
 
 For comprehensive documentation including:
@@ -430,6 +460,7 @@ For comprehensive documentation including:
 - Built-in subagent patterns → `references/subagent-patterns.md`
 - Post-implementation checklist → `references/checklist.md`
 - Verification task workflow → `references/verification.md`
+- Research node workflow → `references/research-workflow.md`
 - Bikelane quick capture → `references/bikelane.md`
 
 **Task Lifecycle:**

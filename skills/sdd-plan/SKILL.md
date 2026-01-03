@@ -239,7 +239,10 @@ For `implementation` or `refactoring` tasks, set `metadata.file_path` to a **rea
 | Node Type | `type` Value | Key Fields |
 |-----------|--------------|------------|
 | Task | `"task"` | `task_category`, `file_path` |
+| Research | `"research"` | `research_type`, `blocking_mode`, `query` |
 | Verification | `"verify"` | `verification_type` |
+
+> See `references/task-hierarchy.md` for research node patterns and blocking modes.
 
 ### Verification Types
 

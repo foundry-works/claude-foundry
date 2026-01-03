@@ -26,5 +26,6 @@ Check if `$ARGUMENTS` contains `--check` or `--preflight`:
     - [--check?] → **Exit**
   - → Permissions → Workspace
     - [toml created?] → FeatureFlags → Providers → Research → TestConfig
+  - → CLAUDE.md Configuration
   - → Summary → **Exit**
 ```

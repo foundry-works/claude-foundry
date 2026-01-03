@@ -5,7 +5,7 @@ Get AI-powered feedback on markdown plans before converting to JSON specs.
 ## Running a Review
 
 ```bash
-# Full comprehensive review
+# Full comprehensive review (standard practice)
 mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name.md" review_type="full"
 
 # Quick review for blockers only

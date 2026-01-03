@@ -1,10 +1,11 @@
-# Parallel Mode
+# Parallel Behavior (`--delegate --parallel`)
 
-Execute multiple independent tasks concurrently via subagents. Enabled with `--parallel` flag.
+Execute multiple independent tasks concurrently via subagents. Enabled with `--parallel` flag (implies `--delegate`).
 
 ## Contents
 
 - [Overview](#overview)
+- [Flag Combinations](#flag-combinations)
 - [Enabling Parallel Mode](#enabling-parallel-mode)
 - [Batch Operations API](#batch-operations-api)
 - [Subagent Delegation](#subagent-delegation)
@@ -14,7 +15,7 @@ Execute multiple independent tasks concurrently via subagents. Enabled with `--p
 
 ## Overview
 
-Parallel mode spawns multiple subagents to work on independent tasks simultaneously. Unlike autonomous mode (sequential execution), parallel mode maximizes throughput for non-conflicting work.
+Parallel mode spawns multiple subagents to work on independent tasks simultaneously. Maximizes throughput for non-conflicting work.
 
 ### When to Use
 
@@ -26,32 +27,57 @@ Parallel mode spawns multiple subagents to work on independent tasks simultaneou
 | Tasks with dependencies between them | Autonomous |
 | Test/verification tasks | Parallel (if independent) |
 
-### Key Differences from Autonomous Mode
+### Key Differences: Inline vs Delegated vs Parallel
 
-| Aspect | Autonomous | Parallel |
-|--------|------------|----------|
-| Execution | Sequential | Concurrent |
-| Task selection | One at a time | Batch of independents |
-| File conflicts | Not possible | Detected and prevented |
-| Failure impact | Stops on threshold | Isolated per task |
-| Context usage | Single conversation | Distributed across subagents |
+| Aspect | Inline | Delegated (`--delegate`) | Parallel (`--parallel`) |
+|--------|--------|--------------------------|-------------------------|
+| Execution | Same context | Subagent per task | Multiple subagents |
+| Concurrency | Sequential | Sequential | Concurrent |
+| Context usage | Shared | Fresh per task | Distributed |
+| File conflicts | N/A | N/A | Detected and prevented |
+| Failure impact | Stops on error | Isolated | Isolated per task |
+
+## Flag Combinations
+
+`--parallel` implies `--delegate` and is combinable with `--auto`:
+
+| Flags | Behavior |
+|-------|----------|
+| `--delegate --parallel` | Interactive, concurrent subagents |
+| `--auto --delegate --parallel` | Autonomous, concurrent subagents |
+
+**Defaults:** Loaded from `[implement]` section in `foundry-mcp.toml`. CLI flags override.
 
 ## Enabling Parallel Mode
 
 ### Via Command Flag
 
 ```bash
-/implement --parallel
+/implement --delegate --parallel                # Interactive parallel
+/implement --auto --delegate --parallel         # Autonomous parallel
+/implement --parallel                           # Implies --delegate
+```
+
+### Via TOML Defaults
+
+Set in `foundry-mcp.toml`:
+```toml
+[implement]
+auto = true       # Skip prompts
+delegate = true   # Use subagents
+parallel = true   # Run concurrently
 ```
 
 ### Via Interactive Selection
 
-When running `/implement` without flags:
+When running `/implement` without flags and no TOML defaults:
 ```
 "Select execution mode:"
-- "Interactive (single task)"
-- "Autonomous (--auto)"
-- "Parallel (--parallel)" <- Select this
+- "Interactive, inline (default)"
+- "Autonomous, inline (--auto)"
+- "Interactive, delegated (--delegate)"
+- "Autonomous, delegated (--auto --delegate)"
+- "Autonomous, parallel (--auto --delegate --parallel)"
 ```
 
 ## Batch Operations API
@@ -326,6 +352,65 @@ The `complete-batch` response includes error details:
   ]
 }
 ```
+
+## Auto-Commit in Parallel Mode
+
+In parallel mode, commits happen at batch boundaries rather than per-task.
+
+### Commit Timing
+
+After `complete-batch` returns, check if any task in the batch returned `suggest_commit: true`:
+
+| Git Cadence | Commit Behavior |
+|-------------|-----------------|
+| `manual` | No commits (user handles) |
+| `task` | Single commit after batch with all completed task titles |
+| `phase` | Commit only if a phase completed during the batch |
+
+### Commit Message Format
+
+**For task cadence (multiple tasks in batch):**
+```
+tasks: Complete batch of N tasks
+
+- task: Add input validation
+- task: Implement error handling
+- task: Update API responses
+```
+
+**For phase cadence:**
+```
+phase: Core API Implementation
+```
+
+### Implementation
+
+```python
+# After complete-batch returns
+results = complete_batch_response["results"]
+suggest_commits = [r for r in results if r.get("suggest_commit")]
+
+if suggest_commits:
+    # Stage all changes from batch
+    git add -A
+
+    if any(r.get("commit_scope") == "phase" for r in suggest_commits):
+        # Phase completion takes precedence
+        phase_hint = next(r["commit_message_hint"] for r in suggest_commits
+                         if r.get("commit_scope") == "phase")
+        git commit -m "{phase_hint}"
+    else:
+        # Aggregate task messages
+        task_lines = [r["commit_message_hint"] for r in suggest_commits]
+        git commit -m "tasks: Complete batch of {len(task_lines)} tasks\n\n" +
+                     "\n".join(f"- {line}" for line in task_lines)
+```
+
+### Notes
+
+- Commits are silent (no prompting) per user's cadence configuration
+- If batch has mixed success/failure, only completed tasks appear in commit message
+- Failed tasks remain uncommitted for retry in next batch
 
 ## Best Practices
 

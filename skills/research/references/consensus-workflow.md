@@ -22,7 +22,7 @@ Multi-model parallel consultation with configurable synthesis strategies.
 ## MCP Usage
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__research action="consensus" prompt="Your question" models='["claude-opus", "claude-sonnet", "gpt-4"]' strategy="synthesize"
+mcp__plugin_foundry_foundry-mcp__research action="consensus" prompt="Your question" strategy="synthesize"
 ```
 
 ## Parameters
@@ -30,7 +30,6 @@ mcp__plugin_foundry_foundry-mcp__research action="consensus" prompt="Your questi
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
 | `prompt` | Yes | - | Question to ask all models |
-| `models` | No | All available | Array of model IDs |
 | `strategy` | No | synthesize | How to combine responses |
 
 ## Synthesis Strategies

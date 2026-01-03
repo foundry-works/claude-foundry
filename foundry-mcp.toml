@@ -22,7 +22,7 @@ auto_compact = true
 # Available: health, plan, pr, error, metrics, journal, authoring, review,
 #            spec, task, provider, environment, lifecycle, verification,
 #            server, test, research
-disabled_tools = ["error", "metrics", "health", "environment"]
+disabled_tools = ["error", "metrics", "health"]
 # Environment variable alternative: FOUNDRY_MCP_DISABLED_TOOLS (comma-separated)
 
 [workflow]
