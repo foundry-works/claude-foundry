@@ -5,6 +5,15 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.4] - 2026-01-04
+
+### Removed
+
+- **Tutorial skill**: Removed `/tutorial` command and `foundry-tutorial` skill
+  - Deleted `commands/tutorial.md`, `skills/foundry-tutorial/`
+  - Deleted `BIKELANE.md` (moved to specs/.bikelane/)
+  - Updated setup completion messages to remove tutorial references
+
 ## [1.6.3] - 2026-01-04
 
 ### Changed
