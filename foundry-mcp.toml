@@ -35,6 +35,7 @@ journal_enabled = true
 auto = false      # --auto: skip prompts between tasks
 delegate = true   # --delegate: use subagent(s) for implementation
 parallel = false  # --parallel: run subagents concurrently (implies delegate)
+model = "haiku"   # --model: model for delegated tasks (haiku, sonnet, opus)
 
 [consultation]
 # Provider priority list - first available provider wins

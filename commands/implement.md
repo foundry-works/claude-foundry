@@ -1,7 +1,7 @@
 ---
 name: implement
 description: Resume or start spec-driven development work by detecting active tasks and providing interactive options
-argument-hint: [--auto] [--delegate] [--parallel]
+argument-hint: [--auto] [--delegate] [--parallel] [--model <haiku|sonnet|opus>]
 ---
 
 # SDD Implement Command
@@ -24,7 +24,7 @@ This returns:
   "success": true,
   "data": {
     "sections": {
-      "implement": {"auto": false, "delegate": false, "parallel": false},
+      "implement": {"auto": false, "delegate": false, "parallel": false, "model": "haiku"},
       "git": {"enabled": true, "commit_cadence": "task", ...}
     }
   }
@@ -38,13 +38,14 @@ The `git` section is available for commit cadence decisions during implementatio
 
 ### Parse Command Flags
 
-Three orthogonal flags that can be combined:
+Four flags that can be combined:
 
 | Flag | Effect |
 |------|--------|
 | `--auto` | Skip prompts between tasks (autonomous execution) |
 | `--delegate` | Use subagent(s) for implementation |
 | `--parallel` | Run subagents concurrently (implies `--delegate`) |
+| `--model <haiku\|sonnet\|opus>` | Model for delegated tasks (default: haiku) |
 
 **Resolution order:** TOML defaults → CLI flags (CLI wins)
 
