@@ -5,7 +5,7 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.6.1] - 2026-01-07
+## [1.6.5] - 2026-01-07
 
 ### Changed
 
@@ -15,17 +15,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added stall detection logic (5 min elapsed + no progress change)
   - Added user options at final check (keep waiting, background, cancel)
 
-- **Spec creation template**: Updated default template from `medium` to `empty`
-  - `sdd-plan` now uses `template="empty"` for spec creation
-  - Phases added via `phase-add-bulk` or `phase-template` macros
-  - Updated documentation in SKILL.md, json-spec.md, and troubleshooting.md
-
 ### Documentation
 
 - **Research tool defaults guidance**: Added to setup.md reference
   - Don't override timeout parameters - use foundry-mcp.toml defaults
   - Don't specify providers - use configured consensus providers
   - Minimal call pattern: `action="consensus" prompt="..." strategy="synthesize"`
+
+## [1.6.4] - 2026-01-04
+
+### Removed
+
+- **Tutorial skill**: Removed `/tutorial` command and `foundry-tutorial` skill
+  - Deleted `commands/tutorial.md`, `skills/foundry-tutorial/`
+  - Deleted `BIKELANE.md` (moved to specs/.bikelane/)
+  - Updated setup completion messages to remove tutorial references
+
+## [1.6.3] - 2026-01-04
+
+### Changed
+
+- **Strengthen critical reference links across all skills**: Extended CRITICAL markers to remaining skills
+  - `run-tests`: `tool-selection.md` (prompt templates, strategy parameters)
+  - `sdd-pr`: `long-running.md` (mandatory timeout rules)
+  - `sdd-refactor`: `impact-analysis.md` (required impact report format)
+  - `sdd-review`: `lsp-integration.md` (required LSP operation patterns)
+  - `research`: `deep-research-workflow.md` (polling strategy, MCP parameters)
+
+## [1.6.2] - 2026-01-04
+
+### Added
+
+- **Model selection for delegated tasks**: New `--model` flag for `/implement` command
+  - Specify `haiku`, `sonnet`, or `opus` for subagent tasks
+  - Default: `haiku` (fast, cost-effective for most tasks)
+  - Configurable via TOML: `[implement] model = "haiku"`
+  - CLI flag overrides TOML default
+
+### Changed
+
+- **Strengthen critical reference links**: Changed soft links to mandatory directives for essential workflow references
+  - `verification.md`: Now marked CRITICAL (contains skill dispatch rules)
+  - `research-workflow.md`: Now marked CRITICAL (contains required command syntax)
+  - `parallel-mode.md`: Now marked CRITICAL when using `--parallel` (contains required JSON formats)
+
+## [1.6.1] - 2026-01-04
+
+### Fixed
+
+- **Outdated spec template documentation**: Updated all references from deprecated templates (`simple`, `medium`, `complex`, `security`) to `empty`
+  - `skills/sdd-plan/SKILL.md`: Fixed 2 examples
+  - `skills/sdd-plan/references/json-spec.md`: Updated template list and removed complex/security language
+  - `skills/sdd-plan/references/task-hierarchy.md`: Removed complex/security template references
+  - `skills/sdd-plan/references/troubleshooting.md`: Fixed example
 
 ## [1.6.0] - 2026-01-03
 

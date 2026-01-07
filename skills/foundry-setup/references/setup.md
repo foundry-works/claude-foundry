@@ -741,7 +741,7 @@ Summarize what was configured:
 - CLAUDE.md (created/updated/skipped)
 
 **Important:** If permissions were added or modified, display:
-> "**Restart Claude Code** for the permission changes to take effect. After restarting, run `/tutorial` if this is your first time using the plugin."
+> "**Restart Claude Code** for the permission changes to take effect."
 
 If no permissions were changed, end with:
-> "Setup complete! If this is your first time using the plugin, run `/tutorial` to learn about Spec-Driven Development and see the workflow in action."
+> "Setup complete!"

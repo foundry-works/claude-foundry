@@ -114,7 +114,7 @@ Gather information about what to refactor:
 3. Present impact report to user with risk assessment
 4. Get user approval before proceeding
 
-> See [references/impact-analysis.md](./references/impact-analysis.md) for detailed procedures and report format.
+**CRITICAL:** Read [references/impact-analysis.md](./references/impact-analysis.md) before refactoring. Contains required impact report format.
 
 ### Step 3: Execute Refactoring
 

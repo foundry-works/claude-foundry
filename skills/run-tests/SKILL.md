@@ -109,7 +109,7 @@ mcp__plugin_foundry_foundry-mcp__research action="consensus" prompt="..." strate
 - `consensus` - Complex failures, want multiple AI perspectives, flaky tests
 - `thinkdeep` - Systematic hypothesis-driven investigation for complex issues
 
-> For full parameter reference and prompt templates, see `references/tool-selection.md`
+**CRITICAL:** Read [references/tool-selection.md](./references/tool-selection.md) before AI consultation. Contains required prompt templates and strategy parameters.
 
 ## Phase 5: Fix & Verify
 

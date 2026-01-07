@@ -132,7 +132,7 @@ Skill(foundry:sdd-pr) "Create PR for spec oauth-feature-2025-11-03-001"
 
 This skill may take up to 5 minutes. Always use foreground execution with appropriate timeout.
 
-> For examples and anti-patterns, see `references/long-running.md`
+**CRITICAL:** Read [references/long-running.md](./references/long-running.md) before execution. Contains mandatory timeout rules.
 
 ## Detailed Reference
 

@@ -84,15 +84,16 @@ This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools u
 
 ## Execution Modes
 
-Three orthogonal flags control execution behavior. Defaults loaded via `environment action="get-config"`, CLI flags override.
+Four flags control execution behavior. Defaults loaded via `environment action="get-config"`, CLI flags override.
 
-**Config Loading:** At entry, call the environment tool to read configuration from `foundry-mcp.toml`. Returns both `implement` (mode flags) and `git` (commit cadence) sections. If the config file is missing or section not found, use defaults (all false for implement).
+**Config Loading:** At entry, call the environment tool to read configuration from `foundry-mcp.toml`. Returns both `implement` (mode flags + model) and `git` (commit cadence) sections. If the config file is missing or section not found, use defaults (all false for implement, model=haiku).
 
 | Flag | Effect |
 |------|--------|
 | `--auto` | Skip prompts between tasks (autonomous execution) |
 | `--delegate` | Use subagent(s) for implementation |
 | `--parallel` | Run subagents concurrently (implies `--delegate`) |
+| `--model <haiku\|sonnet\|opus>` | Model for delegated tasks (default: haiku) |
 
 **Resulting combinations:**
 
@@ -133,14 +134,15 @@ Spawns multiple subagents to execute independent tasks concurrently. File-path c
 
 **Batch actions:** `prepare-batch`, `start-batch`, `complete-batch`, `reset-batch`
 
-> Full documentation: [references/parallel-mode.md](./references/parallel-mode.md)
+**CRITICAL when using `--parallel`:** Read [references/parallel-mode.md](./references/parallel-mode.md) before proceeding. Contains required JSON formats for batch operations.
 
 ### Delegation Behavior (`--delegate`)
 
 Uses subagent(s) for implementation. Fresh context per task while main agent handles orchestration.
 
 **Key behaviors:**
-- Spawns `Task(general-purpose)` for each task implementation
+- Spawns `Task(general-purpose, model={model})` for each task implementation
+- Model defaults to `haiku`; override with `--model sonnet` or `--model opus`
 - Sequential by default; concurrent with `--parallel`
 - Main agent handles task lifecycle (status updates, journaling)
 - With `--auto`: skips user gates; without: preserves all gates
@@ -424,7 +426,7 @@ mcp__plugin_foundry_foundry-mcp__task action="complete" spec_id="my-spec-001" ta
 
 **Entry:** Routed here from Task Type Dispatch when task has `type: "verify"`
 
-> For the complete verification workflow (mark in progress, detect type, dispatch, execute, complete/remediate), see [references/verification.md](./references/verification.md)
+**CRITICAL:** Read [references/verification.md](./references/verification.md) before proceeding. Contains mandatory skill dispatch rules.
 
 ---
 
@@ -445,7 +447,7 @@ Research nodes use AI-powered workflows (chat, consensus, thinkdeep, ideate, dee
 - `soft` (default): Informational - dependents can proceed
 - `none`: Research never blocks
 
-> For the complete research workflow (status check, execute, review findings, record, handle blocking), see [references/research-workflow.md](./references/research-workflow.md)
+**CRITICAL:** Read [references/research-workflow.md](./references/research-workflow.md) before proceeding. Contains required command syntax and recording parameters.
 
 ---
 

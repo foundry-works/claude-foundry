@@ -66,6 +66,7 @@ Set in `foundry-mcp.toml`:
 auto = true       # Skip prompts
 delegate = true   # Use subagents
 parallel = true   # Run concurrently
+model = "haiku"   # Model for subagents (haiku, sonnet, opus)
 ```
 
 ### Via Interactive Selection
@@ -86,7 +87,7 @@ Parallel mode uses batch-specific MCP actions on the task router.
 
 ### prepare-batch
 
-Identify tasks eligible for parallel execution.
+Identify tasks eligible for parallel execution. Returns independent tasks with full context.
 
 ```bash
 mcp__plugin_foundry_foundry-mcp__task action="prepare-batch" \
@@ -97,16 +98,27 @@ mcp__plugin_foundry_foundry-mcp__task action="prepare-batch" \
 **Returns:**
 ```json
 {
-  "batch_id": "batch-abc123",
-  "tasks": [
-    {"task_id": "task-3-1", "file_path": "src/auth.py", "conflicts_with": []},
-    {"task_id": "task-3-2", "file_path": "src/utils.py", "conflicts_with": []},
-    {"task_id": "task-3-3", "file_path": "src/auth.py", "conflicts_with": ["task-3-1"]}
-  ],
-  "eligible_tasks": ["task-3-1", "task-3-2"],
-  "excluded_tasks": [
-    {"task_id": "task-3-3", "reason": "file_conflict", "conflicts_with": ["task-3-1"]}
-  ]
+  "success": true,
+  "data": {
+    "spec_id": "my-spec-001",
+    "tasks": [
+      {
+        "task_id": "task-1-1",
+        "title": "Create main.py with hello function",
+        "type": "task",
+        "status": "pending",
+        "metadata": {"file_path": "main.py", "acceptance_criteria": [...]},
+        "dependencies": {"task_id": "task-1-1", "can_start": true, "blocked_by": []},
+        "phase": {"id": "phase-1", "title": "Core Components", ...},
+        "parent": {"id": "phase-1", "title": "Core Components", ...}
+      }
+    ],
+    "task_count": 2,
+    "spec_complete": false,
+    "all_blocked": false,
+    "stale_tasks": [],
+    "dependency_graph": {"nodes": [...], "edges": [...]}
+  }
 }
 ```
 
@@ -114,74 +126,128 @@ mcp__plugin_foundry_foundry-mcp__task action="prepare-batch" \
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `spec_id` | string | Target specification |
-| `max_tasks` | int | Maximum tasks to include (default: 5) |
-| `phase_id` | string | Limit to specific phase (optional) |
+| `max_tasks` | int | Maximum tasks to include (default: 3) |
+| `token_budget` | int | Maximum tokens for context (default: 50000) |
+
+**Key Fields:**
+- `tasks`: Full task contexts with metadata, dependencies, phase info
+- `spec_complete`: True if all tasks are done (graceful completion)
+- `all_blocked`: True if remaining tasks are blocked
+- `stale_tasks`: Tasks stuck in_progress for >1 hour
 
 ### start-batch
 
-Begin parallel execution of a prepared batch.
+Atomically mark multiple tasks as in_progress. **Extract task IDs from prepare-batch response**.
 
 ```bash
 mcp__plugin_foundry_foundry-mcp__task action="start-batch" \
   spec_id={spec-id} \
-  batch_id={batch-id}
+  task_ids='["task-1-1", "task-1-2"]'
 ```
+
+**Parameters:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `spec_id` | string | Target specification |
+| `task_ids` | string[] | Task IDs from prepare-batch `tasks[].task_id` |
 
 **Returns:**
 ```json
 {
-  "batch_id": "batch-abc123",
-  "started_at": "2026-01-03T10:00:00Z",
-  "tasks_started": 2,
-  "subagent_ids": ["agent-001", "agent-002"]
-}
-```
-
-### complete-batch
-
-Report completion and collect results from all subagents.
-
-```bash
-mcp__plugin_foundry_foundry-mcp__task action="complete-batch" \
-  spec_id={spec-id} \
-  batch_id={batch-id} \
-  results='[{"task_id": "task-3-1", "status": "completed", "note": "..."}, ...]'
-```
-
-**Returns:**
-```json
-{
-  "batch_id": "batch-abc123",
-  "completed_at": "2026-01-03T10:15:00Z",
-  "summary": {
-    "total": 2,
-    "completed": 2,
-    "failed": 0,
-    "blocked": 0
+  "success": true,
+  "data": {
+    "spec_id": "my-spec-001",
+    "started": ["task-1-1", "task-1-2"],
+    "started_count": 2,
+    "started_at": "2026-01-03T10:00:00Z"
   }
 }
 ```
 
-### reset-batch
+**Important:** All-or-nothing validation. If ANY task fails validation (already started, blocked, conflict), NO tasks are started.
 
-Cancel or reset an in-progress batch (for error recovery).
+### complete-batch
+
+Report completion results for batch tasks. Supports partial failure (some succeed, some fail).
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__task action="reset-batch" \
+mcp__plugin_foundry_foundry-mcp__task action="complete-batch" \
   spec_id={spec-id} \
-  batch_id={batch-id} \
-  reason="User requested cancellation"
+  completions='[
+    {"task_id": "task-1-1", "success": true, "completion_note": "Created main.py"},
+    {"task_id": "task-1-2", "success": true, "completion_note": "Created utils.py"}
+  ]'
 ```
+
+**Parameters:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `spec_id` | string | Target specification |
+| `completions` | array | List of `{task_id, success, completion_note}` |
+
+**Completion Object:**
+| Field | Type | Description |
+|-------|------|-------------|
+| `task_id` | string | Task ID being completed |
+| `success` | bool | True if task succeeded, false if failed |
+| `completion_note` | string | Description of what was done (required) |
 
 **Returns:**
 ```json
 {
-  "batch_id": "batch-abc123",
-  "reset_at": "2026-01-03T10:05:00Z",
-  "tasks_reset": ["task-3-1", "task-3-2"],
-  "previous_status": "in_progress"
+  "success": true,
+  "data": {
+    "spec_id": "my-spec-001",
+    "results": {
+      "task-1-1": {"status": "completed", "completed_at": "..."},
+      "task-1-2": {"status": "completed", "completed_at": "..."}
+    },
+    "completed_count": 2,
+    "failed_count": 0,
+    "total_processed": 2
+  }
 }
 ```
+
+**Failure Handling:** Failed tasks get `status: "failed"`, `retry_count` incremented, and remain available for retry.
+
+### reset-batch
+
+Reset in_progress tasks back to pending (for error recovery or stale task cleanup).
+
+```bash
+# Reset specific tasks
+mcp__plugin_foundry_foundry-mcp__task action="reset-batch" \
+  spec_id={spec-id} \
+  task_ids='["task-1-1", "task-1-2"]'
+
+# Auto-detect and reset stale tasks (>1 hour old)
+mcp__plugin_foundry_foundry-mcp__task action="reset-batch" \
+  spec_id={spec-id} \
+  threshold_hours=1.0
+```
+
+**Parameters:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `spec_id` | string | Target specification |
+| `task_ids` | string[] | Specific task IDs to reset (optional) |
+| `threshold_hours` | float | Auto-detect stale threshold (default: 1.0) |
+
+**Returns:**
+```json
+{
+  "success": true,
+  "data": {
+    "spec_id": "my-spec-001",
+    "reset": ["task-1-1", "task-1-2"],
+    "reset_count": 2,
+    "message": "Reset 2 tasks to pending status"
+  }
+}
+```
+
+**Note:** If `task_ids` not provided, automatically finds and resets tasks in_progress longer than `threshold_hours`.
 
 ## Subagent Delegation
 
@@ -196,7 +262,7 @@ Main Agent (orchestrator)
     |
     +-- For each eligible task:
     |       |
-    |       +-- Task(subagent_type="general-purpose")
+    |       +-- Task(subagent_type="general-purpose", model={model})
     |           - Receives: task context, file path, acceptance criteria
     |           - Returns: completion status, changes made, issues found
     |
@@ -209,6 +275,7 @@ Main Agent (orchestrator)
 # For each task in batch
 Task(
     subagent_type="general-purpose",
+    model="{model}",  # haiku (default), sonnet, or opus
     prompt=f"""
     Implement task {task_id} from spec {spec_id}.
 

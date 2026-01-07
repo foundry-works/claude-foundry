@@ -29,14 +29,14 @@ The formal specification format used by all SDD tools.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `mission` | string | Yes (complex/security) | Single-sentence mission describing the spec's purpose |
+| `mission` | string | Recommended | Single-sentence mission describing the spec's purpose |
 | `status` | string | Yes | `pending`, `active`, `completed`, `archived` |
 | `priority` | string | No | `low`, `medium`, `high`, `critical` |
 | `owner` | string | No | Email or identifier of owner |
 | `tags` | array | No | Categorization tags |
 | `estimated_hours` | number | No | Total estimated hours |
 
-> Mission is required for complex/security specs; always populate it before handing off the spec.
+> Mission helps provide context and should be populated before handing off the spec.
  
 ## Phase Structure
 
@@ -90,10 +90,10 @@ The formal specification format used by all SDD tools.
 }
 ```
 
-### Complex Required Fields
+### Required Fields for Implementation Tasks
 
-For `template="complex"` and `template="security"` specs, require:
-- `metadata.mission`
+Best practices for well-structured specs:
+- `metadata.mission` at the spec level
 - Every `type: "task"` node includes `description`, `acceptance_criteria`, and `metadata.task_category`
 - `metadata.file_path` for `implementation` and `refactoring` tasks
 
@@ -103,5 +103,5 @@ For `template="complex"` and `template="security"` specs, require:
 # Create from template
 mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="feature-name" template="empty"
 
-# Only 'empty' template available; add phases via phase-add-bulk or phase-template
+# Templates: empty (blank spec with no phases - use phase templates to add structure)
 ```

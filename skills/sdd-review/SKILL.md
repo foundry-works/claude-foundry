@@ -181,7 +181,7 @@ refs = LSP(operation="findReferences", filePath="src/auth/service.py", line=45, 
 
 **Why:** Understand deviation impact before recommending fixes.
 
-> For detailed LSP patterns and examples, see `references/lsp-integration.md`
+**CRITICAL:** Read [references/lsp-integration.md](./references/lsp-integration.md) before LSP investigation. Contains required operation patterns.
 
 ## LSP Operations Quick Reference
 

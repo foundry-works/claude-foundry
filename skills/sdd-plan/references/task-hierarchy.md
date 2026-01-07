@@ -45,9 +45,9 @@ Spec
 | `decision` | Architecture/design decisions | No |
 | `research` | External research/learning | No |
 
-## Required Task Fields (Complex)
+## Required Task Fields
 
-For `template="complex"` and `template="security"` specs, every `type: "task"` must include:
+Best practices for well-structured specs - every `type: "task"` should include:
 - `description`
 - `acceptance_criteria` (array with at least one item)
 - `metadata.task_category`

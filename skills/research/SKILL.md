@@ -23,6 +23,8 @@ description: AI-powered research skill with five workflows - chat (single-model 
 - **Deep** → Start → Poll → Report (background execution)
 ```
 
+**CRITICAL for `deep` workflow:** Read [references/deep-research-workflow.md](./references/deep-research-workflow.md) before execution. Contains required polling strategy and MCP parameters.
+
 ## MCP Tooling
 
 | Router | Actions |
