@@ -5,6 +5,15 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.6] - 2026-01-07
+
+### Documentation
+
+- **Document assumption-add action in sdd-plan**: Added missing `assumption-add` and `assumption-list` actions
+  - Added to MCP Tooling table in authoring router
+  - Added usage examples showing how to add and list assumptions
+  - Prevents Claude from misusing `spec-update-frontmatter` for assumptions
+
 ## [1.6.5] - 2026-01-07
 
 ### Changed

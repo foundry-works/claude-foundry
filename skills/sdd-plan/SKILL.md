@@ -66,7 +66,7 @@ This skill combines planning, review, modification, and validation into a unifie
 
 | Router | Key Actions |
 |--------|-------------|
-| `authoring` | `spec-create`, `spec-update-frontmatter`, `phase-add-bulk`, `phase-template`, `phase-move`, `phase-update-metadata` |
+| `authoring` | `spec-create`, `spec-update-frontmatter`, `phase-add-bulk`, `phase-template`, `phase-move`, `phase-update-metadata`, `assumption-add`, `assumption-list` |
 | `spec` | `validate`, `fix`, `apply-plan`, `completeness-check`, `duplicate-detection`, `stats`, `analyze-deps` |
 | `review` | `spec-review`, `parse-feedback`, `list-tools` |
 | `task` | `add`, `remove`, `move`, `update-metadata` |
@@ -120,6 +120,17 @@ mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spe
 Update metadata:
 ```bash
 mcp__plugin_foundry_foundry-mcp__authoring action="spec-update-frontmatter" spec_id="{spec-id}" key="mission" value="Single-sentence objective"
+```
+
+Add assumptions:
+```bash
+mcp__plugin_foundry_foundry-mcp__authoring action="assumption-add" spec_id="{spec-id}" text="Single GCP project for staging and production"
+mcp__plugin_foundry_foundry-mcp__authoring action="assumption-add" spec_id="{spec-id}" text="Shared Redis with key prefix isolation" assumption_type="constraint"
+```
+
+List assumptions:
+```bash
+mcp__plugin_foundry_foundry-mcp__authoring action="assumption-list" spec_id="{spec-id}"
 ```
 
 > See `references/json-spec.md` and `references/task-hierarchy.md` for structure details.
