@@ -51,6 +51,17 @@ This interactive wizard will:
 
 Follow the prompts to complete configuration.
 
+## Step 2.5: Research (Optional)
+
+Before planning, you can explore your codebase or research best practices:
+
+```
+/research How does this project currently handle API routes?
+/research deep Current best practices for API rate limiting
+```
+
+This is optional but recommended for larger codebases, unfamiliar projects, or when you want to research industry best practices before committing to an approach.
+
 ## Step 3: Create Your First Spec
 
 Now let's plan a simple feature. Tell Claude what you want to build:

@@ -26,13 +26,12 @@ Ad-hoc coding with AI assistants often leads to unclear requirements, untracked 
 
 ## Key Features
 
-- **Plan-First Workflow** - Create detailed specifications with phases, tasks, and acceptance criteria before writing code. AI-assisted review validates your plan.
-- **Granular Task Tracking** - Track progress at the task level with states (pending, in_progress, completed, blocked), completion notes, and journal entries.
-- **AI-Powered Verification** - Review implementation against spec requirements. Catch drift between what was planned and what was built.
-- **Test Integration** - Run tests with structured debugging. AI consultation helps diagnose failures with 5-phase investigation.
-- **Context-Rich PRs** - Generate pull request descriptions from spec metadata, journal entries, and git history. No more blank PR descriptions.
-- **LSP-Powered Refactoring** - Safe symbol renaming and extraction with impact analysis. See what will change before committing.
-- **Multi-Model Research** - Query multiple AI models in parallel for consensus, run deep web research, or brainstorm with structured ideation.
+- **Spec-Driven Methodology** - Plan before code with mandatory human approval gates. Specs define requirements, phases, tasks, and verification steps.
+- **Fidelity Verification** - AI compares implementation to spec requirements. Catches drift between what was planned and what was built.
+- **Task Dependencies & Tracking** - Granular task states with automatic next-task recommendations. Know what's done, blocked, or ready.
+- **Auditable Decision Journals** - Every task completion logs decisions made. Full traceability of why changes happened.
+- **Context Flow to PRs** - PR descriptions generated from spec + journals + git history. Reviewers understand the "why", not just the "what".
+- **Multi-Model Research** - Query multiple AI models for consensus, deep research, or structured ideation before planning.
 
 ## Prerequisites
 
@@ -82,20 +81,25 @@ Restart Claude Code and trust the repository when prompted.
    /setup
    ```
 
-2. **Create a spec** - Plan your feature before coding:
+2. **Research** (optional) - Explore the codebase or research best practices:
    ```
-   /sdd-plan
+   /research How is authentication currently handled?
+   /research deep Current best practices for JWT refresh tokens
    ```
 
-3. **Implement tasks** - Work through the spec task by task:
+3. **Describe what you want** - Tell Claude what you want to build:
+   ```
+   I want to add user authentication with JWT tokens.
+   ```
+   Claude creates a spec with phases, tasks, and verification steps.
+
+4. **Implement** - Work through tasks (verification is built into the spec):
    ```
    /implement
    ```
 
-4. **Verify and ship** - Review implementation, run tests, create PR:
+5. **Ship** - Create a PR when the spec is complete:
    ```
-   /sdd-review
-   /run-tests
    /sdd-pr
    ```
 
@@ -104,66 +108,59 @@ Restart Claude Code and trust the repository when prompted.
 A complete spec-driven development cycle:
 
 ```bash
-# 1. Plan: Create a specification for your feature
-/sdd-plan
-# Claude asks clarifying questions, then generates a spec with phases and tasks
-# Spec is saved to specs/pending/your-feature.json
+# 1. Research (optional): Understand existing patterns
+/research How does the current API handle errors?
+# Single-model chat, multi-model consensus, or deep web research
 
-# 2. Activate: Move spec to active when ready to implement
-# (sdd-plan handles this automatically after review)
+# 2. Describe your feature: Claude creates the spec
+"I want to add rate limiting to the API endpoints"
+# Claude invokes sdd-plan, asks clarifying questions, creates spec
+# Spec saved to specs/pending/, then activated after your approval
 
-# 3. Implement: Work through tasks one at a time
+# 3. Implement: Work through tasks with /implement
 /implement
-# Shows next actionable task, provides context, tracks completion
+# Shows next task, you implement it, verification tasks auto-dispatch
+# When /implement hits a verify task, it runs sdd-review or tests
 
-# 4. Verify: Check implementation matches the spec
-/sdd-review
-# AI analyzes code against spec requirements, reports deviations
-
-# 5. Test: Run tests and debug any failures
-/run-tests
-# Runs test suite, investigates failures with AI assistance
-
-# 6. Ship: Create a PR with full context
+# 4. Ship: Create PR when spec is complete
 /sdd-pr
-# Generates PR description from spec, journals, and git history
+# Generates PR from spec metadata, journals, and git history
 ```
 
 ## How It Works
 
 ```
-sdd-plan → sdd-implement → [CODE] → sdd-review → run-tests → sdd-pr
-   │            │              │          │           │          │
-   ▼            ▼              ▼          ▼           ▼          ▼
- Create      Find next      Write     Verify      Validate   Generate
-  spec        task          code      against      with       PR with
-              and                      spec        tests     context
-             track
+/research → describe intent → /implement → (auto-verify) → /sdd-pr
+    │             │               │              │             │
+    ▼             ▼               ▼              ▼             ▼
+ Explore      Claude          Work on       Verify tasks    Create PR
+ codebase     creates         tasks via     auto-dispatch   with full
+ or web       spec            dependency    to sdd-review   context
+                              order         or run-tests
 ```
 
-| Phase | What happens |
-|-------|--------------|
-| **sdd-plan** | Creates a structured spec with phases, tasks, and acceptance criteria. AI review validates the plan. |
-| **sdd-implement** | Finds the next actionable task, provides context, and tracks progress. Journals decisions. |
-| **Coding** | You write the code. Foundry tracks which task you're working on. |
-| **sdd-review** | Compares implementation against spec requirements. Reports compliance and drift. |
-| **run-tests** | Executes test suite with structured debugging for failures. |
-| **sdd-pr** | Creates PR description from spec metadata, journals, and commit history. |
+| Step | What happens |
+|------|--------------|
+| **Research** | Optional first step to explore the codebase or research best practices via web search. |
+| **Describe intent** | Tell Claude what you want to build. Claude creates a spec with phases, tasks, and verification steps. |
+| **Implement** | `/implement` finds next task by dependency order. You implement, it tracks progress. |
+| **Auto-verify** | Specs include verify tasks. When `/implement` hits one, it auto-dispatches to `sdd-review` or `run-tests`. |
+| **Ship** | `/sdd-pr` creates PR from spec metadata, journals, and commit history. |
 
 ## Skills Reference
 
-Invoke skills with `/skill-name` or via the Skill tool.
+Skills are invoked by Claude based on your intent. Describe what you want, and Claude selects the appropriate skill.
 
-| Skill | Purpose |
-|-------|---------|
-| `sdd-plan` | Create, review, and modify specifications |
-| `sdd-implement` | Find next task, implement, track progress |
-| `sdd-review` | Verify implementation matches specification |
-| `run-tests` | Run tests with AI-assisted debugging |
-| `sdd-pr` | Create PRs with spec context |
-| `sdd-refactor` | LSP-powered refactoring with impact analysis |
-| `research` | Multi-model research: chat, consensus, thinkdeep, ideate, deep |
-| `bikelane` | Quick capture for ideas and issues |
+| Skill | When Claude uses it |
+|-------|---------------------|
+| `sdd-plan` | You describe a feature or ask to plan something |
+| `sdd-implement` | You run `/implement` or ask to work on tasks |
+| `sdd-review` | Verify task in spec, or you ask to check implementation |
+| `run-tests` | Verify task in spec, or you ask to run/debug tests |
+| `sdd-pr` | You ask to create a pull request |
+| `sdd-refactor` | You ask to rename, extract, or move code |
+| `research` | You run `/research` or ask to investigate something |
+| `bikelane` | You run `/bikelane` or ask to capture an idea |
 
 ## Commands Reference
 
@@ -171,7 +168,8 @@ Invoke skills with `/skill-name` or via the Skill tool.
 |---------|---------|
 | `/setup` | First-time setup and permissions configuration |
 | `/implement` | Resume or start spec-driven development |
-| `/tutorial` | Interactive tutorial for learning SDD |
+| `/research` | AI-powered research: chat, consensus, thinkdeep, ideate, deep |
+| `/bikelane` | Quick capture for ideas and issues |
 
 ## Configuration
 

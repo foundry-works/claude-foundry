@@ -14,12 +14,42 @@ The complete Spec-Driven Development workflow explained step by step.
 ## The SDD Workflow
 
 ```
-sdd-plan  →  /implement  →  sdd-review  →  run-tests  →  sdd-pr
-   │              │              │              │            │
- Plan         Code it        Verify it      Test it     Ship it
+/research → describe intent → /implement → (auto-verify) → /sdd-pr
+    │             │               │              │              │
+ Explore      Claude          Work on       Verify tasks     Ship it
+ codebase     creates         tasks via     auto-dispatch
+ or web       spec            dependency    to sdd-review
+                              order         or run-tests
 ```
 
+**Key insight:** You don't manually call `sdd-review` or `run-tests`. Specs include verification tasks that `/implement` auto-dispatches when reached.
+
 Each step has a specific skill. Let's walk through each one.
+
+---
+
+## 0. Research (Optional)
+
+**When to use:** Before planning, especially in unfamiliar codebases, when design decisions matter, or when you want to research industry best practices.
+
+### Starting research
+
+```
+/research How does this project handle authentication?
+/research deep Current best practices for JWT refresh tokens 2025
+```
+
+### Research workflows
+
+| Workflow | Use for |
+|----------|---------|
+| `chat` | Quick questions, single-model conversation |
+| `consensus` | Design decisions, get multiple AI perspectives |
+| `thinkdeep` | Systematic investigation of complex topics |
+| `ideate` | Creative brainstorming, exploring options |
+| `deep` | Comprehensive web research (runs in background) |
+
+Research helps you make informed decisions before committing to a plan. Use `deep` for web research on best practices, libraries, or industry standards.
 
 ---
 
@@ -507,15 +537,12 @@ Later, review captured items:
 ### Starting fresh
 
 ```
-1. Describe your feature
-2. Claude runs sdd-plan
-3. Review and approve the plan
-4. Activate the spec
-5. /implement to start working
-6. Complete tasks one by one
-7. sdd-review to verify
-8. run-tests to validate
-9. sdd-pr to create PR
+1. /research to understand codebase (optional)
+2. Describe your feature naturally
+3. Claude creates spec, you review and approve
+4. /implement to work through tasks
+5. Verification tasks auto-dispatch when reached
+6. /sdd-pr when spec is complete
 ```
 
 ### Resuming work
@@ -530,10 +557,10 @@ Later, review captured items:
 ### Fixing issues
 
 ```
-1. run-tests shows failures
+1. Verify task fails (or you ask to run tests)
 2. AI helps diagnose
 3. Fix the issues
-4. Re-run to verify
+4. Continue with /implement
 ```
 
 ---
