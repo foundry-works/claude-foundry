@@ -673,12 +673,12 @@ Use marker comments for idempotent updates:
 
 | When you need to... | Use |
 |---------------------|-----|
-| Create/review/modify a spec | `sdd-plan` skill |
-| Find next task, implement | `sdd-implement` skill |
-| Verify implementation | `sdd-review` skill |
-| Run tests and debug | `run-tests` skill |
-| Create PR with spec context | `sdd-pr` skill |
-| Safe refactoring with LSP | `sdd-refactor` skill |
+| Create/review/modify a spec | `foundry-spec` skill |
+| Find next task, implement | `foundry-implement` skill |
+| Verify implementation | `foundry-review` skill |
+| Run tests and debug | `foundry-test` skill |
+| Create PR with spec context | `foundry-pr` skill |
+| Safe refactoring with LSP | `foundry-refactor` skill |
 
 ### Key Rules
 
@@ -689,8 +689,8 @@ Use marker comments for idempotent updates:
 - For phases with tasks, use `phase-add-bulk` (not `phase-add`)
 
 **Use Explore subagent before skills:**
-- Before `sdd-plan`: Understand codebase architecture and existing patterns
-- Before `sdd-implement`: Find related code, test files, dependencies
+- Before `foundry-spec`: Understand codebase architecture and existing patterns
+- Before `foundry-implement`: Find related code, test files, dependencies
 - Thoroughness levels: `quick` (single file), `medium` (related files), `very thorough` (subsystem)
 
 **Task completion gates - NEVER mark complete if:**
@@ -701,8 +701,8 @@ Use marker comments for idempotent updates:
 - Instead: keep `in_progress` and document blocker
 
 **LSP pre-checks for speed:**
-- Use `documentSymbol` before expensive AI reviews (sdd-review)
-- Use `findReferences` to assess impact before refactoring (sdd-refactor)
+- Use `documentSymbol` before expensive AI reviews (foundry-review)
+- Use `findReferences` to assess impact before refactoring (foundry-refactor)
 - LSP catches structural issues in seconds vs minutes for full analysis
 
 **Research tool defaults - let config decide:**

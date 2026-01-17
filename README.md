@@ -17,7 +17,6 @@ Ad-hoc coding with AI assistants often leads to unclear requirements, untracked 
 - [Example Workflow](#example-workflow)
 - [How It Works](#how-it-works)
 - [Skills Reference](#skills-reference)
-- [Commands Reference](#commands-reference)
 - [Configuration](#configuration)
 - [Scope and Limitations](#scope-and-limitations)
 - [Documentation](#documentation)
@@ -76,15 +75,15 @@ Restart Claude Code and trust the repository when prompted.
 
 ## Quick Start
 
-1. **Run setup** - Configure permissions and verify installation:
+1. **Run setup** - Ask Claude to configure permissions and verify installation:
    ```
-   /setup
+   Please run foundry-setup to configure the workspace.
    ```
 
-2. **Research** (optional) - Explore the codebase or research best practices:
+2. **Research** (optional) - Ask Claude to explore the codebase or research best practices:
    ```
-   /research How is authentication currently handled?
-   /research deep Current best practices for JWT refresh tokens
+   Research how authentication is currently handled in this codebase.
+   Do deep research on current best practices for JWT refresh tokens.
    ```
 
 3. **Describe what you want** - Tell Claude what you want to build:
@@ -93,14 +92,14 @@ Restart Claude Code and trust the repository when prompted.
    ```
    Claude creates a spec with phases, tasks, and verification steps.
 
-4. **Implement** - Work through tasks (verification is built into the spec):
+4. **Implement** - Ask Claude to work through tasks (verification is built into the spec):
    ```
-   /implement
+   Let's implement the next task from the spec.
    ```
 
 5. **Ship** - Create a PR when the spec is complete:
    ```
-   /sdd-pr
+   Create a pull request for this completed spec.
    ```
 
 ## Example Workflow
@@ -109,56 +108,56 @@ A complete spec-driven development cycle:
 
 ```bash
 # 1. Research (optional): Understand existing patterns
-/research How does the current API handle errors?
+"Research how the current API handles errors"
 # Single-model chat, multi-model consensus, or deep web research
 
 # 2. Describe your feature: Claude creates the spec
 "I want to add rate limiting to the API endpoints"
-# Claude invokes sdd-plan, asks clarifying questions, creates spec
+# Claude invokes foundry-spec, asks clarifying questions, creates spec
 # Spec saved to specs/pending/, then activated after your approval
 
-# 3. Implement: Work through tasks with /implement
-/implement
+# 3. Implement: Work through tasks
+"Let's implement the next task"
 # Shows next task, you implement it, verification tasks auto-dispatch
-# When /implement hits a verify task, it runs sdd-review or tests
+# When foundry-implement hits a verify task, it runs foundry-review or tests
 
 # 4. Ship: Create PR when spec is complete
-/sdd-pr
+"Create a PR for this spec"
 # Generates PR from spec metadata, journals, and git history
 ```
 
 ## How It Works
 
 ```
-/research → describe intent → /implement → (auto-verify) → /sdd-pr
+research → describe intent → implement → (auto-verify) → create PR
     │             │               │              │             │
     ▼             ▼               ▼              ▼             ▼
  Explore      Claude          Work on       Verify tasks    Create PR
  codebase     creates         tasks via     auto-dispatch   with full
- or web       spec            dependency    to sdd-review   context
-                              order         or run-tests
+ or web       spec            dependency    to review       context
+                              order         or tests
 ```
 
 | Step | What happens |
 |------|--------------|
 | **Research** | Optional first step to explore the codebase or research best practices via web search. |
 | **Describe intent** | Tell Claude what you want to build. Claude creates a spec with phases, tasks, and verification steps. |
-| **Implement** | `/implement` finds next task by dependency order. You implement, it tracks progress. |
-| **Auto-verify** | Specs include verify tasks. When `/implement` hits one, it auto-dispatches to `sdd-review` or `run-tests`. |
-| **Ship** | `/sdd-pr` creates PR from spec metadata, journals, and commit history. |
+| **Implement** | Ask Claude to implement - it finds next task by dependency order. You implement, it tracks progress. |
+| **Auto-verify** | Specs include verify tasks. When implementation hits one, it auto-dispatches to `foundry-review` or `foundry-test`. |
+| **Ship** | Ask to create PR - generates from spec metadata, journals, and commit history. |
 
 ### Skill Architecture
 
 Under the hood, these skills power the workflow:
 
 ```
-research → sdd-plan → sdd-implement → [CODE] → sdd-review → run-tests → sdd-pr
-    │          │            │            │          │           │          │
-    ▼          ▼            ▼            ▼          ▼           ▼          ▼
- Explore    Create       Find next    Write     Verify      Validate   Generate
- codebase    spec         task        code      against      with       PR with
- or web                   and                    spec        tests     context
-                         track
+foundry-research → foundry-spec → foundry-implement → [CODE] → foundry-review → foundry-test → foundry-pr
+        │              │                │               │            │               │              │
+        ▼              ▼                ▼               ▼            ▼               ▼              ▼
+     Explore        Create          Find next        Write        Verify         Validate       Generate
+     codebase        spec            task            code         against          with          PR with
+     or web                          and                          spec           tests         context
+                                    track
 ```
 
 ## Skills Reference
@@ -167,23 +166,15 @@ Skills are invoked by Claude based on your intent. Describe what you want, and C
 
 | Skill | When Claude uses it |
 |-------|---------------------|
-| `sdd-plan` | You describe a feature or ask to plan something |
-| `sdd-implement` | You run `/implement` or ask to work on tasks |
-| `sdd-review` | Verify task in spec, or you ask to check implementation |
-| `run-tests` | Verify task in spec, or you ask to run/debug tests |
-| `sdd-pr` | You ask to create a pull request |
-| `sdd-refactor` | You ask to rename, extract, or move code |
-| `research` | You run `/research` or ask to investigate something |
-| `bikelane` | You run `/bikelane` or ask to capture an idea |
-
-## Commands Reference
-
-| Command | Purpose |
-|---------|---------|
-| `/setup` | First-time setup and permissions configuration |
-| `/implement` | Resume or start spec-driven development |
-| `/research` | AI-powered research: chat, consensus, thinkdeep, ideate, deep |
-| `/bikelane` | Quick capture for ideas and issues |
+| `foundry-spec` | You describe a feature or ask to plan something |
+| `foundry-implement` | You ask to work on tasks or implement features |
+| `foundry-review` | Verify task in spec, or you ask to check implementation |
+| `foundry-test` | Verify task in spec, or you ask to run/debug tests |
+| `foundry-pr` | You ask to create a pull request |
+| `foundry-refactor` | You ask to rename, extract, or move code |
+| `foundry-research` | You ask to research or investigate something |
+| `foundry-bikelane` | You ask to capture an idea or track an issue |
+| `foundry-setup` | First-time setup and permissions configuration |
 
 ## Configuration
 
