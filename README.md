@@ -147,6 +147,20 @@ A complete spec-driven development cycle:
 | **Auto-verify** | Specs include verify tasks. When `/implement` hits one, it auto-dispatches to `sdd-review` or `run-tests`. |
 | **Ship** | `/sdd-pr` creates PR from spec metadata, journals, and commit history. |
 
+### Skill Architecture
+
+Under the hood, these skills power the workflow:
+
+```
+research → sdd-plan → sdd-implement → [CODE] → sdd-review → run-tests → sdd-pr
+    │          │            │            │          │           │          │
+    ▼          ▼            ▼            ▼          ▼           ▼          ▼
+ Explore    Create       Find next    Write     Verify      Validate   Generate
+ codebase    spec         task        code      against      with       PR with
+ or web                   and                    spec        tests     context
+                         track
+```
+
 ## Skills Reference
 
 Skills are invoked by Claude based on your intent. Describe what you want, and Claude selects the appropriate skill.
