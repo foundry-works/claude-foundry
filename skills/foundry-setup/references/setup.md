@@ -237,7 +237,7 @@ Note: Set auto_compact = false in foundry-mcp.toml if you've disabled auto-compa
 
 **Only run this phase if foundry-mcp.toml exists (either created in Phase 2 or already present).**
 
-This phase configures the `[implement]` section for the `/implement` command's default execution mode.
+This phase configures the `[implement]` section for the `foundry-implement` command's default execution mode.
 
 ### Step 1: Check Existing Configuration
 
@@ -253,12 +253,12 @@ Continue to Phase 2.5.
 Use `AskUserQuestion` to determine preferred execution mode:
 
 ```
-"How should /implement behave by default?"
+"How should foundry-implement behave by default?"
 Options:
-- "Interactive, inline (default)" → auto=false, delegate=false, parallel=false
+- "Interactive, inline (Recommended)" → auto=false, delegate=false, parallel=false
 - "Autonomous, inline" → auto=true, delegate=false, parallel=false
 - "Interactive, delegated" → auto=false, delegate=true, parallel=false
-- "Autonomous, delegated (recommended)" → auto=true, delegate=true, parallel=false
+- "Autonomous, delegated" → auto=true, delegate=true, parallel=false
 - "Autonomous, parallel" → auto=true, delegate=true, parallel=true
 ```
 
@@ -271,7 +271,7 @@ Append the implement configuration section after `[workflow]`:
 ```toml
 
 [implement]
-# Default flags for /implement command (can be overridden via CLI flags)
+# Default flags for foundry-implement command (can be overridden via CLI flags)
 auto = {auto_value}      # --auto: skip prompts between tasks
 delegate = {delegate_value}  # --delegate: use subagent(s) for implementation
 parallel = {parallel_value}  # --parallel: run subagents concurrently (implies delegate)
@@ -284,7 +284,7 @@ Use the Edit tool to update the file.
 ```
 ## Implement Configuration
 
-Configured /implement defaults:
+Configured foundry-implement defaults:
 
 | Flag | Default | Effect |
 |------|---------|--------|
@@ -292,7 +292,7 @@ Configured /implement defaults:
 | --delegate | {delegate_value} | Use subagent(s) for implementation |
 | --parallel | {parallel_value} | Run subagents concurrently |
 
-You can override these via CLI flags, e.g., `/implement --auto --delegate`.
+You can override these via CLI flags, e.g., `foundry-implement --auto --delegate`.
 ```
 
 ---
@@ -380,7 +380,7 @@ To enable multi-model features like plan reviews, install one of:
 - opencode CLI: https://github.com/opencode-ai/opencode
 - codex CLI: https://github.com/openai/codex
 
-Then re-run `/setup` or manually edit foundry-mcp.toml.
+Then re-run `foundry-setup` or manually edit foundry-mcp.toml.
 ```
 
 ---
@@ -673,12 +673,12 @@ Use marker comments for idempotent updates:
 
 | When you need to... | Use |
 |---------------------|-----|
-| Create/review/modify a spec | `sdd-plan` skill |
-| Find next task, implement | `sdd-implement` skill |
-| Verify implementation | `sdd-review` skill |
-| Run tests and debug | `run-tests` skill |
-| Create PR with spec context | `sdd-pr` skill |
-| Safe refactoring with LSP | `sdd-refactor` skill |
+| Create/review/modify a spec | `foundry-spec` skill |
+| Find next task, implement | `foundry-implement` skill |
+| Verify implementation | `foundry-review` skill |
+| Run tests and debug | `foundry-test` skill |
+| Create PR with spec context | `foundry-pr` skill |
+| Safe refactoring with LSP | `foundry-refactor` skill |
 
 ### Key Rules
 
@@ -689,8 +689,8 @@ Use marker comments for idempotent updates:
 - For phases with tasks, use `phase-add-bulk` (not `phase-add`)
 
 **Use Explore subagent before skills:**
-- Before `sdd-plan`: Understand codebase architecture and existing patterns
-- Before `sdd-implement`: Find related code, test files, dependencies
+- Before `foundry-spec`: Understand codebase architecture and existing patterns
+- Before `foundry-implement`: Find related code, test files, dependencies
 - Thoroughness levels: `quick` (single file), `medium` (related files), `very thorough` (subsystem)
 
 **Task completion gates - NEVER mark complete if:**
@@ -701,8 +701,8 @@ Use marker comments for idempotent updates:
 - Instead: keep `in_progress` and document blocker
 
 **LSP pre-checks for speed:**
-- Use `documentSymbol` before expensive AI reviews (sdd-review)
-- Use `findReferences` to assess impact before refactoring (sdd-refactor)
+- Use `documentSymbol` before expensive AI reviews (foundry-review)
+- Use `findReferences` to assess impact before refactoring (foundry-refactor)
 - LSP catches structural issues in seconds vs minutes for full analysis
 
 **Research tool defaults - let config decide:**

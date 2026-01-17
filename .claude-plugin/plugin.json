@@ -1,6 +1,6 @@
 {
     "name": "foundry",
-    "version": "1.6.4",
+    "version": "1.6.8",
     "description": "Spec-driven development toolkit for Claude Code",
     "author": {
         "name": "tylerburleigh",

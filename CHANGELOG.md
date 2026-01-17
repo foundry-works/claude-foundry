@@ -5,6 +5,34 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.8] - 2026-01-17
+
+### Changed
+
+- **Unified skill naming with foundry-* prefix**: Consistent naming convention across all skills
+  - All SDD skills now use `foundry-*` prefix (e.g., `foundry-spec`, `foundry-implement`, `foundry-review`)
+  - Updated CLAUDE.md skill selection table with new names
+  - Migrated all documentation references to use unified naming
+
+### Documentation
+
+- **README rewrite**: Complete documentation overhaul following best practices
+  - Added skill architecture diagram showing workflow relationships
+  - Improved workflow documentation to reflect actual user experience
+  - Clearer getting started instructions and examples
+
+## [1.6.7] - 2026-01-11
+
+### Changed
+
+- **Mandatory plan-first workflow for sdd-plan**: Restructured workflow to require markdown plans before JSON specs
+  - Plan creation is now MANDATORY (Step 3) with explicit documentation
+  - Added AI review on plans (Step 4) before JSON conversion
+  - Added HUMAN APPROVAL GATE (Step 5) requiring explicit user approval via AskUserQuestion
+  - Renumbered steps: Plan → Plan Review → Approval → JSON Spec → Spec Review → Validate
+  - Updated workflow diagram to show 7-step process with approval gate
+  - Updated `references/ai-review.md` with iteration workflow including approval gate
+
 ## [1.6.6] - 2026-01-07
 
 ### Documentation

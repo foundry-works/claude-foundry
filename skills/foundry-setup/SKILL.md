@@ -1,11 +1,11 @@
 ---
 name: foundry-setup
-description: First-time setup for the claude-foundry plugin (plugin:foundry@claude-foundry)
+description: First-time setup for the foundry plugin (plugin:foundry@claude-foundry)
 ---
 
 # Foundry Setup Skill
 
-First-time setup for the claude-foundry plugin. This skill is idempotent and safe to run multiple times.
+First-time setup for the foundry plugin. This skill is idempotent and safe to run multiple times.
 
 ## Argument Handling
 
@@ -20,12 +20,10 @@ Check if `$ARGUMENTS` contains `--check` or `--preflight`:
 ### Flow
 
 ```
-- **Entry** → Read `references/setup.md` (MANDATORY)
-  - → Ensure Full Mode (check/switch SDD mode)
-  - → Preflight (MCP, Python, Git)
-    - [--check?] → **Exit**
-  - → Permissions → Workspace
+- **Entry** → Read `references/setup.md` (MANDATORY) → Ensure Full Mode → Preflight: MCP, Python, Git
+  - [--check?] → **Exit**
+  - [else] → Permissions → Workspace
     - [toml created?] → FeatureFlags → Providers → Research → TestConfig
-  - → CLAUDE.md Configuration
-  - → Summary → **Exit**
+    - [else] → Create TOML → FeatureFlags → Providers → Research → TestConfig
+    - CLAUDE.md Configuration → Summary → **Exit**
 ```

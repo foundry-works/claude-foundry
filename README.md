@@ -1,16 +1,48 @@
-# claude-foundry
+# Claude Foundry - Spec-Driven Development for Claude Code
 
-A Claude Code plugin for working with [foundry-mcp](https://github.com/tylerburleigh/foundry-mcp).
+Plan before you code. Verify against the spec. Ship with confidence.
 
 ## Overview
 
-This plugin provides skills, commands, and agents for spec-driven development (SDD) workflows powered by the Foundry MCP server.
+Ad-hoc coding with AI assistants often leads to unclear requirements, untracked progress, and implementation drift. Claude Foundry brings structure to AI-assisted development through **spec-driven development (SDD)**: you create a detailed specification first, then implement against it with granular task tracking and AI-powered verification.
+
+**Who it's for:** Developers using Claude Code who want traceable, auditable AI-assisted development with clear requirements and verifiable outcomes.
+
+## Table of Contents
+
+- [Key Features](#key-features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Example Workflow](#example-workflow)
+- [How It Works](#how-it-works)
+- [Skills Reference](#skills-reference)
+- [Configuration](#configuration)
+- [Scope and Limitations](#scope-and-limitations)
+- [Documentation](#documentation)
+- [Support](#support)
+- [License](#license)
+
+## Key Features
+
+- **Spec-Driven Methodology** - Plan before code with mandatory human approval gates. Specs define requirements, phases, tasks, and verification steps.
+- **Fidelity Verification** - AI compares implementation to spec requirements. Catches drift between what was planned and what was built.
+- **Task Dependencies & Tracking** - Granular task states with automatic next-task recommendations. Know what's done, blocked, or ready.
+- **Auditable Decision Journals** - Every task completion logs decisions made. Full traceability of why changes happened.
+- **Context Flow to PRs** - PR descriptions generated from spec + journals + git history. Reviewers understand the "why", not just the "what".
+- **Multi-Model Research** - Query multiple AI models for consensus, deep research, or structured ideation before planning.
 
 ## Prerequisites
 
-### Install foundry-mcp (Required)
+| Requirement | Version | Notes |
+|-------------|---------|-------|
+| Python | 3.10+ | Required for foundry-mcp server |
+| Claude Code | Latest | The CLI tool from Anthropic |
+| foundry-mcp | Latest | MCP server (installed via pip) |
 
-The plugin requires the `foundry-mcp` Python package to be installed:
+## Installation
+
+### 1. Install foundry-mcp
 
 ```bash
 pip install foundry-mcp
@@ -28,95 +60,171 @@ Verify installation:
 python -m foundry_mcp.server --help
 ```
 
-> **Note:** The MCP server (`foundry-mcp`) is automatically registered when you install the plugin. Do not manually add it with `claude mcp add` as this would create a duplicate.
+### 2. Install the plugin
 
-## Installation
-
-### Install from Claude Code (Recommended)
-
-From within Claude Code, add the marketplace and install the plugin:
+From within Claude Code:
 
 ```
 /plugin marketplace add tylerburleigh/claude-foundry
 /plugin install foundry@claude-foundry
 ```
 
-Restart Claude Code and trust the repository when prompted. The plugin will auto-update when new versions are released.
+Restart Claude Code and trust the repository when prompted.
 
-## Plugin Structure
+> **Note:** The MCP server is automatically registered when you install the plugin. Do not manually add it with `claude mcp add`.
+
+## Quick Start
+
+1. **Run setup** - Ask Claude to configure permissions and verify installation:
+   ```
+   Please run foundry-setup to configure the workspace.
+   ```
+
+2. **Research** (optional) - Ask Claude to explore the codebase or research best practices:
+   ```
+   Research how authentication is currently handled in this codebase.
+   Do deep research on current best practices for JWT refresh tokens.
+   ```
+
+3. **Describe what you want** - Tell Claude what you want to build:
+   ```
+   I want to add user authentication with JWT tokens.
+   ```
+   Claude creates a spec with phases, tasks, and verification steps.
+
+4. **Implement** - Ask Claude to work through tasks (verification is built into the spec):
+   ```
+   Let's implement the next task from the spec.
+   ```
+
+5. **Ship** - Create a PR when the spec is complete:
+   ```
+   Create a pull request for this completed spec.
+   ```
+
+## Example Workflow
+
+A complete spec-driven development cycle:
+
+```bash
+# 1. Research (optional): Understand existing patterns
+"Research how the current API handles errors"
+# Single-model chat, multi-model consensus, or deep web research
+
+# 2. Describe your feature: Claude creates the spec
+"I want to add rate limiting to the API endpoints"
+# Claude invokes foundry-spec, asks clarifying questions, creates spec
+# Spec saved to specs/pending/, then activated after your approval
+
+# 3. Implement: Work through tasks
+"Let's implement the next task"
+# Shows next task, you implement it, verification tasks auto-dispatch
+# When foundry-implement hits a verify task, it runs foundry-review or tests
+
+# 4. Ship: Create PR when spec is complete
+"Create a PR for this spec"
+# Generates PR from spec metadata, journals, and git history
+```
+
+## How It Works
 
 ```
-claude-foundry/
-├── .claude-plugin/
-│   └── marketplace.json    # Plugin registration
-├── agents/                 # Subagent definitions
-├── commands/               # Slash commands (/foundry:*)
-├── hooks/                  # Pre/post tool use hooks
-│   └── hooks.json
-├── skills/                 # Skills (foundry:*)
-└── README.md
+research → describe intent → implement → (auto-verify) → create PR
+    │             │               │              │             │
+    ▼             ▼               ▼              ▼             ▼
+ Explore      Claude          Work on       Verify tasks    Create PR
+ codebase     creates         tasks via     auto-dispatch   with full
+ or web       spec            dependency    to review       context
+                              order         or tests
 ```
 
-## Available Components
+| Step | What happens |
+|------|--------------|
+| **Research** | Optional first step to explore the codebase or research best practices via web search. |
+| **Describe intent** | Tell Claude what you want to build. Claude creates a spec with phases, tasks, and verification steps. |
+| **Implement** | Ask Claude to implement - it finds next task by dependency order. You implement, it tracks progress. |
+| **Auto-verify** | Specs include verify tasks. When implementation hits one, it auto-dispatches to `foundry-review` or `foundry-test`. |
+| **Ship** | Ask to create PR - generates from spec metadata, journals, and commit history. |
 
-### Skills (`foundry:*`)
+### Skill Architecture
 
-Skills are invoked via `Skill(foundry:skill-name)`:
+Under the hood, these skills power the workflow:
 
-- `foundry:sdd-plan` - Create detailed specifications before coding (includes review, modification, validation)
-- `foundry:sdd-implement` - Find next task, implement, and track progress
-- `foundry:sdd-review` - Verify implementation matches specification
-- `foundry:run-tests` - Run tests with debugging support
-- `foundry:sdd-pr` - Create PRs with AI-enhanced descriptions
-- `foundry:sdd-refactor` - LSP-powered refactoring with impact analysis
+```
+foundry-research → foundry-spec → foundry-implement → [CODE] → foundry-review → foundry-test → foundry-pr
+        │              │                │               │            │               │              │
+        ▼              ▼                ▼               ▼            ▼               ▼              ▼
+     Explore        Create          Find next        Write        Verify         Validate       Generate
+     codebase        spec            task            code         against          with          PR with
+     or web                          and                          spec           tests         context
+                                    track
+```
 
-### Commands
+## Skills Reference
 
-Slash commands for common workflows:
+Skills are invoked by Claude based on your intent. Describe what you want, and Claude selects the appropriate skill.
 
-- `/setup` - First-time setup and guided tour of plugin features
-- `/implement` - Resume or start spec-driven development work
-- `/tutorial` - Interactive tutorial for Spec-Driven Development
-
-### Agents
-
-Subagents for specialized tasks (spawned via Task tool).
+| Skill | When Claude uses it |
+|-------|---------------------|
+| `foundry-spec` | You describe a feature or ask to plan something |
+| `foundry-implement` | You ask to work on tasks or implement features |
+| `foundry-review` | Verify task in spec, or you ask to check implementation |
+| `foundry-test` | Verify task in spec, or you ask to run/debug tests |
+| `foundry-pr` | You ask to create a pull request |
+| `foundry-refactor` | You ask to rename, extract, or move code |
+| `foundry-research` | You ask to research or investigate something |
+| `foundry-note` | You ask to capture an idea or track an issue |
+| `foundry-setup` | First-time setup and permissions configuration |
 
 ## Configuration
 
-The plugin requires the foundry-mcp MCP server to be installed and registered (see Prerequisites above). Once configured, the server starts automatically when Claude Code launches.
+The plugin stores configuration in `foundry-mcp.toml`. Key settings:
 
-## Permissions
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `workspace` | Current directory | Working directory for specs |
+| `specs_dir` | `specs/` | Where specs are stored |
+| `providers` | System default | AI providers for research workflows |
 
-Claude Code requires explicit permissions for plugin tools. Add the permissions from `docs/examples/settings.local.json.example` to your project's `.claude/settings.local.json`.
+Specs are organized by status:
 
-**If you don't have a `.claude/settings.local.json` yet:**
-
-```bash
-mkdir -p .claude && curl -o .claude/settings.local.json \
-  https://raw.githubusercontent.com/tylerburleigh/claude-foundry/main/docs/examples/settings.local.json.example
+```
+specs/
+├── pending/    # Specs in planning phase
+├── active/     # Specs being implemented
+└── completed/  # Finished specs (archived)
 ```
 
-**If you already have one:** Merge the permissions from the sample file into your existing config. See `docs/examples/settings.local.json.example` in this repo for the full list.
+## Scope and Limitations
 
-### What's included
+**Best for:**
+- Feature development with clear requirements
+- Bug fixes that benefit from structured investigation
+- Multi-phase projects where progress tracking matters
+- Work that needs auditable history (journals, specs)
 
-The sample config allows:
+**Not for:**
+- One-line fixes or trivial changes
+- Exploratory prototyping without clear goals
+- Tasks where overhead exceeds benefit
 
-| Category | Permissions |
-|----------|-------------|
-| **MCP Tools** | All `mcp__plugin_foundry_foundry-mcp__*` tools |
-| **Git** | `status`, `diff`, `log`, `rev-parse`, `branch`, `show` |
-| **Testing** | `pytest`, `python -m pytest` |
-| **Foundry CLI** | `foundry-mcp`, `foundry-cli` |
-| **AI Providers** | `codex`, `claude`, `gemini`, `cursor-agent`, `opencode` |
-| **File Access** | Write/Edit to `specs/` directories |
-| **Denied** | Direct `Read` of spec JSON files (use MCP tools instead) |
+## Documentation
 
-### Customizing
+| Guide | Description |
+|-------|-------------|
+| [Quick Start](docs/01-quick-start.md) | Get started in 5 minutes |
+| [Core Concepts](docs/02-core-concepts.md) | Understand specs, phases, tasks |
+| [Workflow Guide](docs/03-workflow-guide.md) | The complete SDD workflow |
+| [Tutorial](docs/04-tutorial.md) | Build a feature from start to finish |
+| [Command Reference](docs/05-command-reference.md) | All commands and options |
+| [Troubleshooting](docs/06-troubleshooting.md) | Common issues and solutions |
 
-Edit `.claude/settings.local.json` to add or remove permissions. See [Claude Code permissions docs](https://docs.anthropic.com/en/docs/claude-code) for the full syntax.
+## Support
+
+- **Issues:** [GitHub Issues](https://github.com/tylerburleigh/claude-foundry/issues)
+- **Bugs:** Open an issue with steps to reproduce
+- **Features:** Open an issue describing the use case
 
 ## License
 
-MIT
+[MIT](LICENSE)
