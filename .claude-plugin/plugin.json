@@ -7,8 +7,8 @@
         "email": "tylerburleigh@gmail.com",
         "url": "https://github.com/tylerburleigh"
     },
-    "homepage": "https://github.com/tylerburleigh/claude-foundry",
-    "repository": "https://github.com/tylerburleigh/claude-foundry",
+    "homepage": "https://github.com/foundry-works/claude-foundry",
+    "repository": "https://github.com/foundry-works/claude-foundry",
     "license": "MIT",
     "keywords": ["sdd", "spec-driven", "development", "testing", "planning"],
     "commands": "./commands",

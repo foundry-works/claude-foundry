@@ -26,7 +26,7 @@ Before using Claude Foundry, ensure you have:
   ```
 - [ ] **Plugin installed** via Claude Code:
   ```
-  /plugin marketplace add tylerburleigh/claude-foundry
+  /plugin marketplace add foundry-works/claude-foundry
   /plugin install foundry@claude-foundry
   ```
 - [ ] **Permissions configured** in your project (see [Quick Start](01-quick-start.md))

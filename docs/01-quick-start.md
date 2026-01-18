@@ -29,7 +29,7 @@ python -m foundry_mcp.server --help
 In Claude Code, run:
 
 ```
-/plugin marketplace add tylerburleigh/claude-foundry
+/plugin marketplace add foundry-works/claude-foundry
 /plugin install foundry@claude-foundry
 ```
 

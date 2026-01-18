@@ -65,7 +65,7 @@ python -m foundry_mcp.server --help
 From within Claude Code:
 
 ```
-/plugin marketplace add tylerburleigh/claude-foundry
+/plugin marketplace add foundry-works/claude-foundry
 /plugin install foundry@claude-foundry
 ```
 
@@ -221,7 +221,7 @@ specs/
 
 ## Support
 
-- **Issues:** [GitHub Issues](https://github.com/tylerburleigh/claude-foundry/issues)
+- **Issues:** [GitHub Issues](https://github.com/foundry-works/claude-foundry/issues)
 - **Bugs:** Open an issue with steps to reproduce
 - **Features:** Open an issue describing the use case
 
