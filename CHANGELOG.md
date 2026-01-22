@@ -5,6 +5,28 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.11] - 2026-01-22
+
+### Changed
+
+- **Migrate intake to authoring router**: Unified intake operations under the authoring router
+  - `intake action="add"` → `authoring action="intake-add"`
+  - `intake action="list"` → `authoring action="intake-list"`
+  - `intake action="dismiss"` → `authoring action="intake-dismiss"`
+  - Updated CLAUDE.md, foundry-implement, and foundry-note skills
+
+- **Batch operations parameter updates**: Corrected batch task operation syntax in task-lifecycle.md
+  - `start-batch`: Uses `task_ids` array instead of `batch_id`
+  - `complete-batch`: Uses `completions` array with `success` boolean instead of `results`
+  - Added completion object schema documentation
+  - Clarified failed task handling and reset-batch behavior
+
+### Documentation
+
+- **Spec lifecycle clarification**: Added "Completed vs Archived: When to Use Which" section
+  - Clear decision table for when to use complete vs archive
+  - Key distinction: completed = successful delivery, archived = removed from workflow
+
 ## [1.6.10] - 2026-01-19
 
 ### Changed

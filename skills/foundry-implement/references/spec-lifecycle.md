@@ -29,6 +29,19 @@ pending → active → completed
     └──→ archived ←────┘
 ```
 
+## Completed vs Archived: When to Use Which
+
+| Scenario | Action | Why |
+|----------|--------|-----|
+| All tasks done, tests pass | `complete` | Spec is successfully delivered |
+| Spec superseded by newer version | `archive` | Old version no longer relevant |
+| Feature cancelled mid-project | `archive` | No successful completion to record |
+| Requirements changed significantly | `archive` old, create new | Start fresh with new spec |
+
+**Key distinction:**
+- **Completed** = Work finished successfully, ready for PR, serves as documentation of what was built
+- **Archived** = Spec removed from workflow (can be incomplete or obsolete), kept for historical reference only
+
 ## Activate from Pending
 
 Move a spec from pending/ to active/ when ready to start work:
@@ -44,17 +57,20 @@ This:
 
 ## Complete a Spec
 
-When all phases are verified and complete:
+When all phases are verified and the feature is successfully delivered:
 
 ```bash
 mcp__plugin_foundry_foundry-mcp__lifecycle action="complete" spec_id={spec-id}
 ```
 
+**Requirements:** All tasks must be completed (or use `force=true` to override)
+
 This:
 - Moves spec file to `specs/completed/`
 - Updates metadata status to "completed"
 - Records completion timestamp
-- Regenerates documentation
+- Spec becomes the documentation of what was built
+- Ready for `foundry-pr` to create pull request
 
 ## Archive a Spec
 

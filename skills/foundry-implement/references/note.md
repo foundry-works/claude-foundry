@@ -12,9 +12,9 @@ Note provides low-friction capture without disrupting workflow. Items are stored
 
 | Action | Purpose | Key Parameters |
 |--------|---------|----------------|
-| `intake action="add"` | Create intake item | `title` (required), `description`, `priority`, `tags`, `source` |
-| `intake action="list"` | List pending items | `limit`, `cursor` (FIFO pagination) |
-| `intake action="dismiss"` | Mark item dismissed | `item_id`, `reason` |
+| `authoring action="intake-add"` | Create intake item | `title` (required), `description`, `priority`, `tags`, `source` |
+| `authoring action="intake-list"` | List pending items | `limit`, `cursor` (FIFO pagination) |
+| `authoring action="intake-dismiss"` | Mark item dismissed | `item_id`, `reason` |
 
 ## Autonomous Capture During Implementation
 
@@ -28,7 +28,7 @@ Note provides low-friction capture without disrupting workflow. Items are stored
 
 **Capture silently and continue working:**
 ```bash
-mcp__plugin_foundry_foundry-mcp__intake action="add" title="[Type] description" source="foundry-implement"
+mcp__plugin_foundry_foundry-mcp__authoring action="intake-add" title="[Type] description" source="foundry-implement"
 ```
 
 ## Priority Levels
@@ -48,7 +48,7 @@ When reviewing note items, promote actionable ones to spec tasks:
 **Add to existing spec:**
 ```bash
 mcp__plugin_foundry_foundry-mcp__authoring action="task-add" spec_id="{spec-id}" phase_id="{phase-id}" title="{intake-title}" description="{intake-description}"
-mcp__plugin_foundry_foundry-mcp__intake action="dismiss" item_id="{item-id}" reason="Promoted to {spec-id}/{task-id}"
+mcp__plugin_foundry_foundry-mcp__authoring action="intake-dismiss" item_id="{item-id}" reason="Promoted to {spec-id}/{task-id}"
 ```
 
 **Create new spec:**
@@ -58,10 +58,10 @@ Use `foundry-spec` skill with intake item context, then dismiss the intake item.
 
 **Idea beyond scope:**
 ```bash
-mcp__plugin_foundry_foundry-mcp__intake action="add" title="[Idea] Add caching layer to reduce API calls" priority="p2"
+mcp__plugin_foundry_foundry-mcp__authoring action="intake-add" title="[Idea] Add caching layer to reduce API calls" priority="p2"
 ```
 
 **Bug noticed:**
 ```bash
-mcp__plugin_foundry_foundry-mcp__intake action="add" title="[Bug] Stale data after concurrent updates" description="Noticed during task-2-3 implementation" priority="p1"
+mcp__plugin_foundry_foundry-mcp__authoring action="intake-add" title="[Bug] Stale data after concurrent updates" description="Noticed during task-2-3 implementation" priority="p1"
 ```

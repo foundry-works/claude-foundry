@@ -145,10 +145,10 @@ Response includes `eligible_tasks` (no conflicts) and `excluded_tasks` (conflict
 ```bash
 mcp__plugin_foundry_foundry-mcp__task action="start-batch" \
   spec_id={spec-id} \
-  batch_id={batch-id}
+  task_ids='["task-3-1", "task-3-2", "task-3-3"]'
 ```
 
-This marks all batch tasks as `in_progress` atomically.
+This marks all specified tasks as `in_progress` atomically. Extract task IDs from the `prepare-batch` response.
 
 ### Completing a Batch
 
@@ -157,18 +157,32 @@ After subagents finish, report aggregated results:
 ```bash
 mcp__plugin_foundry_foundry-mcp__task action="complete-batch" \
   spec_id={spec-id} \
-  batch_id={batch-id} \
-  results='[
-    {"task_id": "task-3-1", "status": "completed", "note": "Implemented auth handler"},
-    {"task_id": "task-3-2", "status": "completed", "note": "Added validation utils"},
-    {"task_id": "task-3-3", "status": "failed", "error": "Import error in module X"}
+  completions='[
+    {"task_id": "task-3-1", "success": true, "completion_note": "Implemented auth handler"},
+    {"task_id": "task-3-2", "success": true, "completion_note": "Added validation utils"},
+    {"task_id": "task-3-3", "success": false, "completion_note": "Import error in module X"}
   ]'
 ```
 
+> **Note:** See [parallel-mode.md](parallel-mode.md) for the authoritative batch operations reference.
+
+**Parameters:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `spec_id` | string | Target specification |
+| `completions` | array | List of completion objects |
+
+**Completion Object:**
+| Field | Type | Description |
+|-------|------|-------------|
+| `task_id` | string | Task ID being completed |
+| `success` | bool | `true` if succeeded, `false` if failed |
+| `completion_note` | string | Description of what was done (required) |
+
 **What `complete-batch` does:**
-1. Updates each task's status based on results
+1. Updates each task's status based on `success` field
 2. Creates journal entries for completed tasks
-3. Leaves failed tasks as `in_progress` for retry
+3. Marks failed tasks with `status: "failed"` and increments retry count
 4. Returns summary with success/failure counts
 5. Recalculates phase progress
 
@@ -179,14 +193,14 @@ When some tasks in a batch fail:
 | Outcome | Task Status | Next Steps |
 |---------|-------------|------------|
 | Completed | `completed` | Normal - journaled automatically |
-| Failed | `in_progress` | Retry in next batch or debug manually |
-| Timed out | `in_progress` | Check subagent, retry or block |
+| Failed | `failed` | Retry count incremented, available for retry |
+| Timed out | `in_progress` | Use `reset-batch` to return to pending |
 
 **Recovery options:**
 
-1. **Retry in next batch:**
+1. **Retry failed tasks:**
    ```bash
-   # Failed tasks remain in_progress, will be included in next prepare-batch
+   # Failed tasks (status: failed) can be retried via prepare-batch
    mcp__plugin_foundry_foundry-mcp__task action="prepare-batch" spec_id={spec-id}
    ```
 
@@ -210,17 +224,22 @@ When some tasks in a batch fail:
 If a batch is interrupted (crash, timeout, user abort):
 
 ```bash
+# Reset specific tasks
 mcp__plugin_foundry_foundry-mcp__task action="reset-batch" \
   spec_id={spec-id} \
-  batch_id={batch-id} \
-  reason="Session interrupted by user"
+  task_ids='["task-3-1", "task-3-2"]'
+
+# Or auto-detect and reset stale tasks (>1 hour old)
+mcp__plugin_foundry_foundry-mcp__task action="reset-batch" \
+  spec_id={spec-id} \
+  threshold_hours=1.0
 ```
 
 **What `reset-batch` does:**
-1. Resets all batch tasks to `pending` status
+1. Resets specified (or stale) tasks to `pending` status
 2. Clears partial progress (uncommitted changes may be lost)
-3. Returns batch to `idle` state
-4. Records reset in journal for audit trail
+3. Returns tasks to ready state for re-execution
+4. If no `task_ids` provided, auto-detects stale tasks based on `threshold_hours`
 
 **When to use reset:**
 - Subagent crashed mid-execution
@@ -241,5 +260,5 @@ mcp__plugin_foundry_foundry-mcp__task action="reset-batch" \
 | Complete | `task action="complete"` | `task action="complete-batch"` |
 | Progress | Immediate update | Aggregated at batch end |
 | Failure | Block or retry | Isolated per task |
-| Journal | Per-task automatic | Per-task in results array |
+| Journal | Per-task automatic | Per-task in completions array |
 | Reset | N/A (use block) | `task action="reset-batch"` |

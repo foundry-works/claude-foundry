@@ -76,7 +76,7 @@ This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools u
 | `journal` | `add`, `list` |
 | `lifecycle` | `activate`, `move`, `complete` |
 | `spec` | `find`, `list` |
-| `intake` | `add`, `list`, `dismiss` |
+| `authoring` | `intake-add` (see references/note.md) |
 | `environment` | `get-config` |
 
 **Critical Rules:**
@@ -334,7 +334,7 @@ This atomically:
 - Documentation gaps or confusing behavior
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__intake action="add" title="[Type] description" source="foundry-implement"
+mcp__plugin_foundry_foundry-mcp__authoring action="intake-add" title="[Type] description" source="foundry-implement"
 ```
 
 **Do NOT prompt the user.** Silently capture and continue working.

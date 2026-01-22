@@ -45,7 +45,7 @@ foundry-spec → foundry-implement → [CODE] → foundry-review → foundry-tes
 - Ideas beyond current scope → `[Idea]`
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__intake action="add" title="[Type] description" tags='["foundry-feedback"]' source="skill-name"
+mcp__plugin_foundry_foundry-mcp__authoring action="intake-add" title="[Type] description" tags='["foundry-feedback"]' source="skill-name"
 ```
 
 User can invoke `foundry-note` skill for manual capture or list pending items.
