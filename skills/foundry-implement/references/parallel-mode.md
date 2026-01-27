@@ -479,6 +479,50 @@ if suggest_commits:
 - If batch has mixed success/failure, only completed tasks appear in commit message
 - Failed tasks remain uncommitted for retry in next batch
 
+## Auto-Push After Batch Commit
+
+When `auto_push: true` is configured, push happens once per batch after the aggregated commit.
+
+### Push Timing
+
+| Event | Push Behavior |
+|-------|---------------|
+| Batch commit succeeds | Check `auto_push`, push if true |
+| Partial batch (some tasks failed) | Still push successful changes |
+| All tasks in batch failed | No commit, no push |
+
+### Push Flow
+
+```
+After batch commit succeeds:
+    │
+    ├─ Check git config: auto_push?
+    │       │
+    │       ├─ false → Skip push, continue to next batch
+    │       │
+    │       └─ true → Attempt push
+    │                   │
+    │                   ├─ Check upstream: git rev-parse ... @{upstream}
+    │                   │       │
+    │                   │       ├─ exists → git push
+    │                   │       │
+    │                   │       └─ missing → git push -u origin <branch>
+    │                   │
+    │                   ├─ Success → Continue to next batch
+    │                   │
+    │                   └─ Failure → Log warning, continue
+```
+
+### Failure Handling
+
+Push failures are **non-blocking** in parallel mode:
+
+- Log warning message with failure reason
+- Continue to next batch
+- User can resolve push issues independently
+
+**Rationale:** Blocking on push failures would halt the entire parallel pipeline. Local progress is preserved regardless of push status.
+
 ## Best Practices
 
 ### Before Starting Parallel Mode

@@ -317,6 +317,59 @@ No commit action needed. The git cadence is either "manual" or no phase boundary
 }
 ```
 
+## Auto-Push Behavior
+
+After a successful commit, check the git config for `auto_push`:
+
+### When `auto_push: true`
+
+Automatically push to remote after commit:
+
+1. **Detect upstream:** `git rev-parse --abbrev-ref --symbolic-full-name @{upstream}`
+2. **If upstream exists:** `git push`
+3. **If no upstream (first push):** `git push -u origin <branch>`
+4. Continue to next task
+
+### When `auto_push: false` (Default)
+
+No push action. User handles pushing manually. Continue to next task.
+
+### Push Failure Handling
+
+Push failures are **non-blocking**:
+
+| Failure Type | Behavior |
+|--------------|----------|
+| Network error | Log warning, continue workflow |
+| Auth failure | Log warning, continue workflow |
+| Remote rejected | Log warning, continue workflow |
+| Detached HEAD | Skip push with warning, continue |
+| No remote origin | Skip push with warning, continue |
+
+**Rationale:** Push failures don't affect local work. The user can resolve push issues independently without blocking task execution.
+
+### Example Push Flow
+
+```
+After commit succeeds:
+    │
+    ├─ Check git config: auto_push?
+    │       │
+    │       ├─ false → Skip push, continue to next task
+    │       │
+    │       └─ true → Attempt push
+    │                   │
+    │                   ├─ Check upstream: git rev-parse ... @{upstream}
+    │                   │       │
+    │                   │       ├─ exists → git push
+    │                   │       │
+    │                   │       └─ missing → git push -u origin <branch>
+    │                   │
+    │                   ├─ Success → Continue silently
+    │                   │
+    │                   └─ Failure → Log warning, continue
+```
+
 ## Best Practices
 
 ### Before Starting Autonomous Mode

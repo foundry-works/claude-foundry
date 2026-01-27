@@ -90,7 +90,7 @@ This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools u
 
 Four flags control execution behavior. Defaults loaded via `environment action="get-config"`, CLI flags override.
 
-**Config Loading:** At entry, call the environment tool to read configuration from `foundry-mcp.toml`. Returns both `implement` (mode flags + model) and `git` (commit cadence) sections. If the config file is missing or section not found, use defaults (all false for implement, model=small).
+**Config Loading:** At entry, call the environment tool to read configuration from `foundry-mcp.toml`. Returns both `implement` (mode flags + model) and `git` (commit cadence, auto_push) sections. If the config file is missing or section not found, use defaults (all false for implement, model=small, auto_push=false).
 
 | Flag | Effect |
 |------|--------|

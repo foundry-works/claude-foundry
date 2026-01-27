@@ -99,7 +99,8 @@ mcp__plugin_foundry_foundry-mcp__lifecycle action="move" spec_id={spec-id} to_fo
 
 When a spec is completed:
 - Local commits are managed during task completion
-- Push to remote with `git push -u origin <branch>`
+- **If `auto_push: true` in git config:** Commits are automatically pushed after each task/phase commit
+- **If `auto_push: false` (default):** Push to remote manually with `git push -u origin <branch>`
 - Use `foundry-pr` skill for pull request creation
 
 **Note:** The lifecycle tools handle spec movement; PR creation is a separate workflow.
