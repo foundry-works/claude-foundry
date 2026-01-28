@@ -5,6 +5,15 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.15] - 2026-01-28
+
+### Documentation
+
+- **Config loading requirement**: Added mandatory config loading section to foundry-implement SKILL.md
+  - Must call `environment action="get-config"` at skill entry before any other action
+  - Documents config merge behavior (CLI flags override config values)
+  - Explains why this is mandatory (prevents incorrect defaults for autonomous mode, delegation, commit behavior)
+
 ## [1.6.14] - 2026-01-27
 
 ### Added

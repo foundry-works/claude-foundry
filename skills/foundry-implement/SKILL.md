@@ -170,6 +170,22 @@ Uses subagent(s) for implementation. Fresh context per task while main agent han
 
 ## CRITICAL: Global Requirements
 
+### Config Loading (NEVER SKIP)
+
+**At entry, IMMEDIATELY call the environment tool before any other action:**
+
+```bash
+mcp__plugin_foundry_foundry-mcp__environment action="get-config"
+```
+
+This returns:
+- `implement` section: mode flags (`auto`, `delegate`, `parallel`) + `model`
+- `git` section: `commit_cadence`, `auto_push`
+
+**Merge with CLI flags:** CLI flags override config values. If config missing, use defaults (all flags false, model=small, auto_push=false).
+
+**Why mandatory:** Without this call, the skill may use incorrect defaults for autonomous mode, delegation, and commit behavior.
+
 ### Spec Reading Rules (NEVER VIOLATE)
 
 The skill **only** interacts with specs via MCP tools:
