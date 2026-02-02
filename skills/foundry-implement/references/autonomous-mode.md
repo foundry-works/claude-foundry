@@ -21,6 +21,8 @@ The `--auto` flag enables continuous task execution without requiring user appro
 3. Executes it immediately
 4. Repeats until a pause trigger fires
 
+> **Note:** Autonomous mode skips *user prompts* between tasks, but still respects all safety limits (context >= 85%, error thresholds, blockers). These limits are mandatory, not optional.
+
 ### When to Use
 
 | Scenario | Recommended Mode |
