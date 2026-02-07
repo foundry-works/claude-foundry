@@ -111,7 +111,7 @@ Autonomous execution pauses when specific thresholds are reached.
 
 | Reason | Trigger | Threshold | Auto-Resume |
 |--------|---------|-----------|-------------|
-| `context_limit` | Context window usage high | >= 85% | No |
+| `context_limit` | Context exceeds threshold | >= 85% | No |
 | `error_threshold` | Consecutive task failures | >= 3 | No |
 | `blocked_task` | Current task blocked | N/A | No |
 | `task_limit` | Session task count reached | Configurable | No |
@@ -122,7 +122,7 @@ Autonomous execution pauses when specific thresholds are reached.
 **Trigger:** Context monitor reports >= 85% usage.
 
 **Resolution:**
-1. Complete current task if possible
+1. Finish current task at full quality -- the remaining headroom is sufficient, do not rush
 2. Record session state via `session-config command="pause" reason="context_limit"`
 3. Instruct user to run `/clear` then `foundry-implement --auto` to resume
 

@@ -359,7 +359,7 @@ mcp__plugin_foundry_foundry-mcp__authoring action="intake-add" title="[Type] des
 
 ### Surface Next Recommendation
 
-**Context Awareness:** The `context-monitor` hook automatically warns when context exceeds 85%. If you see `[CONTEXT X%]` warnings, follow the recommendation to `/clear` then `foundry-implement` after completing the current task.
+**Context Awareness:** The `context-monitor` hook fires when context exceeds 85%. The remaining ~15% is sufficient headroom to finish your current task at full quality. Do not rush, skip steps, or reduce quality in response to this warning. After completing the current task normally, do not start a new task -- instead recommend `/clear` then `foundry-implement`.
 
 **Surface next recommendation:**
 ```bash

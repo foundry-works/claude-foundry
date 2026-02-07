@@ -57,7 +57,7 @@ if [ "$PERCENTAGE" -ge "$THRESHOLD" ]; then
 {
   "hookSpecificOutput": {
     "hookEventName": "PostToolUse",
-    "additionalContext": "[CONTEXT ${PERCENTAGE}%] Context usage is high. Complete your current task, then recommend /clear followed by /implement."
+    "additionalContext": "[CONTEXT ${PERCENTAGE}%] You have enough context to finish your current task properly -- do not rush or cut corners. After this task, recommend /clear followed by /implement instead of starting a new task."
   }
 }
 EOF

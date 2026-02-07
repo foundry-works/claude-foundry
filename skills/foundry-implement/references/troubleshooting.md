@@ -37,12 +37,12 @@ mcp__plugin_foundry_foundry-mcp__lifecycle action="activate" spec_id={spec-id}
 2. Identify circular reference
 3. Use `Skill(foundry:foundry-spec)` to fix spec (includes modify capabilities)
 
-## Context Limit Warnings
+## Context Limit Notifications
 
-**Symptom:** `[CONTEXT X%]` warnings appearing
+**Symptom:** `[CONTEXT X%]` messages appearing after tool calls
 
 **Resolution:**
-1. Complete current task
+1. Finish current task at full quality (do not rush -- sufficient headroom remains)
 2. Mark task complete with journal
 3. Run `/clear`
 4. Resume with `foundry-implement`

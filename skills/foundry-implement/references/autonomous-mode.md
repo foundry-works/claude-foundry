@@ -114,13 +114,13 @@ Autonomous execution pauses when specific thresholds are reached.
 **Detection:** The `context-monitor` hook reports `[CONTEXT X%]` warnings.
 
 **Behavior:**
-1. Complete current task if possible
+1. Continue working on the current task at full quality -- do not rush or cut corners (the remaining ~15% headroom is sufficient)
 2. Pause session with `reason="context_limit"`
 3. Output recovery guidance
 
 **Output:**
 ```
-Context at 87%. Session paused at task-3-2.
+Current task completed normally. Context at 87%. Session paused at task-3-2.
 Completed 5 tasks this session.
 Run `/clear` then `foundry-implement --auto` to resume.
 ```
@@ -397,7 +397,7 @@ After commit succeeds:
 
 | Anti-pattern | Problem | Solution |
 |--------------|---------|----------|
-| Ignoring context warnings | OOM or truncation | Pause and /clear promptly |
+| Ignoring context notifications | OOM or truncation | After finishing current task, pause and /clear |
 | Resuming without fixing errors | Immediate re-pause | Investigate root cause first |
 | Running on unclear specs | Poor quality output | Use interactive for exploration |
 | Never reviewing progress | Drift from intent | Use task limits for checkpoints |

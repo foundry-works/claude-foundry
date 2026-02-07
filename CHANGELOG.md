@@ -5,6 +5,16 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.16] - 2026-02-07
+
+### Changed
+
+- **Context monitor messaging**: Reworded context-limit warnings to emphasize finishing the current task at full quality
+  - Hook output now says "do not rush or cut corners" instead of implying urgency
+  - SKILL.md clarifies ~15% remaining headroom is sufficient to complete current work
+  - Updated autonomous-mode, session-management, and troubleshooting references consistently
+  - Anti-pattern table reworded from "warnings" to "notifications"
+
 ## [1.6.15] - 2026-01-28
 
 ### Documentation
