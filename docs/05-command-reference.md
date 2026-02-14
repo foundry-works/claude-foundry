@@ -9,7 +9,6 @@ Skills are invoked by asking Claude to use them naturally:
 ```
 Use foundry-spec to create a plan for user authentication
 Use foundry-implement to work on the next task
-Use foundry-note to capture this idea
 ```
 
 Or invoke directly with `Skill(foundry:skill-name)`.
@@ -173,76 +172,6 @@ Use foundry-review to check task-2-3.
 
 ---
 
-### foundry-refactor
-
-Safe refactoring with LSP.
-
-**When to use:**
-- Renaming symbols
-- Extracting functions
-- Moving code
-- Cleaning up
-
-**Invoking:**
-```
-Rename 'oldFunction' to 'newFunction' across the codebase.
-Extract this code block into a function called 'helper'.
-Use foundry-refactor to clean up unused imports.
-```
-
-**Operations:**
-| Operation | What it does |
-|-----------|--------------|
-| Rename | Change symbol name everywhere |
-| Extract function | Pull code into new function |
-| Extract method | Pull code into class method |
-| Move | Move symbol to different file |
-| Dead code | Find and remove unused code |
-
-**Safety features:**
-- Shows impact before changes
-- Requires approval for large refactors
-- Verifies all references updated
-
----
-
-### foundry-note
-
-Quick capture for ideas and issues.
-
-**When to use:**
-- Capturing ideas without interrupting flow
-- Recording bugs or issues for later
-- Documenting thoughts to review later
-
-**Invoking:**
-```
-Use foundry-note to capture: Add rate limiting to auth endpoints
-Use foundry-note to list pending items
-Use foundry-note to dismiss item-001
-```
-
-**Actions:**
-| Action | Description |
-|--------|-------------|
-| add | Capture a new item |
-| list | Show pending items |
-| dismiss | Mark item resolved |
-
-**Item types (prefixes):**
-- `[Bug]` - Issues to fix
-- `[Feature]` - Ideas for features
-- `[Docs]` - Documentation improvements
-- `[Idea]` - General ideas
-- `[Error]` - Errors encountered
-
-**Why use foundry-note?**
-- Capture without interrupting flow
-- Review ideas later when appropriate
-- Don't lose track of small improvements
-
----
-
 ### foundry-research
 
 AI-powered research workflows.
@@ -323,8 +252,6 @@ Use foundry-spec to plan [feature]     # Create a specification
 Use foundry-implement                  # Start/resume work
 Use foundry-implement --auto           # Less prompting
 Use foundry-review on phase 1          # Verify implementation
-Use foundry-refactor to rename X to Y  # Safe refactoring
-Use foundry-note to capture [idea]     # Quick capture
 Use foundry-research chat [question]   # Quick research
 ```
 

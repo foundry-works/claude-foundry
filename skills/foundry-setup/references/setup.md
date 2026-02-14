@@ -678,7 +678,6 @@ Use marker comments for idempotent updates:
 | Verify implementation | `foundry-review` skill |
 | Run tests and debug | Run tests directly via Bash |
 | Create PR with spec context | `gh pr create` |
-| Safe refactoring with LSP | `foundry-refactor` skill |
 
 ### Key Rules
 
@@ -702,7 +701,7 @@ Use marker comments for idempotent updates:
 
 **LSP pre-checks for speed:**
 - Use `documentSymbol` before expensive AI reviews (foundry-review)
-- Use `findReferences` to assess impact before refactoring (foundry-refactor)
+- Use `findReferences` to assess impact before refactoring
 - LSP catches structural issues in seconds vs minutes for full analysis
 
 **Research tool defaults - let config decide:**

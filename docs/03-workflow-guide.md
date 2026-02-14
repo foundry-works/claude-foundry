@@ -7,7 +7,7 @@ The complete Spec-Driven Development workflow explained step by step.
 - How to plan features with `foundry-spec`
 - How to implement tasks with `foundry-implement`
 - How to verify your work with `foundry-review`
-- Supporting skills for research and refactoring
+- Supporting skills for research
 
 ## The SDD Workflow
 
@@ -382,19 +382,6 @@ Create a PR for this spec using gh pr create.
 
 ## Supporting Skills
 
-### foundry-refactor
-
-**When to use:** Renaming, extracting functions, moving code, or cleaning up.
-
-```
-Rename the function 'validateUser' to 'authenticateUser' across the codebase.
-```
-
-Uses LSP (Language Server Protocol) for:
-- **Impact analysis** - Shows all references before changing
-- **Safe renaming** - Updates all usages automatically
-- **Verification** - Confirms all references updated
-
 ### foundry-research
 
 **When to use:** Complex investigations, design decisions, or learning.
@@ -409,20 +396,6 @@ Research workflows:
 - **thinkdeep** - Systematic investigation
 - **ideate** - Creative brainstorming
 - **deep** - Comprehensive web research
-
-### foundry-note
-
-**When to use:** Quick capture of ideas or issues without interrupting flow.
-
-```
-Use foundry-note to capture: Remember to add rate limiting to auth endpoints
-```
-
-Later, review captured items:
-
-```
-Use foundry-note to list pending items
-```
 
 ---
 

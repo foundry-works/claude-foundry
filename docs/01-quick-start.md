@@ -137,5 +137,4 @@ The spec file in `specs/active/` contains the full plan, task status, and journa
 | `foundry-spec` | Create or modify specs |
 | `foundry-implement` | Find next task and implement it |
 | `foundry-review` | Verify implementation matches spec |
-| `foundry-note` | Quick capture an idea for later |
 | `foundry-research` | AI-powered research |

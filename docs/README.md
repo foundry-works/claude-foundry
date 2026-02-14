@@ -44,7 +44,6 @@ Each step is a skill that guides you through the process with AI assistance and 
 ## Getting Help
 
 - **In Claude Code**: Ask Claude questions about workflows or skills
-- **Quick capture**: Use `foundry-note` to capture ideas or issues for later
 - **AI research**: Use `foundry-research` for complex investigations
 
 Ready to start? Head to the [Quick Start Guide](01-quick-start.md).

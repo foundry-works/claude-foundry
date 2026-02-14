@@ -5,6 +5,20 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.19] - 2026-02-14
+
+### Removed
+
+- **foundry-refactor skill**: Removed the `foundry-refactor` skill entirely
+  - Deleted `skills/foundry-refactor/` directory and all reference files
+  - LSP-powered refactoring is handled directly by Claude's native tools
+  - Updated all documentation references across CLAUDE.md, README.md, docs, and skills
+- **foundry-note skill**: Removed the `foundry-note` skill entirely
+  - Deleted `skills/foundry-note/` directory
+  - Note capture is done directly via MCP authoring tool (`action="intake-add"`)
+  - Autonomous capture instructions in CLAUDE.md unchanged (already use MCP tool directly)
+  - Updated all documentation references across CLAUDE.md, README.md, docs, and skills
+
 ## [1.6.18] - 2026-02-14
 
 ### Removed

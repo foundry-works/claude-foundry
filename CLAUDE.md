@@ -10,8 +10,6 @@ Spec-driven development (SDD) toolkit. Plan before code, verify against spec.
 foundry-spec → foundry-implement → [CODE] → foundry-review
 ```
 
-**Supporting skill:** foundry-refactor (LSP-powered refactoring)
-
 ## Skill Selection
 
 ### Core Workflow
@@ -21,13 +19,11 @@ foundry-spec → foundry-implement → [CODE] → foundry-review
 | `foundry-spec` | New feature, multi-file refactor, API integration, architecture change | Single-file edit, trivial fix, exploratory spike |
 | `foundry-implement` | Spec active, need next task, resume work, track progress | No spec, need to plan new work (use spec first) |
 | `foundry-review` | Phase complete, before PR, audit task compliance | Finding tasks (use implement) |
-| `foundry-refactor` | Rename/extract/move across files, cleanup unused code | Single-file edit, new code, formatting |
 
 ### Supporting
 
 | Skill | Invoke When | Skip If |
 |-------|-------------|---------|
-| `foundry-note` | User asks to capture/list/dismiss ideas | Autonomous capture during impl (use authoring tool) |
 | `foundry-setup` | First foundry use, setup environment | Already configured |
 | `foundry-research` | Need AI consultation, multiple perspectives, investigation | Simple questions, no research needed |
 
@@ -63,8 +59,6 @@ foundry-spec → foundry-implement → [CODE] → foundry-review
 - Ideas beyond current scope → `[Idea]`
 
 Use `authoring` MCP tool with `action="intake-add"` to capture notes programmatically.
-
-User can invoke `foundry-note` skill for manual capture or list pending items.
 
 ## Common Workflows
 

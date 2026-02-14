@@ -169,9 +169,7 @@ Skills are invoked by Claude based on your intent. Describe what you want, and C
 | `foundry-spec` | You describe a feature or ask to plan something |
 | `foundry-implement` | You ask to work on tasks or implement features |
 | `foundry-review` | Verify task in spec, or you ask to check implementation |
-| `foundry-refactor` | You ask to rename, extract, or move code |
 | `foundry-research` | You ask to research or investigate something |
-| `foundry-note` | You ask to capture an idea or track an issue |
 | `foundry-setup` | First-time setup and permissions configuration |
 
 ## Configuration
