@@ -676,7 +676,7 @@ Use marker comments for idempotent updates:
 | Create/review/modify a spec | `foundry-spec` skill |
 | Find next task, implement | `foundry-implement` skill |
 | Verify implementation | `foundry-review` skill |
-| Run tests and debug | `foundry-test` skill |
+| Run tests and debug | Run tests directly via Bash |
 | Create PR with spec context | `gh pr create` |
 | Safe refactoring with LSP | `foundry-refactor` skill |
 

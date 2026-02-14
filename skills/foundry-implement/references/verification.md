@@ -20,7 +20,7 @@ mcp__plugin_foundry_foundry-mcp__task action="info" spec_id={spec-id} task_id={t
 
 | verification_type | Skill Invocation |
 |-------------------|------------------|
-| `"run-tests"` | `Skill(foundry:foundry-test)` |
+| `"run-tests"` | Run tests directly via Bash (e.g., `pytest`, `jest`, `go test`) |
 | `"fidelity"` | `Skill(foundry:foundry-review)` |
 
 **For fidelity reviews**, extract `scope` and `target` from task metadata to pass to the skill.
@@ -37,9 +37,7 @@ Skill(foundry:foundry-review) "Review {scope} {target} in spec {spec-id}"
 Example: `Skill(foundry:foundry-review) "Review phase phase-1 in spec my-spec-001"`
 
 **For run-tests:**
-```bash
-Skill(foundry:foundry-test) "Run tests for spec {spec-id}"
-```
+Run tests directly using the project's native test runner via Bash (e.g., `pytest`, `npm test`, `go test`). Read test output to diagnose failures.
 
 ## Present Results
 

@@ -52,7 +52,7 @@ Use `Skill(foundry:foundry-refactor)` for:
   - [else] → Grep fallback
   - Impact analysis → `findReferences` → Assess risk: refs <10, <50, 50-100, >100 → (GATE: approve scope)
   - Execute → Operation path: rename, extract, move, cleanup
-  - Verify → Structural LSP → References LSP → Tests via foundry-test
+  - Verify → Structural LSP → References LSP → Tests via Bash
   - Document
     - [spec task?] → Journal entry
     - [else] → skip
@@ -145,9 +145,7 @@ After any refactoring:
    ```
 
 3. **Run affected tests:**
-   ```
-   Skill(foundry:foundry-test) "Run tests for affected files"
-   ```
+   Run tests directly via Bash using the project's native test runner (e.g., `pytest`, `npm test`, `go test`).
 
 ### Step 5: Document Changes
 

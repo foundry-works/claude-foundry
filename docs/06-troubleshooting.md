@@ -293,7 +293,7 @@ Language Server Protocol provides code intelligence. Some features need it.
 
 **Solutions:**
 
-1. **Use foundry-test skill:**
+1. **Run tests directly:**
    ```
    Run the tests and help me debug failures.
    ```

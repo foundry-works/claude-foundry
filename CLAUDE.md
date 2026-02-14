@@ -7,7 +7,7 @@ Spec-driven development (SDD) toolkit. Plan before code, verify against spec.
 ## Workflow
 
 ```
-foundry-spec → foundry-implement → [CODE] → foundry-review → foundry-test
+foundry-spec → foundry-implement → [CODE] → foundry-review
 ```
 
 **Supporting skill:** foundry-refactor (LSP-powered refactoring)
@@ -20,8 +20,7 @@ foundry-spec → foundry-implement → [CODE] → foundry-review → foundry-tes
 |-------|-------------|---------|
 | `foundry-spec` | New feature, multi-file refactor, API integration, architecture change | Single-file edit, trivial fix, exploratory spike |
 | `foundry-implement` | Spec active, need next task, resume work, track progress | No spec, need to plan new work (use spec first) |
-| `foundry-review` | Phase complete, before PR, audit task compliance | Need to run tests (use test), finding tasks (use implement) |
-| `foundry-test` | Test failure unclear, need AI diagnosis, systematic debugging | Simple test run, tests pass, obvious failure |
+| `foundry-review` | Phase complete, before PR, audit task compliance | Finding tasks (use implement) |
 | `foundry-refactor` | Rename/extract/move across files, cleanup unused code | Single-file edit, new code, formatting |
 
 ### Supporting
@@ -91,7 +90,7 @@ User can invoke `foundry-note` skill for manual capture or list pending items.
 
 ### Completing a Phase
 1. Run `foundry-review` to verify implementation matches spec
-2. Execute `foundry-test` to validate functionality
+2. Run tests directly to validate functionality
 3. Create PR with `gh` CLI when ready
 
 ## Codebase Exploration

@@ -5,6 +5,17 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.18] - 2026-02-14
+
+### Removed
+
+- **foundry-test skill**: Removed the `foundry-test` skill entirely
+  - Deleted `skills/foundry-test/` directory and all reference files
+  - Tests are now run directly via native test runners (pytest, jest, go test)
+  - `run-tests` verification type now dispatches to Bash instead of a skill
+  - Updated all documentation references across CLAUDE.md, README.md, docs, and skills
+  - Updated workflow diagrams to end at `foundry-review`
+
 ## [1.6.17] - 2026-02-14
 
 ### Removed
@@ -14,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - PR creation is now done directly with `gh pr create`
   - Removed `pr` and `test` from available MCP tools comment in `foundry-mcp.toml`
   - Updated all documentation references across CLAUDE.md, README.md, docs, and skills
-  - Updated workflow diagrams to end at `foundry-test` instead of `foundry-pr`
+  - Updated workflow diagrams to end at `foundry-review` instead of `foundry-pr`
 
 ### Changed
 

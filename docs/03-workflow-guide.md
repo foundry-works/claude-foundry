@@ -7,7 +7,6 @@ The complete Spec-Driven Development workflow explained step by step.
 - How to plan features with `foundry-spec`
 - How to implement tasks with `foundry-implement`
 - How to verify your work with `foundry-review`
-- How to debug tests with `foundry-test`
 - Supporting skills for research and refactoring
 
 ## The SDD Workflow
@@ -18,10 +17,10 @@ foundry-research → describe intent → foundry-implement → (auto-verify) →
     Explore          Claude            Work on           Verify tasks     Ship it
     codebase         creates           tasks via         auto-dispatch    with gh
     or web           spec              dependency        to foundry-review
-                                       order             or foundry-test
+                                       order             or tests
 ```
 
-**Key insight:** You don't manually call `foundry-review` or `foundry-test`. Specs include verification tasks that `foundry-implement` auto-dispatches when reached.
+**Key insight:** You don't manually call `foundry-review`. Specs include verification tasks that `foundry-implement` auto-dispatches when reached (fidelity reviews dispatch to `foundry-review`, test tasks run tests directly).
 
 Each step has a specific skill. Let's walk through each one.
 
@@ -363,53 +362,9 @@ Claude will modify the spec to match reality, keeping documentation accurate.
 
 ---
 
-## 4. Testing with foundry-test
+## 4. Running Tests
 
-**When to use:** When tests fail or you need to debug test issues systematically.
-
-### Running tests
-
-```
-Run the tests for this project.
-```
-
-Or invoke directly:
-
-```
-Use foundry-test to debug the failing tests.
-```
-
-### What it does
-
-1. **Runs your test suite** (pytest, jest, go test, etc.)
-2. **Categorizes failures** (assertion, exception, import, etc.)
-3. **Gathers context** (related code, test setup)
-4. **Helps you fix** (AI-assisted diagnosis)
-5. **Verifies fixes** (re-runs failing tests)
-
-### Failure categories
-
-| Category | Typical cause | Fix approach |
-|----------|--------------|--------------|
-| **Assertion** | Logic error | Check expected vs actual |
-| **Exception** | Runtime error | Fix the throwing code |
-| **Import** | Missing dependency | Install or fix import path |
-| **Setup** | Fixture/config issue | Fix test setup |
-| **Timeout** | Performance issue | Optimize or increase timeout |
-| **Flaky** | Non-deterministic | Add waits, fix race conditions |
-
-### AI consultation
-
-For complex failures, Claude can consult AI for deeper analysis:
-
-```
-This test is failing intermittently. Can you investigate?
-```
-
-The AI will:
-- Analyze the test and related code
-- Form hypotheses about the cause
-- Suggest fixes with reasoning
+Run tests directly using your project's native test runner (`pytest`, `jest`, `go test`, etc.). Claude can help debug failures and suggest fixes.
 
 ---
 
@@ -496,8 +451,8 @@ Use foundry-note to list pending items
 ### Fixing issues
 
 ```
-1. Verify task fails (or you ask to run tests)
-2. AI helps diagnose
+1. Tests fail (run directly or via verify task)
+2. Claude helps diagnose
 3. Fix the issues
 4. Continue with foundry-implement
 ```

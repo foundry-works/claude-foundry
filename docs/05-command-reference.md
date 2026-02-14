@@ -173,41 +173,6 @@ Use foundry-review to check task-2-3.
 
 ---
 
-### foundry-test
-
-Execute tests and debug failures.
-
-**When to use:**
-- After implementation
-- When tests are failing
-- For systematic debugging
-
-**Invoking:**
-```
-Run the tests.
-Use foundry-test to debug the failing tests.
-```
-
-**Failure categories:**
-| Category | Typical fix |
-|----------|------------|
-| Assertion | Check logic |
-| Exception | Fix throwing code |
-| Import | Fix dependencies |
-| Setup | Fix test config |
-| Timeout | Optimize code |
-| Flaky | Fix race conditions |
-
-**AI consultation levels:**
-| Level | When |
-|-------|------|
-| None | Simple failures |
-| Chat | Moderate complexity |
-| Consensus | Need perspectives |
-| ThinkDeep | Complex debugging |
-
----
-
 ### foundry-refactor
 
 Safe refactoring with LSP.
@@ -358,7 +323,6 @@ Use foundry-spec to plan [feature]     # Create a specification
 Use foundry-implement                  # Start/resume work
 Use foundry-implement --auto           # Less prompting
 Use foundry-review on phase 1          # Verify implementation
-Use foundry-test                       # Run and debug tests
 Use foundry-refactor to rename X to Y  # Safe refactoring
 Use foundry-note to capture [idea]     # Quick capture
 Use foundry-research chat [question]   # Quick research

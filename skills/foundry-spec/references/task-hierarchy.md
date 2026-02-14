@@ -57,7 +57,7 @@ Best practices for well-structured specs - every `type: "task"` should include:
 
 | Type | Skill Used | Purpose |
 |------|------------|---------|
-| `run-tests` | `Skill(foundry:foundry-test)` | Execute test suite |
+| `run-tests` | Run tests directly via Bash | Execute test suite |
 | `fidelity` | `Skill(foundry:foundry-review)` | Compare implementation to spec |
 | `manual` | Human verification | Manual testing checklist |
 
