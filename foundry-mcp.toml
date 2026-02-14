@@ -19,9 +19,9 @@ auto_compact = true
 [tools]
 # Disable specific tools to reduce context window usage
 # List tool names (without mcp__plugin_foundry_foundry-mcp__ prefix)
-# Available: health, plan, pr, error, metrics, journal, authoring, review,
+# Available: health, plan, error, metrics, journal, authoring, review,
 #            spec, task, provider, environment, lifecycle, verification,
-#            server, test, research
+#            server, research
 disabled_tools = ["error", "metrics", "health"]
 # Environment variable alternative: FOUNDRY_MCP_DISABLED_TOOLS (comma-separated)
 

@@ -151,12 +151,12 @@ research → describe intent → implement → (auto-verify) → create PR
 Under the hood, these skills power the workflow:
 
 ```
-foundry-research → foundry-spec → foundry-implement → [CODE] → foundry-review → foundry-test → foundry-pr
-        │              │                │               │            │               │              │
-        ▼              ▼                ▼               ▼            ▼               ▼              ▼
-     Explore        Create          Find next        Write        Verify         Validate       Generate
-     codebase        spec            task            code         against          with          PR with
-     or web                          and                          spec           tests         context
+foundry-research → foundry-spec → foundry-implement → [CODE] → foundry-review → foundry-test
+        │              │                │               │            │               │
+        ▼              ▼                ▼               ▼            ▼               ▼
+     Explore        Create          Find next        Write        Verify         Validate
+     codebase        spec            task            code         against          with
+     or web                          and                          spec           tests
                                     track
 ```
 
@@ -170,7 +170,6 @@ Skills are invoked by Claude based on your intent. Describe what you want, and C
 | `foundry-implement` | You ask to work on tasks or implement features |
 | `foundry-review` | Verify task in spec, or you ask to check implementation |
 | `foundry-test` | Verify task in spec, or you ask to run/debug tests |
-| `foundry-pr` | You ask to create a pull request |
 | `foundry-refactor` | You ask to rename, extract, or move code |
 | `foundry-research` | You ask to research or investigate something |
 | `foundry-note` | You ask to capture an idea or track an issue |

@@ -5,6 +5,21 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.17] - 2026-02-14
+
+### Removed
+
+- **foundry-pr skill**: Removed the `foundry-pr` skill entirely
+  - Deleted `skills/foundry-pr/` directory and all reference files
+  - PR creation is now done directly with `gh pr create`
+  - Removed `pr` and `test` from available MCP tools comment in `foundry-mcp.toml`
+  - Updated all documentation references across CLAUDE.md, README.md, docs, and skills
+  - Updated workflow diagrams to end at `foundry-test` instead of `foundry-pr`
+
+### Changed
+
+- **Verification step syntax**: Updated modification-operations.md to use `command` field instead of deprecated `mcp_tool` field
+
 ## [1.6.16] - 2026-02-07
 
 ### Changed

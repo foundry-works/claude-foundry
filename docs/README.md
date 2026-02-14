@@ -34,9 +34,9 @@ Before using Claude Foundry, ensure you have:
 ## The SDD Workflow at a Glance
 
 ```
-foundry-spec  →  foundry-implement  →  foundry-review  →  foundry-test  →  foundry-pr
-      │                 │                    │                 │               │
-    Plan            Code it             Verify it          Test it         Ship it
+foundry-spec  →  foundry-implement  →  foundry-review  →  foundry-test
+      │                 │                    │                 │
+    Plan            Code it             Verify it          Test it
 ```
 
 Each step is a skill that guides you through the process with AI assistance and human approval gates.

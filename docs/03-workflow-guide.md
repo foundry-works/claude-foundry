@@ -8,16 +8,15 @@ The complete Spec-Driven Development workflow explained step by step.
 - How to implement tasks with `foundry-implement`
 - How to verify your work with `foundry-review`
 - How to debug tests with `foundry-test`
-- How to create PRs with `foundry-pr`
 - Supporting skills for research and refactoring
 
 ## The SDD Workflow
 
 ```
-foundry-research → describe intent → foundry-implement → (auto-verify) → foundry-pr
+foundry-research → describe intent → foundry-implement → (auto-verify) → create PR
        │                 │                  │                  │              │
     Explore          Claude            Work on           Verify tasks     Ship it
-    codebase         creates           tasks via         auto-dispatch
+    codebase         creates           tasks via         auto-dispatch    with gh
     or web           spec              dependency        to foundry-review
                                        order             or foundry-test
 ```
@@ -414,75 +413,15 @@ The AI will:
 
 ---
 
-## 5. Creating PRs with foundry-pr
+## 5. Creating PRs
 
 **When to use:** When your spec is complete and you're ready to submit for review.
 
-### What it does
-
-`foundry-pr` creates a comprehensive pull request by gathering:
-
-- **Spec metadata** - Title, description, mission
-- **Completed tasks** - What was implemented
-- **Git history** - Commits during implementation
-- **Journal entries** - Decisions made along the way
-- **Spec evolution** - Requirements added during work
-
-### Creating a PR
+Use `gh pr create` directly to create pull requests. You can reference the completed spec for context:
 
 ```
-Create a PR for this spec.
+Create a PR for this spec using gh pr create.
 ```
-
-### The PR creation flow
-
-1. **Context gathering** - Collects all relevant information
-2. **Draft generation** - AI writes comprehensive PR description
-3. **Your review** - You approve or revise the draft
-4. **Branch push** - Pushes to remote if needed
-5. **PR creation** - Creates the pull request
-
-### PR template
-
-```markdown
-## Summary
-Brief description of what this PR accomplishes.
-
-## What Changed
-
-### Key Features
-- Bullet points of key changes
-- Organized by feature/component
-
-### Files Modified
-- `path/to/file.ext`: Short summary
-
-## Technical Approach
-Explanation of how it was implemented.
-
-## Implementation Details
-### Phase 1: Foundation
-- ✅ Key task
-
-## Testing
-- [ ] Unit tests added/updated
-- [ ] Integration tests pass
-- [ ] Manual testing performed
-
-## Spec Reference
-- `specs/completed/<spec-id>.json`
-
-## Commits
-- abc1234: task-1-1: Short description
-```
-
-### Why spec-driven PRs are better
-
-| Traditional PR | Spec-Driven PR |
-|---------------|----------------|
-| "Added auth" | Full context of why and how |
-| Reviewer guesses intent | Intent is documented |
-| Lost context over time | Journal preserves decisions |
 
 ---
 
@@ -542,7 +481,7 @@ Use foundry-note to list pending items
 3. Claude creates spec, you review and approve
 4. Use foundry-implement to work through tasks
 5. Verification tasks auto-dispatch when reached
-6. Use foundry-pr when spec is complete
+6. Create PR with gh pr create when spec is complete
 ```
 
 ### Resuming work

@@ -208,36 +208,6 @@ Use foundry-test to debug the failing tests.
 
 ---
 
-### foundry-pr
-
-Create pull requests with full context.
-
-**When to use:**
-- When spec is complete
-- After tests pass
-- Ready to submit for review
-
-**Invoking:**
-```
-Create a PR for this spec.
-Use foundry-pr to create a pull request.
-```
-
-**Context sources:**
-- Spec metadata (title, mission)
-- Completed tasks
-- Git commits
-- Journal entries
-- Spec evolution
-
-**PR sections:**
-- Summary
-- Changes
-- Technical approach
-- Testing checklist
-
----
-
 ### foundry-refactor
 
 Safe refactoring with LSP.
@@ -389,7 +359,6 @@ Use foundry-implement                  # Start/resume work
 Use foundry-implement --auto           # Less prompting
 Use foundry-review on phase 1          # Verify implementation
 Use foundry-test                       # Run and debug tests
-Use foundry-pr                         # Create a PR
 Use foundry-refactor to rename X to Y  # Safe refactoring
 Use foundry-note to capture [idea]     # Quick capture
 Use foundry-research chat [question]   # Quick research
