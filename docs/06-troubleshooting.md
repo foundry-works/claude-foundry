@@ -293,7 +293,7 @@ Language Server Protocol provides code intelligence. Some features need it.
 
 **Solutions:**
 
-1. **Use foundry-test skill:**
+1. **Run tests directly:**
    ```
    Run the tests and help me debug failures.
    ```
@@ -439,9 +439,9 @@ I'm having trouble with [issue]. Can you help diagnose?
 ```
 
 ### Capture for later
-If something seems like a bug:
+If something seems like a bug, use the MCP authoring tool to capture it:
 ```
-Use foundry-note to capture: [Bug] Description of what went wrong
+authoring action="intake-add" title="[Bug] Description of what went wrong"
 ```
 
 ### Check plugin version

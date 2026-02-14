@@ -42,7 +42,7 @@ Add a verification step to a task:
   "task_id": "task-1-3",
   "verification": {
     "verification_type": "run-tests",
-    "mcp_tool": "mcp__plugin_foundry_foundry-mcp__test action=\"run\"",
+    "command": "pytest",
     "expected": "All tests pass"
   }
 }

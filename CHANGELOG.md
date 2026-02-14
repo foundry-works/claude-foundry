@@ -5,6 +5,46 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.19] - 2026-02-14
+
+### Removed
+
+- **foundry-refactor skill**: Removed the `foundry-refactor` skill entirely
+  - Deleted `skills/foundry-refactor/` directory and all reference files
+  - LSP-powered refactoring is handled directly by Claude's native tools
+  - Updated all documentation references across CLAUDE.md, README.md, docs, and skills
+- **foundry-note skill**: Removed the `foundry-note` skill entirely
+  - Deleted `skills/foundry-note/` directory
+  - Note capture is done directly via MCP authoring tool (`action="intake-add"`)
+  - Autonomous capture instructions in CLAUDE.md unchanged (already use MCP tool directly)
+  - Updated all documentation references across CLAUDE.md, README.md, docs, and skills
+
+## [1.6.18] - 2026-02-14
+
+### Removed
+
+- **foundry-test skill**: Removed the `foundry-test` skill entirely
+  - Deleted `skills/foundry-test/` directory and all reference files
+  - Tests are now run directly via native test runners (pytest, jest, go test)
+  - `run-tests` verification type now dispatches to Bash instead of a skill
+  - Updated all documentation references across CLAUDE.md, README.md, docs, and skills
+  - Updated workflow diagrams to end at `foundry-review`
+
+## [1.6.17] - 2026-02-14
+
+### Removed
+
+- **foundry-pr skill**: Removed the `foundry-pr` skill entirely
+  - Deleted `skills/foundry-pr/` directory and all reference files
+  - PR creation is now done directly with `gh pr create`
+  - Removed `pr` and `test` from available MCP tools comment in `foundry-mcp.toml`
+  - Updated all documentation references across CLAUDE.md, README.md, docs, and skills
+  - Updated workflow diagrams to end at `foundry-review` instead of `foundry-pr`
+
+### Changed
+
+- **Verification step syntax**: Updated modification-operations.md to use `command` field instead of deprecated `mcp_tool` field
+
 ## [1.6.16] - 2026-02-07
 
 ### Changed

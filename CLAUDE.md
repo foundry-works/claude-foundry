@@ -7,10 +7,8 @@ Spec-driven development (SDD) toolkit. Plan before code, verify against spec.
 ## Workflow
 
 ```
-foundry-spec → foundry-implement → [CODE] → foundry-review → foundry-test → foundry-pr
+foundry-spec → foundry-implement → [CODE] → foundry-review
 ```
-
-**Supporting skill:** foundry-refactor (LSP-powered refactoring)
 
 ## Skill Selection
 
@@ -20,16 +18,12 @@ foundry-spec → foundry-implement → [CODE] → foundry-review → foundry-tes
 |-------|-------------|---------|
 | `foundry-spec` | New feature, multi-file refactor, API integration, architecture change | Single-file edit, trivial fix, exploratory spike |
 | `foundry-implement` | Spec active, need next task, resume work, track progress | No spec, need to plan new work (use spec first) |
-| `foundry-review` | Phase complete, before PR, audit task compliance | Need to run tests (use test), finding tasks (use implement) |
-| `foundry-test` | Test failure unclear, need AI diagnosis, systematic debugging | Simple test run, tests pass, obvious failure |
-| `foundry-pr` | Spec complete, comprehensive PR needed | Quick change, no spec (use `gh` directly) |
-| `foundry-refactor` | Rename/extract/move across files, cleanup unused code | Single-file edit, new code, formatting |
+| `foundry-review` | Phase complete, before PR, audit task compliance | Finding tasks (use implement) |
 
 ### Supporting
 
 | Skill | Invoke When | Skip If |
 |-------|-------------|---------|
-| `foundry-note` | User asks to capture/list/dismiss ideas | Autonomous capture during impl (use authoring tool) |
 | `foundry-setup` | First foundry use, setup environment | Already configured |
 | `foundry-research` | Need AI consultation, multiple perspectives, investigation | Simple questions, no research needed |
 
@@ -66,8 +60,6 @@ foundry-spec → foundry-implement → [CODE] → foundry-review → foundry-tes
 
 Use `authoring` MCP tool with `action="intake-add"` to capture notes programmatically.
 
-User can invoke `foundry-note` skill for manual capture or list pending items.
-
 ## Common Workflows
 
 ### Workflow Selection
@@ -92,8 +84,8 @@ User can invoke `foundry-note` skill for manual capture or list pending items.
 
 ### Completing a Phase
 1. Run `foundry-review` to verify implementation matches spec
-2. Execute `foundry-test` to validate functionality
-3. Create PR with `foundry-pr` when ready
+2. Run tests directly to validate functionality
+3. Create PR with `gh` CLI when ready
 
 ## Codebase Exploration
 

@@ -34,17 +34,16 @@ Before using Claude Foundry, ensure you have:
 ## The SDD Workflow at a Glance
 
 ```
-foundry-spec  →  foundry-implement  →  foundry-review  →  foundry-test  →  foundry-pr
-      │                 │                    │                 │               │
-    Plan            Code it             Verify it          Test it         Ship it
+foundry-spec  →  foundry-implement  →  foundry-review
+      │                 │                    │
+    Plan            Code it             Verify it
 ```
 
-Each step is a skill that guides you through the process with AI assistance and human approval gates.
+Each step is a skill that guides you through the process with AI assistance and human approval gates. Tests are run directly using your project's native test runner.
 
 ## Getting Help
 
 - **In Claude Code**: Ask Claude questions about workflows or skills
-- **Quick capture**: Use `foundry-note` to capture ideas or issues for later
 - **AI research**: Use `foundry-research` for complex investigations
 
 Ready to start? Head to the [Quick Start Guide](01-quick-start.md).

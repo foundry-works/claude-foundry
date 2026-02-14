@@ -102,7 +102,7 @@ Not all tasks are code changes:
 
 **Verification nodes** are special tasks that check quality:
 
-- **foundry-test** - Execute the test suite
+- **run-tests** - Run tests directly via Bash
 - **fidelity** - Check if code matches the spec
 - **manual** - Human verification checklist
 

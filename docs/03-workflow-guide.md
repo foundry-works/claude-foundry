@@ -7,22 +7,20 @@ The complete Spec-Driven Development workflow explained step by step.
 - How to plan features with `foundry-spec`
 - How to implement tasks with `foundry-implement`
 - How to verify your work with `foundry-review`
-- How to debug tests with `foundry-test`
-- How to create PRs with `foundry-pr`
-- Supporting skills for research and refactoring
+- Supporting skills for research
 
 ## The SDD Workflow
 
 ```
-foundry-research → describe intent → foundry-implement → (auto-verify) → foundry-pr
+foundry-research → describe intent → foundry-implement → (auto-verify) → create PR
        │                 │                  │                  │              │
     Explore          Claude            Work on           Verify tasks     Ship it
-    codebase         creates           tasks via         auto-dispatch
+    codebase         creates           tasks via         auto-dispatch    with gh
     or web           spec              dependency        to foundry-review
-                                       order             or foundry-test
+                                       order             or tests
 ```
 
-**Key insight:** You don't manually call `foundry-review` or `foundry-test`. Specs include verification tasks that `foundry-implement` auto-dispatches when reached.
+**Key insight:** You don't manually call `foundry-review`. Specs include verification tasks that `foundry-implement` auto-dispatches when reached (fidelity reviews dispatch to `foundry-review`, test tasks run tests directly).
 
 Each step has a specific skill. Let's walk through each one.
 
@@ -364,142 +362,25 @@ Claude will modify the spec to match reality, keeping documentation accurate.
 
 ---
 
-## 4. Testing with foundry-test
+## 4. Running Tests
 
-**When to use:** When tests fail or you need to debug test issues systematically.
-
-### Running tests
-
-```
-Run the tests for this project.
-```
-
-Or invoke directly:
-
-```
-Use foundry-test to debug the failing tests.
-```
-
-### What it does
-
-1. **Runs your test suite** (pytest, jest, go test, etc.)
-2. **Categorizes failures** (assertion, exception, import, etc.)
-3. **Gathers context** (related code, test setup)
-4. **Helps you fix** (AI-assisted diagnosis)
-5. **Verifies fixes** (re-runs failing tests)
-
-### Failure categories
-
-| Category | Typical cause | Fix approach |
-|----------|--------------|--------------|
-| **Assertion** | Logic error | Check expected vs actual |
-| **Exception** | Runtime error | Fix the throwing code |
-| **Import** | Missing dependency | Install or fix import path |
-| **Setup** | Fixture/config issue | Fix test setup |
-| **Timeout** | Performance issue | Optimize or increase timeout |
-| **Flaky** | Non-deterministic | Add waits, fix race conditions |
-
-### AI consultation
-
-For complex failures, Claude can consult AI for deeper analysis:
-
-```
-This test is failing intermittently. Can you investigate?
-```
-
-The AI will:
-- Analyze the test and related code
-- Form hypotheses about the cause
-- Suggest fixes with reasoning
+Run tests directly using your project's native test runner (`pytest`, `jest`, `go test`, etc.). Claude can help debug failures and suggest fixes.
 
 ---
 
-## 5. Creating PRs with foundry-pr
+## 5. Creating PRs
 
 **When to use:** When your spec is complete and you're ready to submit for review.
 
-### What it does
-
-`foundry-pr` creates a comprehensive pull request by gathering:
-
-- **Spec metadata** - Title, description, mission
-- **Completed tasks** - What was implemented
-- **Git history** - Commits during implementation
-- **Journal entries** - Decisions made along the way
-- **Spec evolution** - Requirements added during work
-
-### Creating a PR
+Use `gh pr create` directly to create pull requests. You can reference the completed spec for context:
 
 ```
-Create a PR for this spec.
+Create a PR for this spec using gh pr create.
 ```
-
-### The PR creation flow
-
-1. **Context gathering** - Collects all relevant information
-2. **Draft generation** - AI writes comprehensive PR description
-3. **Your review** - You approve or revise the draft
-4. **Branch push** - Pushes to remote if needed
-5. **PR creation** - Creates the pull request
-
-### PR template
-
-```markdown
-## Summary
-Brief description of what this PR accomplishes.
-
-## What Changed
-
-### Key Features
-- Bullet points of key changes
-- Organized by feature/component
-
-### Files Modified
-- `path/to/file.ext`: Short summary
-
-## Technical Approach
-Explanation of how it was implemented.
-
-## Implementation Details
-### Phase 1: Foundation
-- ✅ Key task
-
-## Testing
-- [ ] Unit tests added/updated
-- [ ] Integration tests pass
-- [ ] Manual testing performed
-
-## Spec Reference
-- `specs/completed/<spec-id>.json`
-
-## Commits
-- abc1234: task-1-1: Short description
-```
-
-### Why spec-driven PRs are better
-
-| Traditional PR | Spec-Driven PR |
-|---------------|----------------|
-| "Added auth" | Full context of why and how |
-| Reviewer guesses intent | Intent is documented |
-| Lost context over time | Journal preserves decisions |
 
 ---
 
 ## Supporting Skills
-
-### foundry-refactor
-
-**When to use:** Renaming, extracting functions, moving code, or cleaning up.
-
-```
-Rename the function 'validateUser' to 'authenticateUser' across the codebase.
-```
-
-Uses LSP (Language Server Protocol) for:
-- **Impact analysis** - Shows all references before changing
-- **Safe renaming** - Updates all usages automatically
-- **Verification** - Confirms all references updated
 
 ### foundry-research
 
@@ -516,20 +397,6 @@ Research workflows:
 - **ideate** - Creative brainstorming
 - **deep** - Comprehensive web research
 
-### foundry-note
-
-**When to use:** Quick capture of ideas or issues without interrupting flow.
-
-```
-Use foundry-note to capture: Remember to add rate limiting to auth endpoints
-```
-
-Later, review captured items:
-
-```
-Use foundry-note to list pending items
-```
-
 ---
 
 ## Workflow Examples
@@ -542,7 +409,7 @@ Use foundry-note to list pending items
 3. Claude creates spec, you review and approve
 4. Use foundry-implement to work through tasks
 5. Verification tasks auto-dispatch when reached
-6. Use foundry-pr when spec is complete
+6. Create PR with gh pr create when spec is complete
 ```
 
 ### Resuming work
@@ -557,8 +424,8 @@ Use foundry-note to list pending items
 ### Fixing issues
 
 ```
-1. Verify task fails (or you ask to run tests)
-2. AI helps diagnose
+1. Tests fail (run directly or via verify task)
+2. Claude helps diagnose
 3. Fix the issues
 4. Continue with foundry-implement
 ```

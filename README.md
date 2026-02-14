@@ -143,7 +143,7 @@ research → describe intent → implement → (auto-verify) → create PR
 | **Research** | Optional first step to explore the codebase or research best practices via web search. |
 | **Describe intent** | Tell Claude what you want to build. Claude creates a spec with phases, tasks, and verification steps. |
 | **Implement** | Ask Claude to implement - it finds next task by dependency order. You implement, it tracks progress. |
-| **Auto-verify** | Specs include verify tasks. When implementation hits one, it auto-dispatches to `foundry-review` or `foundry-test`. |
+| **Auto-verify** | Specs include verify tasks. When implementation hits one, it auto-dispatches to `foundry-review` or runs tests directly. |
 | **Ship** | Ask to create PR - generates from spec metadata, journals, and commit history. |
 
 ### Skill Architecture
@@ -151,12 +151,12 @@ research → describe intent → implement → (auto-verify) → create PR
 Under the hood, these skills power the workflow:
 
 ```
-foundry-research → foundry-spec → foundry-implement → [CODE] → foundry-review → foundry-test → foundry-pr
-        │              │                │               │            │               │              │
-        ▼              ▼                ▼               ▼            ▼               ▼              ▼
-     Explore        Create          Find next        Write        Verify         Validate       Generate
-     codebase        spec            task            code         against          with          PR with
-     or web                          and                          spec           tests         context
+foundry-research → foundry-spec → foundry-implement → [CODE] → foundry-review
+        │              │                │               │            │
+        ▼              ▼                ▼               ▼            ▼
+     Explore        Create          Find next        Write        Verify
+     codebase        spec            task            code         against
+     or web                          and                          spec
                                     track
 ```
 
@@ -169,11 +169,7 @@ Skills are invoked by Claude based on your intent. Describe what you want, and C
 | `foundry-spec` | You describe a feature or ask to plan something |
 | `foundry-implement` | You ask to work on tasks or implement features |
 | `foundry-review` | Verify task in spec, or you ask to check implementation |
-| `foundry-test` | Verify task in spec, or you ask to run/debug tests |
-| `foundry-pr` | You ask to create a pull request |
-| `foundry-refactor` | You ask to rename, extract, or move code |
 | `foundry-research` | You ask to research or investigate something |
-| `foundry-note` | You ask to capture an idea or track an issue |
 | `foundry-setup` | First-time setup and permissions configuration |
 
 ## Configuration

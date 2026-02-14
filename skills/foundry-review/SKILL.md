@@ -28,7 +28,7 @@ The `foundry-review` skill compares actual implementation against SDD specificat
 Part of the **Spec-Driven Development** quality assurance family:
 
 ```
-foundry-spec → foundry-implement → [CODE] → foundry-review (this skill) → foundry-test → foundry-pr
+foundry-spec → foundry-implement → [CODE] → foundry-review (this skill)
 ```
 
 ## When to Use This Skill
@@ -42,7 +42,7 @@ foundry-spec → foundry-implement → [CODE] → foundry-review (this skill) �
 **Do NOT use for:**
 - Creating specifications (use `foundry-spec`)
 - Finding next tasks or tracking progress (use `foundry-implement`)
-- Running tests (use `foundry-test`)
+- Running tests (run directly via Bash)
 
 ### Flow
 

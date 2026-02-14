@@ -63,7 +63,7 @@ tmux: dev-environment
 
 ### 3. Test Watch Mode
 
-Instead of running tests once, maintain a persistent watcher for `foundry-test`:
+Instead of running tests once, maintain a persistent watcher:
 
 ```
 tmux: test-watcher
@@ -105,7 +105,7 @@ Continue other work while research runs in background.
 
 ### 6. Interactive Debugging
 
-When `foundry-test` encounters failures, drop into a real debugger:
+When tests encounter failures, drop into a real debugger:
 
 ```
 tmux: debug
@@ -172,7 +172,7 @@ Add tmux support as flags/options to existing skills:
 
 ```
 /foundry-implement --auto --tmux     # Run in persistent tmux session
-/foundry-test --watch --tmux         # Persistent test watcher
+# Test watcher can be set up as a tmux pane
 /foundry-research deep --tmux        # Background research session
 ```
 
