@@ -5,6 +5,55 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-02-22
+
+### Added
+
+- **Plan-to-spec traceability**: Specs now link to their source plan via `plan_path` and `plan_review_path` metadata fields
+  - `spec-create` accepts `plan_path` and `plan_review_path` parameters
+  - Plan-enhanced spec review auto-triggers when `plan_path` is linked, evaluating coverage, fidelity, and constraint preservation
+  - Plan-enhanced fidelity review augments standard phase/task reviews with plan alignment checks
+  - Response includes `plan_enhanced` boolean and `verdict` (`aligned`, `deviation`, `incomplete`)
+
+- **Structured spec metadata**: New authoring actions for constraints, risks, open questions, and success criteria
+  - `constraint-add` / `constraint-list` — technical/business constraints
+  - `risk-add` / `risk-list` — risk entries with likelihood, impact, and mitigation
+  - `question-add` / `question-list` — unresolved questions from planning
+  - `success-criterion-add` / `success-criteria-list` — measurable success criteria
+  - New reference: `skills/foundry-spec/references/metadata-management.md`
+  - Spec review automatically validates that plan metadata is preserved
+
+- **Session-step orchestration for autonomous mode**: New `task action="session-step"` protocol
+  - Commands: `next`, `report`, `replay`, `heartbeat`
+  - Loop signals (`phase_complete`, `spec_complete`, `paused_needs_attention`, `failed`, `blocked_runtime`) guide auto-continuation
+  - `recommended_actions` array provides next-step guidance
+  - `task action="session-events"` for journal-backed event feed with pagination
+
+- **Context monitor sidecar**: Hook now writes `specs/.autonomy/context/context.json` for MCP ContextTracker
+  - Atomic write via temp file + rename
+  - Always written (not just above threshold)
+  - Hook type changed from UserPromptSubmit to PostToolUse
+
+### Changed
+
+- **Session tracking actions**: Renamed `session-config` to canonical `session` action
+  - Updated all references in autonomous-mode, session-management, and SKILL.md
+- **Simplified plan/spec review**: Removed review type variants (`quick`, `full`, `security`, `feasibility`)
+  - All 6 dimensions always assessed for plans; plan-enhanced review for specs
+  - Single review output path: `specs/.plan-reviews/<name>-review.md` and `specs/.spec-reviews/<id>-spec-review.md`
+- **Plan template expanded**: Added Assumptions, Constraints, Risks, Open Questions, Dependencies sections
+- **Task metadata**: Replaced `estimated_hours` with `complexity` (`low`, `medium`, `high`) throughout
+  - Updated task metadata fields, phase-add-bulk payload, modification operations, and examples
+- **Spec templates simplified**: Collapsed `simple`/`medium`/`complex`/`security` into single `empty` template
+- **CLAUDE.md**: Added plan traceability and metadata enrichment details to Starting New Work workflow
+- **foundry-review**: Marked as `user-invocable: false`
+
+### Removed
+
+- **Phase templates**: Removed `phase-template` action documentation (list/show/apply)
+- **Deprecated fields**: Removed `estimated_hours`, `owner` from spec/phase/task metadata
+- **PLAN.md and PLAN-CHECKLIST.md**: Removed temporary planning files
+
 ## [1.6.19] - 2026-02-14
 
 ### Removed

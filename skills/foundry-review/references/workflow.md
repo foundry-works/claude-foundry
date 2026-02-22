@@ -63,8 +63,9 @@ The MCP tool returns JSON output with the structure:
 ```json
 {
   "spec_id": "...",
-  "review_type": "task|phase",
   "scope": {"id": "...", "title": "..."},
+  "plan_enhanced": false,
+  "review_path": "specs/.reviews/{spec_id}-fidelity-review.md",
   "summary": {
     "tasks_reviewed": 0,
     "files_analyzed": 0,
@@ -84,4 +85,20 @@ The MCP tool returns JSON output with the structure:
 }
 ```
 
+**Response fields:**
+- `plan_enhanced` — `true` when the spec has a linked `plan_path` and the review included spec-vs-plan comparison
+- `review_path` — Path to the saved review report
+
 Parse this JSON, surface the structured findings directly to the invoking workflow, and include a link or path to the saved JSON report. The agent's responsibility is to faithfully relay the MCP tool's assessed deviations, recommendations, consensus signals, and metadata—perform validation/formatting as needed, but do not introduce any new analysis beyond what the tool returned. Do not open or read the saved artifact; simply point the caller to its location.
+
+## Plan-Enhanced Review
+
+When a spec has a linked `plan_path` in its metadata, the fidelity review is automatically enhanced with spec-vs-plan comparison. No additional parameters are needed — the MCP tool detects plan linkage and includes plan alignment checks.
+
+**How it works:**
+1. Standard fidelity review executes as normal (steps 1-4 above)
+2. MCP tool detects `plan_path` in spec metadata
+3. Review automatically adds plan alignment analysis
+4. Response includes `plan_enhanced: true` and the `review_path` to the saved report
+
+**No user action needed.** The plan-enhanced flow is fully automatic.

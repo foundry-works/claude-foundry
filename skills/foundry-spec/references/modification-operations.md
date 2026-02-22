@@ -8,8 +8,8 @@ Detailed JSON structures for each spec modification operation.
 |-----------|---------|
 | `update_task` | Modify task title, description, file_path, category |
 | `add_verification` | Add verification step to task |
-| `update_metadata` | Update task metadata (hours, priority, etc.) |
-| `update_phase_metadata` | Update phase metadata (description, purpose, hours) |
+| `update_metadata` | Update task metadata (priority, complexity, etc.) |
+| `update_phase_metadata` | Update phase metadata (description, purpose) |
 | `batch_update` | Apply same change to multiple nodes |
 | `add_node` | Add new task/subtask/verify node |
 | `remove_node` | Remove node (optionally cascading) |
@@ -54,14 +54,13 @@ Add a verification step to a task:
 
 ## update_metadata
 
-Update task metadata (hours, priority, etc.):
+Update task metadata (priority, complexity, etc.):
 
 ```json
 {
   "operation": "update_metadata",
   "task_id": "task-3-2",
   "metadata": {
-    "estimated_hours": 6,
     "priority": "high",
     "complexity": "medium"
   }
@@ -70,7 +69,7 @@ Update task metadata (hours, priority, etc.):
 
 ## update_phase_metadata
 
-Update phase metadata (description, purpose, estimated_hours):
+Update phase metadata (description, purpose):
 
 ```json
 {
@@ -78,15 +77,14 @@ Update phase metadata (description, purpose, estimated_hours):
   "phase_id": "phase-2",
   "metadata": {
     "description": "Updated phase description",
-    "purpose": "Clarified purpose statement",
-    "estimated_hours": 8.5
+    "purpose": "Clarified purpose statement"
   }
 }
 ```
 
 **MCP invocation:**
 ```bash
-mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id={spec-id} phase_id="phase-2" description="Updated description" estimated_hours=8.5
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id={spec-id} phase_id="phase-2" description="Updated description"
 ```
 
 ## batch_update
@@ -113,8 +111,7 @@ Add a new task, subtask, or verify node:
   "node_type": "task",
   "node": {
     "title": "Implement rate limiting",
-    "description": "Add rate limiting middleware to API endpoints",
-    "estimated_hours": 4
+    "description": "Add rate limiting middleware to API endpoints"
   }
 }
 ```

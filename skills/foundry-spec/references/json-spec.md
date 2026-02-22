@@ -16,9 +16,13 @@ The formal specification format used by all SDD tools.
     "mission": "Ensure every school admin sees accurate trust signals before launch",
     "status": "pending",
     "priority": "high",
-    "owner": "developer@example.com",
     "tags": ["feature", "auth"],
-    "estimated_hours": 40
+    "plan_path": "specs/.plans/feature-name.md",
+    "plan_review_path": "specs/.plan-reviews/feature-name-review.md",
+    "constraints": ["Must maintain backward compatibility with v2 API"],
+    "risks": [{"description": "OAuth rate limits", "likelihood": "medium", "impact": "high", "mitigation": "Token caching"}],
+    "open_questions": ["Which OAuth scopes for admin flow?"],
+    "success_criteria": ["All protected endpoints return 401 without valid token"]
   },
   "phases": { ... },
   "journal": []
@@ -32,11 +36,15 @@ The formal specification format used by all SDD tools.
 | `mission` | string | Recommended | Single-sentence mission describing the spec's purpose |
 | `status` | string | Yes | `pending`, `active`, `completed`, `archived` |
 | `priority` | string | No | `low`, `medium`, `high`, `critical` |
-| `owner` | string | No | Email or identifier of owner |
 | `tags` | array | No | Categorization tags |
-| `estimated_hours` | number | No | Total estimated hours |
+| `plan_path` | string | Recommended | Path to the source markdown plan |
+| `plan_review_path` | string | No | Path to the plan review output |
+| `constraints` | array of strings | No | Technical/business constraints from the plan |
+| `risks` | array of objects | No | Risk entries: `{description, likelihood, impact, mitigation}` |
+| `open_questions` | array of strings | No | Unresolved questions from planning |
+| `success_criteria` | array of strings | No | Measurable success criteria from the plan |
 
-> Mission helps provide context and should be populated before handing off the spec.
+> Mission helps provide context and should be populated before handing off the spec. Use `plan_path` to link the spec to its source plan for traceability and plan-enhanced review.
  
 ## Phase Structure
 
@@ -75,7 +83,7 @@ The formal specification format used by all SDD tools.
     "metadata": {
       "file_path": "src/db/schema.sql",
       "task_category": "implementation",
-      "estimated_hours": 2
+      "complexity": "medium"
     },
     "instructions": [
       "Create users table with id, email, password_hash",
@@ -90,12 +98,21 @@ The formal specification format used by all SDD tools.
 }
 ```
 
+### Task Metadata Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `file_path` | string | Associated file path (required for `implementation`/`refactoring` tasks) |
+| `task_category` | string | `implementation`, `refactoring`, `investigation`, `decision`, `research` |
+| `complexity` | string | Task complexity: `low`, `medium`, `high` |
+
 ### Required Fields for Implementation Tasks
 
 Best practices for well-structured specs:
 - `metadata.mission` at the spec level
 - Every `type: "task"` node includes `description`, `acceptance_criteria`, and `metadata.task_category`
 - `metadata.file_path` for `implementation` and `refactoring` tasks
+- `metadata.complexity` to indicate task difficulty
 
 ## Creating a Spec
 

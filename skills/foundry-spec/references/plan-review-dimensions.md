@@ -68,11 +68,6 @@ Ensures the spec can be properly validated.
 - Coverage expectations
 - Verification steps for each phase
 
-## Dimension Coverage by Review Type
+## Dimension Coverage
 
-| Review Type | Primary Dimensions | Secondary Dimensions |
-|-------------|-------------------|---------------------|
-| `quick` | Completeness, Clarity | - |
-| `full` | All 6 dimensions | Equal weight |
-| `security` | Risk Management, Architecture | Verification |
-| `feasibility` | Feasibility, Completeness | - |
+All 6 dimensions are always assessed in every review with equal weight. There is no dimension filtering — every review provides comprehensive coverage across all dimensions.

@@ -17,7 +17,6 @@ Multi-model review coordinates parallel AI reviewers to provide structured, cate
 - Spec is ready for implementation (draft complete)
 - Complex specifications (>10 tasks, architectural decisions)
 - Security-critical designs (auth, data, privacy)
-- Tight deadlines requiring estimate validation
 - Novel architectures with uncertain risks
 
 **Skip review for:**
@@ -31,30 +30,6 @@ Multi-model review coordinates parallel AI reviewers to provide structured, cate
 |--------|---------|---------|
 | `review` | `spec-review`, `list-tools`, `list-plan-tools` | Execute reviews and list toolchains |
 | `spec` | `completeness-check`, `duplicate-detection` | Automated quality checks |
-
-## Review Types
-
-| Type | Models | Duration | Focus | Use When |
-|------|--------|----------|-------|----------|
-| **quick** | 2 | 10-15 min | Completeness, Clarity | Simple specs, time-constrained |
-| **full** | 3-4 | 20-30 min | All 6 dimensions | Complex specs, moderate-high risk |
-| **security** | 2-3 | 15-20 min | Risk Management | Auth, data handling, compliance |
-| **feasibility** | 2-3 | 10-15 min | Estimates, Dependencies | Tight deadlines, uncertain scope |
-
-### Decision Matrix
-
-| Condition | Review Type |
-|-----------|-------------|
-| Task count <= 10 AND no auth/payment/PII tasks | `quick` |
-| Task count > 10 OR has architectural decisions | `full` |
-| Contains auth, payment, encryption, or PII handling | `security` |
-| Phase has deadline pressure OR external dependencies | `feasibility` |
-
-**Priority when multiple conditions match:**
-1. `security` (always takes precedence for sensitive data)
-2. `full` (for complex specs)
-3. `feasibility` (for time-constrained work)
-4. `quick` (default fallback)
 
 ## Workflow Steps
 
@@ -74,24 +49,17 @@ Check which AI review toolchains are installed:
 Run automated checks before AI review to catch structural issues:
 
 ```bash
-# Check spec completeness (metadata, descriptions, estimates)
+# Check spec completeness (metadata, descriptions)
 mcp__plugin_foundry_foundry-mcp__spec action="completeness-check" spec_id="{spec-id}"
 
 # Detect duplicate or overlapping tasks
 mcp__plugin_foundry_foundry-mcp__spec action="duplicate-detection" spec_id="{spec-id}"
 ```
 
-| Review Type | Recommended Quality Checks |
-|-------------|---------------------------|
-| `quick` | `completeness-check` (fast structural validation) |
-| `full` | Both checks before AI review |
-| `security` | `completeness-check` (ensure all security requirements specified) |
-| `feasibility` | `duplicate-detection` (avoid double-counting estimates) |
-
 ### Step 3: Execute Review
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__review action="spec-review" spec_id="{spec-id}" review_type="{type}"
+mcp__plugin_foundry_foundry-mcp__review action="spec-review" spec_id="{spec-id}"
 ```
 
 The tool automatically:
@@ -99,6 +67,10 @@ The tool automatically:
 2. Collects responses as they complete (60-120s per tool)
 3. Handles failures gracefully
 4. Parses and synthesizes responses
+
+All 6 dimensions are always assessed: Completeness, Clarity, Feasibility, Architecture, Risk Management, Verification.
+
+When the spec has a linked `plan_path`, the review automatically enhances to include a spec-vs-plan comparison. No additional parameters are needed.
 
 ### Step 4: Interpret Results
 
@@ -128,7 +100,8 @@ After completing the review:
 
 ## Output Format
 
-Reports are written to `specs/.plan-reviews/{spec-id}-review-{type}.md`
+Plan reviews are written to `specs/.plan-reviews/{plan-name}-review.md`
+Spec reviews are written to `specs/.spec-reviews/{spec-id}-spec-review.md`
 
 Full results go to files; conversation receives summary only.
 

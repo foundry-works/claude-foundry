@@ -1,6 +1,7 @@
 ---
 name: foundry-review
 description: Review implementation fidelity against specifications by comparing actual code to spec requirements. Identifies deviations, assesses impact, and generates compliance reports for tasks, phases, or entire specs.
+user-invocable: false
 ---
 
 # Implementation Fidelity Review Skill
@@ -220,6 +221,15 @@ mcp__plugin_foundry_foundry-mcp__review action="fidelity" spec_id="{spec-id}" ta
 | **Task Review** | 1 file | Critical task validation, high-risk implementations |
 
 > For detailed workflow per review type, see `references/review-types.md`
+
+### Plan-Enhanced Review
+
+When a spec has a linked `plan_path`, fidelity review automatically includes spec-vs-plan comparison. This is **not a separate review type** — it augments the standard phase or task review with additional plan alignment checks.
+
+**Auto-triggered when:** Spec metadata contains `plan_path`
+**No user action needed:** The MCP tool detects plan linkage and enhances the review automatically
+
+The response includes a `plan_enhanced` boolean indicating whether plan comparison was performed.
 
 ## Fidelity Assessment Categories
 

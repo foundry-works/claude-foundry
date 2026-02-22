@@ -13,7 +13,7 @@ The `task action="prepare"` response provides comprehensive context for task exe
     "status": "pending",
     "metadata": {
       "file_path": "src/middleware/auth.ts",
-      "estimated_hours": 2,
+      "complexity": "medium",
       "task_category": "implementation"
     },
     "instructions": ["Step 1...", "Step 2..."]

@@ -35,12 +35,16 @@ The `--auto` flag enables continuous task execution without requiring user appro
 
 ### Session Tracking
 
-Autonomous mode uses session-config to track state:
-- Session starts when `--auto` is invoked
-- Progress persists across `/clear` boundaries
-- Session ends when spec completes or user abandons
+Autonomous mode uses canonical session actions to track state:
+- `task action="session" command="start"` — begin session
+- `task action="session" command="status"` — check state
+- `task action="session" command="pause"` — pause execution
+- `task action="session" command="resume"` — resume from pause
+- `task action="session" command="end"` — end session
 
-> See [session-management.md](./session-management.md) for session-config MCP action details.
+Progress persists across `/clear` boundaries. Session ends when spec completes or user abandons.
+
+> See [session-management.md](./session-management.md) for full session and session-step MCP action details.
 
 ## Flag Combinations
 
@@ -115,7 +119,7 @@ Autonomous execution pauses when specific thresholds are reached.
 
 **Behavior:**
 1. Continue working on the current task at full quality -- do not rush or cut corners (the remaining ~15% headroom is sufficient)
-2. Pause session with `reason="context_limit"`
+2. Pause session: `task action="session" command="pause" reason="context_limit"`
 3. Output recovery guidance
 
 **Output:**
@@ -130,7 +134,7 @@ Run `/clear` then `foundry-implement --auto` to resume.
 **Detection:** Task completion returns error or task marked blocked 3+ times in a row.
 
 **Behavior:**
-1. Pause session with `reason="error_threshold"`
+1. Pause session: `task action="session" command="pause" reason="error_threshold"`
 2. List failed tasks with error summaries
 3. Wait for user investigation
 
@@ -151,7 +155,7 @@ Fix issues manually, then `foundry-implement --auto` to resume.
 **Behavior:**
 1. Check if alternative tasks exist
 2. If yes, skip to next available task (no pause)
-3. If no, pause session with `reason="blocked_task"`
+3. If no, pause session: `task action="session" command="pause" reason="blocked_task"`
 
 **Output:**
 ```
@@ -166,7 +170,7 @@ Resolve blocker or mark task as skipped, then resume.
 
 **Purpose:** Periodic checkpoint for user review.
 
-**Default:** 10 tasks (configurable via session-config).
+**Default:** 10 tasks (configurable via session).
 
 **Output:**
 ```
@@ -181,8 +185,66 @@ Review changes, then `foundry-implement --auto` to continue.
 
 **Behavior:**
 1. Complete current atomic operation if safe
-2. Pause session with `reason="user_requested"`
+2. Pause session: `task action="session" command="pause" reason="user_requested"`
 3. Save state for resume
+
+## Loop Signals
+
+Session-step responses include a `data.loop_signal` field that guides autonomous continuation decisions.
+
+### Signal Values
+
+| Signal | Meaning | Auto-Continue? |
+|--------|---------|----------------|
+| `phase_complete` | Current phase finished, more phases remain | Yes |
+| `spec_complete` | All phases/tasks done | No — report completion |
+| `paused_needs_attention` | Requires user intervention | No — pause session |
+| `failed` | Step failed | No — increment error count |
+| `blocked_runtime` | Runtime blocker encountered | No — pause session |
+
+### Auto-Continue Rule
+
+**CRITICAL:** Auto-continue should ONLY happen when `loop_signal` is `phase_complete`. All other signals require either pausing or ending the session.
+
+```
+session-step response received:
+    │
+    ├─ loop_signal == "phase_complete" → Auto-continue to next phase
+    ├─ loop_signal == "spec_complete" → End session, report completion
+    ├─ loop_signal == "paused_needs_attention" → Pause session
+    ├─ loop_signal == "failed" → Increment errors, check threshold
+    └─ loop_signal == "blocked_runtime" → Pause session
+```
+
+### Recommended Actions
+
+Session-step responses also include a `data.recommended_actions` array suggesting next steps:
+
+```json
+{
+  "data": {
+    "loop_signal": "phase_complete",
+    "recommended_actions": [
+      "start_next_phase",
+      "run_verification"
+    ]
+  }
+}
+```
+
+Use `recommended_actions` as guidance for what to do next, but always respect the `loop_signal` for continuation decisions.
+
+## Session Events
+
+Inspect the journal-backed event feed for debugging or audit:
+
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="session-events" \
+  spec_id={spec-id} \
+  session_id={session-id}
+```
+
+Supports pagination via `cursor` and `limit` parameters. Returns chronological events including task starts, completions, pauses, and errors.
 
 ## Recovery Patterns
 
@@ -193,7 +255,7 @@ Session state persists in MCP storage. Recovery flow:
 ```
 User runs: foundry-implement --auto
     │
-    ├─ Check session-config status
+    ├─ Check session status
     │
     ├─ Session exists and paused?
     │       │
@@ -241,7 +303,7 @@ foundry-implement --auto
 
 Or explicitly end:
 ```bash
-mcp__plugin_foundry_foundry-mcp__task action="session-config" spec_id={spec-id} command="end"
+mcp__plugin_foundry_foundry-mcp__task action="session" spec_id={spec-id} command="end"
 ```
 
 ## Gate Comparison

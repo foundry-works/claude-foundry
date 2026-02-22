@@ -78,7 +78,7 @@ This skill follows a **plan-first methodology**. A markdown plan is **MANDATORY*
 
 | Router | Key Actions |
 |--------|-------------|
-| `authoring` | `spec-create`, `spec-update-frontmatter`, `phase-add-bulk`, `phase-template`, `phase-move`, `phase-update-metadata`, `assumption-add`, `assumption-list` |
+| `authoring` | `spec-create`, `spec-update-frontmatter`, `phase-add-bulk`, `phase-move`, `phase-update-metadata`, `assumption-add`, `assumption-list`, `constraint-add`, `constraint-list`, `risk-add`, `risk-list`, `question-add`, `question-list`, `success-criterion-add`, `success-criteria-list` |
 | `spec` | `validate`, `fix`, `apply-plan`, `completeness-check`, `duplicate-detection`, `stats`, `analyze-deps` |
 | `review` | `spec-review`, `parse-feedback`, `list-tools` |
 | `task` | `add`, `remove`, `move`, `update-metadata` |
@@ -111,14 +111,15 @@ Use **Explore subagents** for large codebases (prevents context bloat), or `Glob
 **This step is REQUIRED.** All specifications must begin as markdown plans before JSON conversion.
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__plan action="create" name="Feature Name" template="detailed"
+mcp__plugin_foundry_foundry-mcp__plan action="create" name="Feature Name"
 ```
 
 The command creates a template at `specs/.plans/feature-name.md`. Fill in all sections:
 - Mission statement (becomes `metadata.mission`)
-- Objective and success criteria
+- Objectives and success criteria
+- Assumptions and constraints
 - Phase breakdown with tasks
-- Risks and dependencies
+- Risks, dependencies, and open questions
 
 **After completing the plan:**
 1. Run AI review (Step 4)
@@ -133,18 +134,12 @@ The command creates a template at `specs/.plans/feature-name.md`. Fill in all se
 After completing the markdown plan, run AI review to catch issues before JSON conversion:
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name.md" review_type="full"
+mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name.md"
 ```
 
-**Review types for plans:**
-| Type | Focus | Use When |
-|------|-------|----------|
-| `quick` | Critical blockers only | Simple plans |
-| `full` | All dimensions | Complex features |
-| `security` | Auth, data handling | Security-sensitive |
-| `feasibility` | Estimates, dependencies | Tight deadlines |
+**Review output:** Saved to `specs/.plan-reviews/<plan-name>-review.md`
 
-**Review output:** Saved to `specs/.plan-reviews/<plan-name>-<review-type>.md`
+All 6 dimensions are always assessed: Completeness, Architecture, Sequencing, Feasibility, Risk, Clarity.
 
 **Iterate if needed:** If the review identifies issues:
 1. Read the review feedback
@@ -172,7 +167,7 @@ Present to user:
 ### Step 6: Create JSON Specification (From Approved Plan)
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="feature-name" template="empty"
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="feature-name" template="empty" plan_path="specs/.plans/feature-name.md" plan_review_path="specs/.plan-reviews/feature-name-review.md"
 ```
 
 Add phases with tasks:
@@ -185,17 +180,28 @@ Update metadata:
 mcp__plugin_foundry_foundry-mcp__authoring action="spec-update-frontmatter" spec_id="{spec-id}" key="mission" value="Single-sentence objective"
 ```
 
-Add assumptions:
+### Step 6a: Enrich Spec Metadata (From Approved Plan)
+
+After creating the spec, populate structured metadata extracted from the approved plan:
+
 ```bash
+# Add constraints from plan
+mcp__plugin_foundry_foundry-mcp__authoring action="constraint-add" spec_id="{spec-id}" text="Must maintain backward compatibility with v2 API"
+
+# Add risks from plan
+mcp__plugin_foundry_foundry-mcp__authoring action="risk-add" spec_id="{spec-id}" description="OAuth provider rate limits" likelihood="medium" impact="high" mitigation="Implement token caching"
+
+# Add open questions from plan
+mcp__plugin_foundry_foundry-mcp__authoring action="question-add" spec_id="{spec-id}" text="Which OAuth scopes are required for the admin flow?"
+
+# Add success criteria from plan
+mcp__plugin_foundry_foundry-mcp__authoring action="success-criterion-add" spec_id="{spec-id}" text="All protected endpoints return 401 without valid token"
+
+# Add assumptions
 mcp__plugin_foundry_foundry-mcp__authoring action="assumption-add" spec_id="{spec-id}" text="Single GCP project for staging and production"
-mcp__plugin_foundry_foundry-mcp__authoring action="assumption-add" spec_id="{spec-id}" text="Shared Redis with key prefix isolation" assumption_type="constraint"
 ```
 
-List assumptions:
-```bash
-mcp__plugin_foundry_foundry-mcp__authoring action="assumption-list" spec_id="{spec-id}"
-```
-
+> See `references/metadata-management.md` for full action reference and workflow.
 > See `references/json-spec.md` and `references/task-hierarchy.md` for structure details.
 
 ### Step 7: Run AI Review on Spec (Automatic)
@@ -203,16 +209,10 @@ mcp__plugin_foundry_foundry-mcp__authoring action="assumption-list" spec_id="{sp
 After spec creation, AI review runs automatically:
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__review action="spec-review" spec_id="{spec-id}" review_type="full"
+mcp__plugin_foundry_foundry-mcp__review action="spec-review" spec_id="{spec-id}"
 ```
 
-**Review types:**
-| Type | Models | Focus | Use When |
-|------|--------|-------|----------|
-| `quick` | 2 | Completeness, Clarity | Simple specs |
-| `full` | 3-4 | All 6 dimensions | Complex specs |
-| `security` | 2-3 | Risk Management | Auth, data handling |
-| `feasibility` | 2-3 | Estimates, Dependencies | Tight deadlines |
+When the spec has a linked `plan_path`, the review automatically enhances to a spec-vs-plan comparison, evaluating coverage, fidelity, success criteria mapping, and preservation of constraints, risks, and open questions. The response includes a `plan_enhanced` boolean and a verdict of `aligned`, `deviation`, or `incomplete`.
 
 > See `references/plan-review-workflow.md` for detailed review workflow.
 > See `references/plan-review-dimensions.md` for review dimensions.
@@ -293,10 +293,7 @@ For `implementation` or `refactoring` tasks, set `metadata.file_path` to a **rea
 
 | Template | Use Case | Required Fields |
 |----------|----------|-----------------|
-| `simple` | Small tasks | Basic fields only |
-| `medium` | Standard features | `mission`, `description`, `acceptance_criteria`, `task_category` |
-| `complex` | Large features | All medium + detailed metadata |
-| `security` | Security-sensitive | All complex + security review |
+| `empty` | All specs (blank with no phases) | Add phases via `phase-add-bulk` |
 
 ### Task Categories
 
@@ -344,8 +341,9 @@ If >6 phases or >50 tasks, recommend splitting into multiple specs.
 ## Output Artifacts
 
 1. **JSON spec file** at `specs/pending/{spec-id}.json`
-2. **AI review report** at `specs/.plan-reviews/{spec-id}-review-{type}.md`
-3. **Validation passed** with no errors
+2. **Plan review report** at `specs/.plan-reviews/{plan-name}-review.md`
+3. **Spec review report** at `specs/.spec-reviews/{spec-id}-spec-review.md`
+4. **Validation passed** with no errors
 
 ## Detailed Reference
 
@@ -355,6 +353,7 @@ If >6 phases or >50 tasks, recommend splitting into multiple specs.
 - Phase plan template → `references/phase-plan-template.md`
 - JSON spec structure → `references/json-spec.md`
 - Task hierarchy → `references/task-hierarchy.md`
+- Metadata management → `references/metadata-management.md`
 - Codebase analysis → `references/codebase-analysis.md`
 
 **Review:**

@@ -5,7 +5,9 @@ Autonomous execution session tracking for foundry-implement. Manages state persi
 ## Contents
 
 - [Session State Model](#session-state-model)
-- [session-config MCP Action](#session-config-mcp-action)
+- [Session MCP Actions](#session-mcp-actions)
+- [Session-Step MCP Actions](#session-step-mcp-actions)
+- [Session Events](#session-events)
 - [Pause Reasons](#pause-reasons)
 - [Recovery Patterns](#recovery-patterns)
 - [State Persistence](#state-persistence)
@@ -50,14 +52,16 @@ idle ──[start]──> active ──[complete]──> idle
 | `error_count` | int | Consecutive errors encountered |
 | `context_percentage` | int | Last known context usage |
 
-## session-config MCP Action
+## Session MCP Actions
 
-Manage autonomous execution sessions via the task router.
+Manage autonomous execution sessions via the task router using the canonical `session` action.
+
+> **Legacy aliases:** The old `session-config` action name still works but responses include deprecation metadata. Use canonical forms for new code.
 
 ### Start Session
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__task action="session-config" \
+mcp__plugin_foundry_foundry-mcp__task action="session" \
   spec_id={spec-id} \
   command="start"
 ```
@@ -67,7 +71,7 @@ mcp__plugin_foundry_foundry-mcp__task action="session-config" \
 ### Check Status
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__task action="session-config" \
+mcp__plugin_foundry_foundry-mcp__task action="session" \
   spec_id={spec-id} \
   command="status"
 ```
@@ -77,7 +81,7 @@ mcp__plugin_foundry_foundry-mcp__task action="session-config" \
 ### Pause Session
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__task action="session-config" \
+mcp__plugin_foundry_foundry-mcp__task action="session" \
   spec_id={spec-id} \
   command="pause" \
   reason={pause-reason}
@@ -86,7 +90,7 @@ mcp__plugin_foundry_foundry-mcp__task action="session-config" \
 ### Resume Session
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__task action="session-config" \
+mcp__plugin_foundry_foundry-mcp__task action="session" \
   spec_id={spec-id} \
   command="resume"
 ```
@@ -96,12 +100,111 @@ mcp__plugin_foundry_foundry-mcp__task action="session-config" \
 ### End Session
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__task action="session-config" \
+mcp__plugin_foundry_foundry-mcp__task action="session" \
   spec_id={spec-id} \
   command="end"
 ```
 
 Clears session state, returns summary of completed tasks.
+
+## Session-Step MCP Actions
+
+Orchestrate individual step execution within an active session using the canonical `session-step` action.
+
+> **Legacy aliases:** The old hyphenated forms (`session-step-next`, etc.) still work but responses include deprecation metadata. Use canonical forms for new code.
+
+### Get Next Step
+
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="session-step" \
+  spec_id={spec-id} \
+  command="next"
+```
+
+**Returns:** Next step to execute with task context. Response includes `loop_signal` and `recommended_actions` (see below).
+
+### Report Step Result
+
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="session-step" \
+  spec_id={spec-id} \
+  command="report" \
+  step_id={step-id} \
+  outcome={outcome} \
+  completion_note="Summary of what was done"
+```
+
+**Returns:** Updated session state with `loop_signal` and `recommended_actions`.
+
+### Replay Step
+
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="session-step" \
+  spec_id={spec-id} \
+  command="replay" \
+  step_id={step-id}
+```
+
+Re-execute a previously completed or failed step.
+
+### Heartbeat
+
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="session-step" \
+  spec_id={spec-id} \
+  command="heartbeat"
+```
+
+Signal that the agent is still active. Prevents stale session detection.
+
+### Response Fields: `loop_signal` and `recommended_actions`
+
+Session-step responses include two fields that guide autonomous continuation:
+
+**`data.loop_signal`** — Determines whether to auto-continue:
+
+| Signal | Meaning | Action |
+|--------|---------|--------|
+| `phase_complete` | Current phase finished, more phases remain | Auto-continue |
+| `spec_complete` | All phases/tasks done | End session |
+| `paused_needs_attention` | Requires user intervention | Pause session |
+| `failed` | Step failed | Increment errors, check threshold |
+| `blocked_runtime` | Runtime blocker encountered | Pause session |
+
+**`data.recommended_actions`** — Array of suggested next steps:
+
+```json
+{
+  "data": {
+    "loop_signal": "phase_complete",
+    "recommended_actions": ["start_next_phase", "run_verification"]
+  }
+}
+```
+
+Use `recommended_actions` as guidance, but always respect `loop_signal` for continuation decisions.
+
+## Session Events
+
+Inspect the journal-backed event feed for debugging, audit, or progress review.
+
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="session-events" \
+  spec_id={spec-id} \
+  session_id={session-id}
+```
+
+**Pagination:** Use `cursor` and `limit` parameters for large event histories:
+
+```bash
+mcp__plugin_foundry_foundry-mcp__task action="session-events" \
+  spec_id={spec-id} \
+  session_id={session-id} \
+  limit=20 \
+  cursor={last-cursor}
+```
+
+**Returns:** Chronological events including task starts, completions, pauses, errors, and phase transitions.
 
 ## Pause Reasons
 
@@ -123,7 +226,7 @@ Autonomous execution pauses when specific thresholds are reached.
 
 **Resolution:**
 1. Finish current task at full quality -- the remaining headroom is sufficient, do not rush
-2. Record session state via `session-config command="pause" reason="context_limit"`
+2. Pause: `task action="session" command="pause" reason="context_limit"`
 3. Instruct user to run `/clear` then `foundry-implement --auto` to resume
 
 **Example recovery message:**
@@ -137,7 +240,7 @@ Run `/clear` then `foundry-implement --auto` to resume from task-3-2.
 **Trigger:** 3+ consecutive tasks fail (blocked, errors, cannot complete).
 
 **Resolution:**
-1. Pause session with `reason="error_threshold"`
+1. Pause: `task action="session" command="pause" reason="error_threshold"`
 2. Surface failed tasks and error summaries
 3. User investigates and fixes issues manually
 4. Resume with `foundry-implement --auto`
@@ -154,7 +257,7 @@ Fix issues, then run `foundry-implement --auto` to resume.
 **Trigger:** Next recommended task has unresolved blockers.
 
 **Resolution:**
-1. Pause session with `reason="blocked_task"`
+1. Pause: `task action="session" command="pause" reason="blocked_task"`
 2. Surface blocker details
 3. User resolves blocker or skips task
 4. Resume with `foundry-implement --auto`
@@ -166,7 +269,7 @@ Fix issues, then run `foundry-implement --auto` to resume.
 **Purpose:** Checkpoint for user review of progress.
 
 **Resolution:**
-1. Pause session with `reason="task_limit"`
+1. Pause: `task action="session" command="pause" reason="task_limit"`
 2. Summarize completed tasks
 3. User reviews and continues with `foundry-implement --auto`
 
@@ -187,7 +290,7 @@ Session state persists across `/clear` boundaries via MCP storage.
 
 **Recovery flow:**
 1. User runs `foundry-implement --auto`
-2. Command checks `session-config command="status"`
+2. Check status: `task action="session" command="status"`
 3. If session exists and is `paused`:
    - Surface pause reason and last task
    - Offer: "Resume session?" / "Start fresh?"
@@ -197,12 +300,12 @@ Session state persists across `/clear` boundaries via MCP storage.
 
 ```bash
 # Check session status
-mcp__plugin_foundry_foundry-mcp__task action="session-config" \
+mcp__plugin_foundry_foundry-mcp__task action="session" \
   spec_id={spec-id} \
   command="status"
 
 # If paused due to errors, user fixes issues, then:
-mcp__plugin_foundry_foundry-mcp__task action="session-config" \
+mcp__plugin_foundry_foundry-mcp__task action="session" \
   spec_id={spec-id} \
   command="resume"
 ```
@@ -212,7 +315,7 @@ mcp__plugin_foundry_foundry-mcp__task action="session-config" \
 If user wants to start fresh:
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__task action="session-config" \
+mcp__plugin_foundry_foundry-mcp__task action="session" \
   spec_id={spec-id} \
   command="end"
 ```
@@ -251,13 +354,13 @@ Session state stored in MCP server's workspace data:
 **Wrong:**
 ```bash
 # Starting fresh without checking for existing session
-mcp__plugin_foundry_foundry-mcp__task action="session-config" command="start" ...
+mcp__plugin_foundry_foundry-mcp__task action="session" command="start" ...
 ```
 
 **Right:**
 ```bash
 # Always check status first
-mcp__plugin_foundry_foundry-mcp__task action="session-config" command="status" ...
+mcp__plugin_foundry_foundry-mcp__task action="session" command="status" ...
 # Then decide: resume existing or start new
 ```
 
@@ -282,7 +385,7 @@ Run `/clear` then `foundry-implement --auto` to resume safely.
 - Using `task action="update-status"` to bypass session tracking
 
 **Right:**
-- Always use `session-config` action for session operations
+- Always use canonical `session` and `session-step` actions for session operations
 - Let the system manage state transitions
 
 ### Resuming Without Addressing Blockers
@@ -291,7 +394,7 @@ Run `/clear` then `foundry-implement --auto` to resume safely.
 ```bash
 # Session paused due to blocked_task
 # User immediately resumes without fixing blocker
-mcp__plugin_foundry_foundry-mcp__task action="session-config" command="resume" ...
+mcp__plugin_foundry_foundry-mcp__task action="session" command="resume" ...
 # Will immediately pause again
 ```
 
@@ -302,7 +405,7 @@ mcp__plugin_foundry_foundry-mcp__task action="unblock" ...
 # Or skip the blocked task
 mcp__plugin_foundry_foundry-mcp__task action="update-status" status="blocked" ...
 # Then resume
-mcp__plugin_foundry_foundry-mcp__task action="session-config" command="resume" ...
+mcp__plugin_foundry_foundry-mcp__task action="session" command="resume" ...
 ```
 
 ### Not Completing Tasks Atomically

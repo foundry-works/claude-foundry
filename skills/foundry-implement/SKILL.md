@@ -71,7 +71,7 @@ This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools u
 
 | Router | Key Actions |
 |--------|-------------|
-| `task` | `prepare`, `query`, `info`, `start`, `complete`, `update-status`, `block`, `unblock`, `add-dependency`, `add-requirement`, `session-config`, `prepare-batch`, `start-batch`, `complete-batch`, `reset-batch` |
+| `task` | `prepare`, `query`, `info`, `start`, `complete`, `update-status`, `block`, `unblock`, `add-dependency`, `add-requirement`, `session`, `session-step`, `session-events`, `fix-verification-types`, `gate-waiver`, `prepare-batch`, `start-batch`, `complete-batch`, `reset-batch` |
 | `research` | `node-status`, `node-execute`, `node-record`, `node-findings` |
 | `journal` | `add`, `list` |
 | `lifecycle` | `activate`, `move`, `complete` |
@@ -122,7 +122,7 @@ Executes tasks continuously without user prompts between each task. Session stat
 - Auto-continues after task completion
 - Pauses on: context >= 85%, 3+ consecutive errors, blocked tasks, task limit
 
-**Session tracking:** Uses `task action="session-config"` with commands: `start`, `status`, `pause`, `resume`, `end`.
+**Session tracking:** Uses canonical `task action="session"` with commands: `start`, `status`, `pause`, `resume`, `end`. Step orchestration via `task action="session-step"` with commands: `next`, `report`, `replay`, `heartbeat`.
 
 > Full documentation: [references/autonomous-mode.md](./references/autonomous-mode.md)
 > Session management: [references/session-management.md](./references/session-management.md)
@@ -229,7 +229,7 @@ Execute one task at a time with explicit user approval.
 
 ### Select Task
 
-- **Recommendation path**: `mcp__plugin_foundry_foundry-mcp__task action="prepare"` -> surface task id, file, estimates, blockers
+- **Recommendation path**: `mcp__plugin_foundry_foundry-mcp__task action="prepare"` -> surface task id, file, complexity, blockers
 - **Browsing path**: Use `mcp__plugin_foundry_foundry-mcp__task action="query"` -> present shortlist via `AskUserQuestion`
 
 ### Task Type Dispatch

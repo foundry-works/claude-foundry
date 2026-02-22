@@ -73,7 +73,11 @@ Use `authoring` MCP tool with `action="intake-add"` to capture notes programmati
 
 ### Starting New Work
 1. Invoke `foundry-spec` - creates spec in `specs/pending/`
+   - Plan is linked to spec via `plan_path` / `plan_review_path` for traceability
+   - Metadata (constraints, risks, open questions, success criteria) is extracted from the approved plan and populated via authoring actions
+   - Phases are created using `phase-add-bulk` with inline tasks
 2. Review and refine spec (plan-review and modify are built into foundry-spec)
+   - Spec review auto-enhances to plan comparison when `plan_path` is linked
 3. Activate spec (moves to `specs/active/`)
 
 ### Resuming Active Work

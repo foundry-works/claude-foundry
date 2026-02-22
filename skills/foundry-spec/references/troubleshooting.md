@@ -74,10 +74,6 @@ Common issues and their resolutions.
 
 **Resolution:** Every task requires a non-empty `title` string.
 
-**Error:** "Task at index N has invalid estimated_hours"
-
-**Resolution:** `estimated_hours` must be a non-negative number if provided.
-
 **Error:** "Phase title is required"
 
 **Resolution:** The `phase` object must include a `title` field.
@@ -90,10 +86,10 @@ Common issues and their resolutions.
 
 ```bash
 # Create markdown plan
-mcp__plugin_foundry_foundry-mcp__plan action="create" name="Feature Name" template="detailed"
+mcp__plugin_foundry_foundry-mcp__plan action="create" name="Feature Name"
 
 # Review plan
-mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name.md" review_type="full"
+mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name.md"
 
 # Create JSON spec
 mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="feature-name" template="empty"
@@ -105,21 +101,6 @@ mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="{spec-id}"
 mcp__plugin_foundry_foundry-mcp__spec action="validate-fix" spec_id="{spec-id}" auto_fix=true
 ```
 
-## Phase Template Commands
-
-```bash
-# List available phase templates
-mcp__plugin_foundry_foundry-mcp__authoring action="phase-template" template_action="list"
-
-# Show template structure (preview before applying)
-mcp__plugin_foundry_foundry-mcp__authoring action="phase-template" template_action="show" template_name="implementation"
-
-# Apply template to existing spec (adds new phase)
-mcp__plugin_foundry_foundry-mcp__authoring action="phase-template" template_action="apply" template_name="testing" spec_id="{spec-id}"
-```
-
-**Available templates:** `planning`, `implementation`, `testing`, `security`, `documentation`
-
 ## Phase-Add-Bulk Commands
 
 ```bash
@@ -127,7 +108,7 @@ mcp__plugin_foundry_foundry-mcp__authoring action="phase-template" template_acti
 mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Phase Title"}' tasks='[{"type": "task", "title": "Task 1", "description": "Explain the task", "task_category": "investigation", "acceptance_criteria": ["Notes captured in spec journal"]}]'
 
 # Add phase with full metadata and verification tasks
-mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Implementation", "description": "Build core features", "estimated_hours": 8}' tasks='[{"type": "task", "title": "Implement feature", "description": "Build the primary workflow", "task_category": "implementation", "file_path": "src/feature/core.py", "estimated_hours": 4, "acceptance_criteria": ["Core workflow passes unit tests"]}, {"type": "verify", "title": "Run tests", "verification_type": "run-tests"}, {"type": "verify", "title": "Fidelity review", "verification_type": "fidelity"}]'
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Implementation", "description": "Build core features"}' tasks='[{"type": "task", "title": "Implement feature", "description": "Build the primary workflow", "task_category": "implementation", "file_path": "src/feature/core.py", "acceptance_criteria": ["Core workflow passes unit tests"], "metadata": {"complexity": "medium"}}, {"type": "verify", "title": "Run tests", "verification_type": "run-tests"}, {"type": "verify", "title": "Fidelity review", "verification_type": "fidelity"}]'
 
 # Preview phase creation without saving (dry run)
 mcp__plugin_foundry_foundry-mcp__authoring action="phase-add-bulk" spec_id="{spec-id}" phase='{"title": "Test Phase"}' tasks='[{"type": "task", "title": "Test task"}]' dry_run=true

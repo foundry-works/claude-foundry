@@ -11,6 +11,14 @@ This reference describes task status transitions and lifecycle management.
 | `completed` | Successfully finished |
 | `blocked` | Cannot proceed due to dependencies or issues |
 
+## Task Metadata
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `metadata.complexity` | enum | Task complexity: `low`, `medium`, `high` |
+
+Complexity is set at spec authoring time and informs effort expectations during implementation. It does not affect task lifecycle transitions.
+
 ## State Transitions
 
 ```

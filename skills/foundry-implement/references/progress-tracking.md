@@ -12,23 +12,19 @@ mcp__plugin_foundry_foundry-mcp__task action="progress" spec_id={spec-id}
 
 Returns completed vs total tasks, percentage, and current phase.
 
-### Update Phase Estimates
+### Update Phase Metadata
 
-When actual work reveals that phase estimates need adjustment:
+When implementation reveals that phase metadata needs adjustment:
 
 ```bash
-# Update estimated hours for a phase
-mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id={spec-id} phase_id="phase-2" estimated_hours=12.5
-
 # Update phase description and purpose
 mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id={spec-id} phase_id="phase-2" description="Updated scope" purpose="Refined objective"
 
 # Preview changes before applying
-mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id={spec-id} phase_id="phase-2" estimated_hours=8.0 dry_run=true
+mcp__plugin_foundry_foundry-mcp__authoring action="phase-update-metadata" spec_id={spec-id} phase_id="phase-2" description="Revised scope" dry_run=true
 ```
 
 **Use cases:**
-- Task completion reveals more/less work than estimated
 - Scope changes during implementation
 - Post-phase retrospective adjustments
 

@@ -1,6 +1,7 @@
 ---
 name: foundry-setup
 description: First-time setup for the foundry plugin (plugin:foundry@claude-foundry)
+disable-model-invocation: true
 ---
 
 # Foundry Setup Skill

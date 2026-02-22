@@ -5,7 +5,11 @@
 # Parses transcript directly (like status line tools) to get context usage.
 # No markers or external CLI needed - receives transcript_path via stdin.
 #
-# Usage: Registered as UserPromptSubmit hook in hooks.json
+# Two responsibilities:
+# 1. Always write a sidecar file for the MCP server's ContextTracker (Tier 1)
+# 2. Inject advisory message when context usage exceeds threshold
+#
+# Usage: Registered as PostToolUse hook in hooks.json
 #
 # Configuration (environment variables):
 # - CONTEXT_THRESHOLD: Percentage threshold for warning (default: 85)
@@ -51,7 +55,21 @@ TOKENS=$(tail -200 "$TRANSCRIPT" 2>/dev/null | \
 # Calculate percentage
 PERCENTAGE=$((TOKENS * 100 / MAX_CONTEXT))
 
-# Warn if above threshold
+# ---- Sidecar write (always, for MCP ContextTracker Tier 1) ----
+# Atomic write: temp file + rename prevents partial reads by the MCP server
+CWD="${CLAUDE_PROJECT_ROOT:-$(pwd)}"
+SIDECAR_DIR="${CWD}/specs/.autonomy/context"
+if mkdir -p "$SIDECAR_DIR" 2>/dev/null; then
+    TEMP=$(mktemp "${SIDECAR_DIR}/.context.XXXXXX.tmp" 2>/dev/null)
+    if [ -n "$TEMP" ]; then
+        cat > "$TEMP" << SEOF
+{"context_usage_pct":${PERCENTAGE},"estimated_tokens_used":${TOKENS},"timestamp":"$(date -u +%Y-%m-%dT%H:%M:%SZ)"}
+SEOF
+        mv "$TEMP" "${SIDECAR_DIR}/context.json" 2>/dev/null
+    fi
+fi
+
+# ---- Advisory message (only above threshold) ----
 if [ "$PERCENTAGE" -ge "$THRESHOLD" ]; then
     cat << EOF
 {

@@ -2,30 +2,19 @@
 
 Get AI-powered feedback on markdown plans before converting to JSON specs.
 
-## Running a Review
+## Running a Plan Review
 
 ```bash
-# Full comprehensive review (standard practice)
-mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name.md" review_type="full"
-
-# Quick review for blockers only
-mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name.md" review_type="quick"
+mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name.md"
 ```
 
-## Review Types
+All 6 dimensions are always assessed: Completeness, Architecture, Sequencing, Feasibility, Risk, Clarity.
 
-| Type | Dimensions | Use When |
-|------|------------|----------|
-| `full` | Completeness, Architecture, Sequencing, Feasibility, Risk, Clarity | Initial review, major changes |
-| `quick` | Critical blockers, Key questions | Iteration, minor updates |
-| `security` | Auth, Input validation, Data handling, Secrets | Security-sensitive features |
-| `feasibility` | Complexity, Dependencies, Unknown risks | Novel or risky implementations |
+## Plan Review Output Location
 
-## Review Output Location
+Reviews are saved to: `specs/.plan-reviews/<plan-name>-review.md`
 
-Reviews are saved to: `specs/.plan-reviews/<plan-name>-<review-type>.md`
-
-## Review Output Structure
+## Plan Review Output Structure
 
 ```markdown
 # Plan Review: {Plan Name}
@@ -61,6 +50,46 @@ Reviews are saved to: `specs/.plan-reviews/<plan-name>-<review-type>.md`
 ## Verdict
 {APPROVED | NEEDS_REVISION | BLOCKED}
 ```
+
+## Plan-Enhanced Spec Review
+
+When a spec has a linked `plan_path`, running a spec review automatically enhances to a spec-vs-plan comparison. No special parameters are needed — the enhancement is triggered by the presence of `plan_path` in spec metadata.
+
+```bash
+mcp__plugin_foundry_foundry-mcp__review action="spec-review" spec_id="{spec-id}"
+```
+
+### Comparison Dimensions
+
+The plan-enhanced review evaluates 7 dimensions:
+
+1. **Coverage** — Are all plan phases and tasks represented in the spec?
+2. **Fidelity** — Does the spec accurately reflect the plan's intent?
+3. **Success Criteria Mapping** — Are plan success criteria traceable to spec tasks?
+4. **Constraints Preserved** — Are plan constraints reflected in the spec?
+5. **Risks Preserved** — Are plan risks carried forward into the spec?
+6. **Open Questions Preserved** — Are unresolved questions tracked in the spec?
+7. **Undocumented Additions** — Does the spec contain work not in the plan?
+
+### Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `plan_enhanced` | boolean | `true` when plan comparison was performed |
+| `review_path` | string | Path to the saved review output |
+| `verdict` | string | `aligned`, `deviation`, or `incomplete` |
+
+### Verdict Values
+
+| Verdict | Meaning |
+|---------|---------|
+| `aligned` | Spec faithfully implements the plan |
+| `deviation` | Spec diverges from the plan in significant ways |
+| `incomplete` | Spec is missing plan elements |
+
+### Spec Review Output Location
+
+Spec reviews are saved to: `specs/.spec-reviews/{spec_id}-spec-review.md`
 
 ## Iteration Workflow
 
