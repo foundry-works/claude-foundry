@@ -34,6 +34,18 @@ Common issues and their resolutions.
 - Follow pattern: `task-{phase}-{n}`, `verify-{phase}-{n}`
 - Phase number must match parent phase
 
+## Spec Creation Fails
+
+**Error:** "Provide a non-empty plan_path parameter" or "Provide a non-empty plan_review_path parameter"
+
+**Resolution:** Both `plan_path` and `plan_review_path` are **required** for `spec-create`:
+1. Create a plan first: `plan action="create" name="feature-name"`
+2. Run AI review: `plan action="review" plan_path="specs/.plans/feature-name.md"`
+3. Then create spec with both paths:
+```bash
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="feature-name" plan_path="specs/.plans/feature-name.md" plan_review_path="specs/.plan-reviews/feature-name-review.md"
+```
+
 ## Spec Not Found
 
 **Symptoms:** MCP tools can't find spec
@@ -91,8 +103,8 @@ mcp__plugin_foundry_foundry-mcp__plan action="create" name="Feature Name"
 # Review plan
 mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name.md"
 
-# Create JSON spec
-mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="feature-name" template="empty"
+# Create JSON spec (both plan_path and plan_review_path are REQUIRED)
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="feature-name" template="empty" plan_path="specs/.plans/feature-name.md" plan_review_path="specs/.plan-reviews/feature-name-review.md"
 
 # Validate spec
 mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="{spec-id}"

@@ -278,10 +278,11 @@ mcp__plugin_foundry_foundry-mcp__spec action="validate" spec_id="{spec-id}"
 
 Use this approach for efficient spec creation:
 
-**Step 1: Create spec from template**
+**Step 1: Create spec from approved plan**
 ```bash
-mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="my-feature" template="empty"
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="my-feature" template="empty" plan_path="specs/.plans/my-feature.md" plan_review_path="specs/.plan-reviews/my-feature-review.md"
 ```
+> **Both `plan_path` and `plan_review_path` are required.** Create these first via `plan action="create"` and `plan action="review"`.
 
 **Step 2: Add phases with bulk macro**
 ```bash

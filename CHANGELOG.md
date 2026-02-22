@@ -5,6 +5,15 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.3] - 2026-02-22
+
+### Changed
+
+- **Require plan traceability for spec creation**: `plan_path` and `plan_review_path` are now mandatory parameters for `spec-create`
+  - Updated foundry-spec SKILL.md quick-start to show required plan paths
+  - Added "Spec Creation Fails" troubleshooting entry for missing plan path errors
+  - Updated troubleshooting quick-start example with required parameters
+
 ## [1.7.2] - 2026-02-22
 
 ### Changed
