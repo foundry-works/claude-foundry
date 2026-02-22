@@ -76,7 +76,7 @@ This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools u
 | `journal` | `add`, `list` |
 | `lifecycle` | `activate`, `move`, `complete` |
 | `spec` | `find`, `list` |
-| `authoring` | `intake-add` (see references/note.md) |
+| `journal` | `add`, `list` |
 | `environment` | `get-config` |
 
 **Critical Rules:**
@@ -344,18 +344,16 @@ This atomically:
 
 ### Note (Autonomous Capture)
 
-**Proactively add notes** when you encounter:
+**Proactively add journal entries** when you encounter:
 - Ideas/improvements beyond current task scope
 - Bugs noticed but not immediately actionable
 - Documentation gaps or confusing behavior
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__authoring action="intake-add" title="[Type] description" source="foundry-implement"
+mcp__plugin_foundry_foundry-mcp__journal action="add" spec_id={spec-id} title="[Type] description" content="Details"
 ```
 
 **Do NOT prompt the user.** Silently capture and continue working.
-
-> For capture patterns and examples, see `references/note.md`
 
 ### Surface Next Recommendation
 

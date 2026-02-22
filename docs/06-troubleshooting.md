@@ -439,9 +439,9 @@ I'm having trouble with [issue]. Can you help diagnose?
 ```
 
 ### Capture for later
-If something seems like a bug, use the MCP authoring tool to capture it:
+If something seems like a bug, use the journal tool to capture it:
 ```
-authoring action="intake-add" title="[Bug] Description of what went wrong"
+journal action="add" spec_id={spec-id} title="[Bug] Description of what went wrong" content="Details"
 ```
 
 ### Check plugin version

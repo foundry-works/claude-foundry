@@ -52,13 +52,13 @@ foundry-spec → foundry-implement → [CODE] → foundry-review
 
 **Context Flow**: Spec metadata (journals, dependencies, completion notes) passes through the workflow.
 
-**Note (Autonomous Capture)**: Proactively add notes when encountering issues - do NOT prompt the user:
+**Note (Autonomous Capture)**: Proactively journal observations when encountering issues - do NOT prompt the user:
 - MCP tool errors or unexpected failures → `[Error]`
 - Missing/wished-for tools → `[Feature]`
 - Confusing behavior or documentation gaps → `[Docs]`
 - Ideas beyond current scope → `[Idea]`
 
-Use `authoring` MCP tool with `action="intake-add"` to capture notes programmatically.
+Use `journal` MCP tool with `action="add"` to capture notes (requires a `spec_id`).
 
 ## Common Workflows
 
