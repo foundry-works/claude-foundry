@@ -5,6 +5,15 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.4] - 2026-02-22
+
+### Changed
+
+- **Normalize plan paths to be relative to specs directory**: `plan_path` and `plan_review_path` in the JSON spec reference now use relative paths (e.g., `.plans/feature.md` instead of `specs/.plans/feature.md`)
+- **Add `spec_review_path` field**: New optional field documenting where spec review output is stored (`.spec-reviews/{spec_id}-spec-review.md`)
+- Both `plan_path` and `plan_review_path` are now marked as Required (was Recommended/No)
+- Added note that absolute and `specs/`-prefixed paths are automatically normalized at creation time
+
 ## [1.7.3] - 2026-02-22
 
 ### Changed

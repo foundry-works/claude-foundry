@@ -17,8 +17,8 @@ The formal specification format used by all SDD tools.
     "status": "pending",
     "priority": "high",
     "tags": ["feature", "auth"],
-    "plan_path": "specs/.plans/feature-name.md",
-    "plan_review_path": "specs/.plan-reviews/feature-name-review.md",
+    "plan_path": ".plans/feature-name.md",
+    "plan_review_path": ".plan-reviews/feature-name-review.md",
     "constraints": ["Must maintain backward compatibility with v2 API"],
     "risks": [{"description": "OAuth rate limits", "likelihood": "medium", "impact": "high", "mitigation": "Token caching"}],
     "open_questions": ["Which OAuth scopes for admin flow?"],
@@ -37,14 +37,15 @@ The formal specification format used by all SDD tools.
 | `status` | string | Yes | `pending`, `active`, `completed`, `archived` |
 | `priority` | string | No | `low`, `medium`, `high`, `critical` |
 | `tags` | array | No | Categorization tags |
-| `plan_path` | string | Recommended | Path to the source markdown plan |
-| `plan_review_path` | string | No | Path to the plan review output |
+| `plan_path` | string | Required | Path to the source markdown plan (relative to specs dir) |
+| `plan_review_path` | string | Required | Path to the plan review output (relative to specs dir) |
+| `spec_review_path` | string | No | Auto-populated path to the spec review output (`.spec-reviews/{spec_id}-spec-review.md`) |
 | `constraints` | array of strings | No | Technical/business constraints from the plan |
 | `risks` | array of objects | No | Risk entries: `{description, likelihood, impact, mitigation}` |
 | `open_questions` | array of strings | No | Unresolved questions from planning |
 | `success_criteria` | array of strings | No | Measurable success criteria from the plan |
 
-> Mission helps provide context and should be populated before handing off the spec. Use `plan_path` to link the spec to its source plan for traceability and plan-enhanced review.
+> Mission helps provide context and should be populated before handing off the spec. Use `plan_path` to link the spec to its source plan for traceability and plan-enhanced review. Paths are stored relative to the specs directory (e.g. `.plans/feature.md`). Absolute paths and `specs/`-prefixed paths are automatically normalized at creation time.
  
 ## Phase Structure
 
