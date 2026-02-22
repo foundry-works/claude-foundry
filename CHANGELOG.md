@@ -5,6 +5,15 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.5] - 2026-02-22
+
+### Changed
+
+- **Use canonical `spec` action name for spec review**: Replaced `spec-review` with `spec` in all foundry-spec SKILL.md references (alias still works)
+- **Add date suffix to plan path templates**: Plan paths now show `YYYY-MM-DD` suffix pattern (e.g., `feature-name-YYYY-MM-DD.md`) matching actual tool behavior
+- **Add spec review troubleshooting guidance**: Document prerequisites, common error codes, and resolution steps for failed spec reviews
+- Added notes to use actual paths returned by create/review steps instead of hardcoding
+
 ## [1.7.4] - 2026-02-22
 
 ### Changed

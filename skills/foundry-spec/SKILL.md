@@ -53,7 +53,7 @@ This skill follows a **plan-first methodology**. A markdown plan is **MANDATORY*
 - **Spec Creation** → `authoring action="spec-create"`
   - `authoring action="phase-add-bulk"` ↻ per phase
   - `authoring action="spec-update-frontmatter"` → mission/metadata
-- **Spec Review** (MANDATORY) → `review action="spec-review"`
+- **Spec Review** (MANDATORY) → `review action="spec"`
   - [critical/high?] → `review action="parse-feedback"` → fix spec → re-review
   - ↻ Self-iterate until no critical/high issues remain
   - Present final spec + review summary to user
@@ -83,7 +83,7 @@ This skill follows a **plan-first methodology**. A markdown plan is **MANDATORY*
 |--------|-------------|
 | `authoring` | `spec-create`, `spec-update-frontmatter`, `phase-add-bulk`, `phase-move`, `phase-update-metadata`, `assumption-add`, `assumption-list`, `constraint-add`, `constraint-list`, `risk-add`, `risk-list`, `question-add`, `question-list`, `success-criterion-add`, `success-criteria-list` |
 | `spec` | `validate`, `fix`, `apply-plan`, `completeness-check`, `duplicate-detection`, `stats`, `analyze-deps` |
-| `review` | `spec-review`, `parse-feedback`, `list-tools` |
+| `review` | `spec`, `parse-feedback`, `list-tools` |
 | `task` | `add`, `remove`, `move`, `update-metadata` |
 
 **Critical Rule:** NEVER read spec JSON files directly with `Read()` or shell commands.
@@ -117,7 +117,7 @@ Use **Explore subagents** for large codebases (prevents context bloat), or `Glob
 mcp__plugin_foundry_foundry-mcp__plan action="create" name="Feature Name"
 ```
 
-The command creates a template at `specs/.plans/feature-name.md`. Fill in all sections:
+The command creates a template at `specs/.plans/feature-name-YYYY-MM-DD.md` (date is auto-appended). Fill in all sections:
 - Mission statement (becomes `metadata.mission`)
 - Objectives and success criteria
 - Assumptions and constraints
@@ -137,10 +137,12 @@ The command creates a template at `specs/.plans/feature-name.md`. Fill in all se
 After completing the markdown plan, run AI review to catch issues before JSON conversion:
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name.md"
+mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/feature-name-YYYY-MM-DD.md"
 ```
 
-**Review output:** Saved to `specs/.plan-reviews/<plan-name>-review.md`
+**Review output:** Saved to `specs/.plan-reviews/<plan-name-YYYY-MM-DD>-review.md`
+
+> **Important:** Use the actual `plan_path` returned by the create step — do not hardcode the path.
 
 All 6 dimensions are always assessed: Completeness, Architecture, Sequencing, Feasibility, Risk, Clarity.
 
@@ -173,8 +175,10 @@ Present to user:
 ### Step 6: Create JSON Specification (From Approved Plan)
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="feature-name" template="empty" plan_path="specs/.plans/feature-name.md" plan_review_path="specs/.plan-reviews/feature-name-review.md"
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="feature-name" template="empty" plan_path="specs/.plans/feature-name-YYYY-MM-DD.md" plan_review_path="specs/.plan-reviews/feature-name-YYYY-MM-DD-review.md"
 ```
+
+> **Important:** Use the actual paths returned by the create and review steps. The date suffix is auto-generated.
 
 Add phases with tasks:
 ```bash
@@ -215,10 +219,24 @@ mcp__plugin_foundry_foundry-mcp__authoring action="assumption-add" spec_id="{spe
 After spec creation, the spec review compares the JSON spec against its source plan:
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__review action="spec-review" spec_id="{spec-id}"
+mcp__plugin_foundry_foundry-mcp__review action="spec" spec_id="{spec-id}"
 ```
 
+> **Action name:** Use `action="spec"` (canonical). The alias `"spec-review"` also works but `"spec"` is preferred.
+
 The spec review compares the JSON spec against its source plan to catch translation gaps — evaluating coverage, fidelity, success criteria mapping, and preservation of constraints, risks, and open questions. The response includes a verdict of `aligned`, `deviation`, or `incomplete`.
+
+**Prerequisites for spec review to succeed:**
+- The spec must already be saved to disk (completed by `spec-create` + `phase-add-bulk`)
+- The spec's `metadata.plan_path` must point to an existing plan file (set during `spec-create`)
+- An AI provider must be available (configured in `foundry-mcp.toml` or environment)
+
+**If the review returns `success: false`:**
+1. Check `error_code` in the response — common causes:
+   - `SPEC_NOT_FOUND`: Verify `spec_id` is correct via `spec action="list"`
+   - `AI_NO_PROVIDER`: Check AI provider configuration
+   - `AI_PROVIDER_TIMEOUT`: Retry with a higher `ai_timeout` value
+2. Do NOT retry with a different action name — `"spec"` and `"spec-review"` are identical
 
 **Self-iterate before presenting to user:** Address all critical and high issues yourself:
 1. Parse review findings via `review action="parse-feedback"`
@@ -280,9 +298,9 @@ Use this approach for efficient spec creation:
 
 **Step 1: Create spec from approved plan**
 ```bash
-mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="my-feature" template="empty" plan_path="specs/.plans/my-feature.md" plan_review_path="specs/.plan-reviews/my-feature-review.md"
+mcp__plugin_foundry_foundry-mcp__authoring action="spec-create" name="my-feature" template="empty" plan_path="specs/.plans/my-feature-YYYY-MM-DD.md" plan_review_path="specs/.plan-reviews/my-feature-YYYY-MM-DD-review.md"
 ```
-> **Both `plan_path` and `plan_review_path` are required.** Create these first via `plan action="create"` and `plan action="review"`.
+> **Both `plan_path` and `plan_review_path` are required.** Create these first via `plan action="create"` and `plan action="review"`. Use the actual paths returned by those steps.
 
 **Step 2: Add phases with bulk macro**
 ```bash
@@ -355,7 +373,7 @@ If >6 phases or >50 tasks, recommend splitting into multiple specs.
 ## Output Artifacts
 
 1. **JSON spec file** at `specs/pending/{spec-id}.json`
-2. **Plan review report** at `specs/.plan-reviews/{plan-name}-review.md`
+2. **Plan review report** at `specs/.plan-reviews/{plan-name-YYYY-MM-DD}-review.md`
 3. **Spec review report** at `specs/.spec-reviews/{spec-id}-spec-review.md`
 4. **Validation passed** with no errors
 
