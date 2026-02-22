@@ -68,11 +68,9 @@ The tool automatically:
 3. Handles failures gracefully
 4. Parses and synthesizes responses
 
-All 6 dimensions are always assessed: Completeness, Clarity, Feasibility, Architecture, Risk Management, Verification.
+The spec review compares the JSON spec against its source plan across 7 dimensions: Coverage, Fidelity, Success Criteria Mapping, Constraints Preserved, Risks Preserved, Open Questions Preserved, and Undocumented Additions.
 
-When the spec has a linked `plan_path`, the review automatically enhances to include a spec-vs-plan comparison. No additional parameters are needed.
-
-### Step 4: Interpret Results
+### Step 4: Self-Iterate on Findings
 
 **Priority Levels:**
 - **CRITICAL**: Security vulnerabilities, blockers - Address immediately
@@ -80,23 +78,23 @@ When the spec has a linked `plan_path`, the review automatically enhances to inc
 - **MEDIUM**: Improvements, unclear requirements - Consider addressing
 - **LOW**: Nice-to-have enhancements - Note for future
 
+**Self-iterate before presenting to user.** Address all critical and high issues yourself:
+
+1. Read review findings
+2. For **plan review**: revise the plan markdown, then re-run `plan action="review"`
+3. For **spec review**: fix the spec via authoring/task MCP tools, then re-run `review action="spec-review"`
+4. Repeat until no critical/high issues remain
+
 See `plan-review-consensus.md` for priority assignment details.
 
-### Step 5: Synthesize & Report
+### Step 5: Present to User
 
-1. Organize feedback by category and priority
-2. Note reviewer consensus and diverse perspectives
-3. Identify type of downstream work needed
-4. Return report path for full context
+After resolving critical/high issues, present the clean result:
 
-### Step 6: Handoff
-
-After completing the review:
-
-1. Present summary to user with finding counts by priority level
-2. Provide paths to full reports (markdown + JSON)
-3. Ask if user wants to apply recommendations
-4. Do NOT automatically proceed to modifications without user approval
+1. Summary of what was reviewed and what you fixed during iteration
+2. Any remaining medium/low findings for user awareness
+3. Paths to full reports (markdown + JSON)
+4. Ask user for approval to proceed
 
 ## Output Format
 

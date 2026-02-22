@@ -1,6 +1,6 @@
 # Review Dimensions
 
-Every spec review examines across 6 dimensions to ensure comprehensive coverage.
+Every plan review examines across 6 dimensions to ensure comprehensive coverage.
 
 ## 1. Completeness
 

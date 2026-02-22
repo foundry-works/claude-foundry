@@ -27,7 +27,7 @@ This skill follows a **plan-first methodology**. A markdown plan is **MANDATORY*
 │  1. Analyze    2. Create Plan    3. Plan Review   4. APPROVAL   5. Create Spec   6. Spec Review   7. Validate │
 │  ──────────    ─────────────     ────────────     ───────────   ─────────────    ────────────     ──────────  │
 │  Explore/LSP → plan-create   →   plan-review  →  HUMAN GATE →  spec-create  →   spec-review  →  validate-fix │
-│  (understand)  (MANDATORY)       (AI feedback)   (approve)     (from plan)      (auto)          (auto-fix)   │
+│  (understand)  (MANDATORY)       (AI feedback)   (approve)     (from plan)      (MANDATORY)     (auto-fix)   │
 └──────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -40,9 +40,10 @@ This skill follows a **plan-first methodology**. A markdown plan is **MANDATORY*
 - **Plan** (MANDATORY)
   - `plan action="create"` → create markdown plan
   - Fill in plan content with analysis results
-- **Plan Review** → `plan action="review"` (automatic)
-  - [findings?] → Revise plan based on feedback
-  - ↻ Re-review until no critical blockers
+- **Plan Review** → `plan action="review"`
+  - [critical/high?] → Revise plan, re-review
+  - ↻ Self-iterate until no critical/high issues remain
+  - Present final plan + review summary to user
 - **(GATE: approve plan)**
   - Present plan summary + AI review findings to user
   - User must explicitly approve via AskUserQuestion
@@ -52,9 +53,11 @@ This skill follows a **plan-first methodology**. A markdown plan is **MANDATORY*
 - **Spec Creation** → `authoring action="spec-create"`
   - `authoring action="phase-add-bulk"` ↻ per phase
   - `authoring action="spec-update-frontmatter"` → mission/metadata
-- **Spec Review** → `review action="spec-review"` (automatic)
-  - [findings?] → `review action="parse-feedback"`
-  - (GATE: approve modifications) → `spec action="apply-plan"`
+- **Spec Review** (MANDATORY) → `review action="spec-review"`
+  - [critical/high?] → `review action="parse-feedback"` → fix spec → re-review
+  - ↻ Self-iterate until no critical/high issues remain
+  - Present final spec + review summary to user
+  - (GATE: approve remaining modifications) → `spec action="apply-plan"`
 - **Validate** → `spec action="validate"` ↻ [errors?] → `spec action="fix"`
 - **Exit** → specs/pending/{spec-id}.json
 ```
@@ -141,10 +144,12 @@ mcp__plugin_foundry_foundry-mcp__plan action="review" plan_path="specs/.plans/fe
 
 All 6 dimensions are always assessed: Completeness, Architecture, Sequencing, Feasibility, Risk, Clarity.
 
-**Iterate if needed:** If the review identifies issues:
+**Self-iterate before presenting to user:** Address all critical and high issues yourself:
 1. Read the review feedback
-2. Revise the plan to address findings
-3. Re-run review until no critical blockers
+2. Revise the plan to address critical/high findings
+3. Re-run review
+4. Repeat until no critical/high issues remain
+5. Then present the clean plan + review summary at the human approval gate
 
 > See `references/ai-review.md` for review output format and iteration workflow.
 
@@ -154,8 +159,9 @@ All 6 dimensions are always assessed: Completeness, Architecture, Sequencing, Fe
 
 Present to user:
 1. Plan summary (mission, phases, task count)
-2. AI review findings summary (critical/high/medium issues)
-3. Any unresolved questions or risks
+2. What you fixed during self-iteration (critical/high issues resolved)
+3. Any remaining medium/low findings for awareness
+4. Any unresolved questions or risks
 
 **Use `AskUserQuestion` with options:**
 - **"Approve & Create JSON Spec"** - Proceed to Step 6
@@ -204,15 +210,22 @@ mcp__plugin_foundry_foundry-mcp__authoring action="assumption-add" spec_id="{spe
 > See `references/metadata-management.md` for full action reference and workflow.
 > See `references/json-spec.md` and `references/task-hierarchy.md` for structure details.
 
-### Step 7: Run AI Review on Spec (Automatic)
+### Step 7: Spec Review — Spec-vs-Plan Comparison (MANDATORY)
 
-After spec creation, AI review runs automatically:
+After spec creation, the spec review compares the JSON spec against its source plan:
 
 ```bash
 mcp__plugin_foundry_foundry-mcp__review action="spec-review" spec_id="{spec-id}"
 ```
 
-When the spec has a linked `plan_path`, the review automatically enhances to a spec-vs-plan comparison, evaluating coverage, fidelity, success criteria mapping, and preservation of constraints, risks, and open questions. The response includes a `plan_enhanced` boolean and a verdict of `aligned`, `deviation`, or `incomplete`.
+The spec review compares the JSON spec against its source plan to catch translation gaps — evaluating coverage, fidelity, success criteria mapping, and preservation of constraints, risks, and open questions. The response includes a verdict of `aligned`, `deviation`, or `incomplete`.
+
+**Self-iterate before presenting to user:** Address all critical and high issues yourself:
+1. Parse review findings via `review action="parse-feedback"`
+2. Fix the spec to address critical/high findings (using authoring/task MCP tools)
+3. Re-run spec review
+4. Repeat until no critical/high issues remain
+5. Then present the clean spec + review summary to the user
 
 > See `references/plan-review-workflow.md` for detailed review workflow.
 > See `references/plan-review-dimensions.md` for review dimensions.

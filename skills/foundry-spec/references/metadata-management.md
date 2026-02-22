@@ -8,7 +8,7 @@ Use these actions during the **plan-to-spec transition** (after plan approval, d
 
 1. **Extract** — Identify constraints, risks, questions, and success criteria from the approved plan
 2. **Populate** — Add each item to the spec via the authoring MCP actions below
-3. **Validate** — Spec review automatically checks that plan metadata is preserved
+3. **Validate** — Spec review verifies plan metadata (constraints, risks, questions, success criteria) was preserved in the spec
 
 ## Actions
 
@@ -142,9 +142,9 @@ mcp__plugin_foundry_foundry-mcp__authoring action="success-criterion-add" spec_i
 mcp__plugin_foundry_foundry-mcp__authoring action="constraint-list" spec_id="{spec-id}"
 mcp__plugin_foundry_foundry-mcp__authoring action="risk-list" spec_id="{spec-id}"
 
-# 7. Continue with phases, then spec review validates preservation
+# 7. Continue with phases, then spec review compares spec against plan
 ```
 
 ## Validation
 
-When a spec has a linked `plan_path`, the spec review automatically checks that plan metadata (constraints, risks, open questions, success criteria) is preserved in the spec. Missing or divergent metadata will appear in the review findings.
+The spec review compares the JSON spec against its source plan and verifies that plan metadata (constraints, risks, open questions, success criteria) was faithfully carried over. Missing or divergent metadata will appear in the review findings.

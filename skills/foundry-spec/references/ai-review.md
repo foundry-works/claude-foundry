@@ -51,9 +51,9 @@ Reviews are saved to: `specs/.plan-reviews/<plan-name>-review.md`
 {APPROVED | NEEDS_REVISION | BLOCKED}
 ```
 
-## Plan-Enhanced Spec Review
+## Spec Review (Spec-vs-Plan Comparison)
 
-When a spec has a linked `plan_path`, running a spec review automatically enhances to a spec-vs-plan comparison. No special parameters are needed — the enhancement is triggered by the presence of `plan_path` in spec metadata.
+The spec review compares the JSON spec against its source plan to identify translation gaps — places where the plan's intent was lost, diluted, or silently modified during spec creation. It requires a linked `plan_path` in spec metadata.
 
 ```bash
 mcp__plugin_foundry_foundry-mcp__review action="spec-review" spec_id="{spec-id}"
@@ -61,7 +61,7 @@ mcp__plugin_foundry_foundry-mcp__review action="spec-review" spec_id="{spec-id}"
 
 ### Comparison Dimensions
 
-The plan-enhanced review evaluates 7 dimensions:
+The spec review evaluates 7 comparison dimensions:
 
 1. **Coverage** — Are all plan phases and tasks represented in the spec?
 2. **Fidelity** — Does the spec accurately reflect the plan's intent?
@@ -75,7 +75,6 @@ The plan-enhanced review evaluates 7 dimensions:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `plan_enhanced` | boolean | `true` when plan comparison was performed |
 | `review_path` | string | Path to the saved review output |
 | `verdict` | string | `aligned`, `deviation`, or `incomplete` |
 
@@ -98,14 +97,20 @@ Spec reviews are saved to: `specs/.spec-reviews/{spec_id}-spec-review.md`
 2. Fill in content → Read + Edit
 3. Run AI review → plan action="review"
 4. Read feedback → specs/.plan-reviews/
-5. Revise plan → Edit based on feedback
+5. Revise plan → address critical/high findings
 6. Re-review → plan action="review"
-7. Repeat until no critical blockers
-8. HUMAN APPROVAL GATE → AskUserQuestion
+7. ↻ Repeat steps 4-6 until no critical/high issues remain
+8. HUMAN APPROVAL GATE → present clean plan + review summary
    - [approved] → continue
    - [revise] → back to step 2
    - [abort] → exit
 9. Convert to spec → authoring action="spec-create"
+10. Run spec review → review action="spec-review"
+11. Read findings → parse-feedback
+12. Fix spec → address critical/high findings (authoring/task MCP tools)
+13. Re-review → review action="spec-review"
+14. ↻ Repeat steps 11-13 until no critical/high issues remain
+15. Present clean spec + review summary to user
 ```
 
 ## Common Review Feedback

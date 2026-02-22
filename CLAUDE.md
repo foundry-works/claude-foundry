@@ -77,7 +77,7 @@ Use `authoring` MCP tool with `action="intake-add"` to capture notes programmati
    - Metadata (constraints, risks, open questions, success criteria) is extracted from the approved plan and populated via authoring actions
    - Phases are created using `phase-add-bulk` with inline tasks
 2. Review and refine spec (plan-review and modify are built into foundry-spec)
-   - Spec review auto-enhances to plan comparison when `plan_path` is linked
+   - Spec review compares the JSON spec against the source plan to catch translation gaps
 3. Activate spec (moves to `specs/active/`)
 
 ### Resuming Active Work

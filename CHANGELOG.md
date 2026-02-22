@@ -5,15 +5,24 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2026-02-22
+
+### Changed
+
+- **Spec review is spec-vs-plan comparison**: Revised all docs to describe spec review as fundamentally comparing the JSON spec against its source plan, not an "enhancement" triggered by `plan_path`
+- **Spec review is MANDATORY**: Labeled as required step in workflow diagram and flow, matching its actual role in the pipeline
+- **Self-iteration on review findings**: Agent must resolve all critical/high issues from plan review and spec review before presenting to the user — the human gate is for strategic decisions, not rubber-stamping fixable gaps
+- Fixed mislabel in `plan-review-dimensions.md` (was "spec review", actually describes plan review)
+
 ## [1.7.0] - 2026-02-22
 
 ### Added
 
 - **Plan-to-spec traceability**: Specs now link to their source plan via `plan_path` and `plan_review_path` metadata fields
   - `spec-create` accepts `plan_path` and `plan_review_path` parameters
-  - Plan-enhanced spec review auto-triggers when `plan_path` is linked, evaluating coverage, fidelity, and constraint preservation
-  - Plan-enhanced fidelity review augments standard phase/task reviews with plan alignment checks
-  - Response includes `plan_enhanced` boolean and `verdict` (`aligned`, `deviation`, `incomplete`)
+  - Spec review compares JSON spec against source plan, evaluating coverage, fidelity, and constraint preservation
+  - Fidelity review augments standard phase/task reviews with plan alignment checks
+  - Response includes `verdict` (`aligned`, `deviation`, `incomplete`)
 
 - **Structured spec metadata**: New authoring actions for constraints, risks, open questions, and success criteria
   - `constraint-add` / `constraint-list` — technical/business constraints
@@ -21,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `question-add` / `question-list` — unresolved questions from planning
   - `success-criterion-add` / `success-criteria-list` — measurable success criteria
   - New reference: `skills/foundry-spec/references/metadata-management.md`
-  - Spec review automatically validates that plan metadata is preserved
+  - Spec review verifies that plan metadata is preserved
 
 - **Session-step orchestration for autonomous mode**: New `task action="session-step"` protocol
   - Commands: `next`, `report`, `replay`, `heartbeat`

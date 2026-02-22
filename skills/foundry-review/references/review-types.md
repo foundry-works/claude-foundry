@@ -16,10 +16,10 @@ All fidelity reviews use a single unified review flow. The scope (phase or task)
 
 **Note:** For full spec reviews, run phase-by-phase reviews for better manageability and quality.
 
-## Plan-Enhanced Review
+## Spec Review (Spec-vs-Plan Comparison)
 
-When a spec has a linked `plan_path`, fidelity reviews are automatically enhanced with spec-vs-plan comparison. This is not a separate review type — it augments standard phase or task reviews with additional plan alignment checks.
+The spec review compares the JSON spec against its source plan to catch translation gaps. It evaluates 7 dimensions: coverage, fidelity, success criteria mapping, and preservation of constraints, risks, and open questions, plus undocumented additions.
 
-- **Auto-triggered:** Detected from spec metadata; no user action needed
-- **Response field:** `plan_enhanced` boolean indicates whether plan comparison was performed
+- **Requires:** `plan_path` in spec metadata pointing to the source plan
+- **Verdict:** `aligned`, `deviation`, or `incomplete`
 - **Report path:** Available via `review_path` in the response
