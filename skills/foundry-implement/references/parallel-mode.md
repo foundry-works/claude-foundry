@@ -1,12 +1,11 @@
-# Parallel Behavior (`--delegate --parallel`)
+# Batch Execution
 
-Execute multiple independent tasks concurrently via subagents. Enabled with `--parallel` flag (implies `--delegate`).
+Execute multiple independent tasks concurrently via subagents. The agent decides when to use batch execution based on task characteristics — it is a capability, not a mode you enable with a flag.
 
 ## Contents
 
 - [Overview](#overview)
-- [Flag Combinations](#flag-combinations)
-- [Enabling Parallel Mode](#enabling-parallel-mode)
+- [When to Use Batch Execution](#when-to-use-batch-execution)
 - [Batch Operations API](#batch-operations-api)
 - [Subagent Delegation](#subagent-delegation)
 - [Conflict Detection](#conflict-detection)
@@ -15,75 +14,41 @@ Execute multiple independent tasks concurrently via subagents. Enabled with `--p
 
 ## Overview
 
-Parallel mode spawns multiple subagents to work on independent tasks simultaneously. Maximizes throughput for non-conflicting work.
+Batch execution spawns multiple subagents to work on independent tasks simultaneously. Maximizes throughput for non-conflicting work.
 
-### When to Use
+### Key Differences: Inline vs Delegated vs Batch
 
-| Scenario | Recommended Mode |
-|----------|------------------|
-| Independent tasks in same phase | Parallel |
-| Tasks modifying same files | Interactive or Autonomous |
-| Large phase with many isolated changes | Parallel |
-| Tasks with dependencies between them | Autonomous |
-| Test/verification tasks | Parallel (if independent) |
-
-### Key Differences: Inline vs Delegated vs Parallel
-
-| Aspect | Inline | Delegated (`--delegate`) | Parallel (`--parallel`) |
-|--------|--------|--------------------------|-------------------------|
+| Aspect | Inline | Delegated | Batch (Parallel) |
+|--------|--------|-----------|-------------------|
 | Execution | Same context | Subagent per task | Multiple subagents |
 | Concurrency | Sequential | Sequential | Concurrent |
 | Context usage | Shared | Fresh per task | Distributed |
 | File conflicts | N/A | N/A | Detected and prevented |
 | Failure impact | Stops on error | Isolated | Isolated per task |
 
-## Flag Combinations
+## When to Use Batch Execution
 
-`--parallel` implies `--delegate` and is combinable with `--auto`:
+Use your judgment to decide when batch execution is appropriate:
 
-| Flags | Behavior |
-|-------|----------|
-| `--delegate --parallel` | Interactive, concurrent subagents |
-| `--auto --delegate --parallel` | Autonomous, concurrent subagents |
+| Scenario | Approach |
+|----------|----------|
+| Independent tasks in same phase, no file conflicts | Good candidate for batch |
+| Tasks modifying same files | Run sequentially (inline or delegated) |
+| Large phase with many isolated changes | Good candidate for batch |
+| Tasks with dependencies between them | Run sequentially |
+| Test/verification tasks (if independent) | Good candidate for batch |
+| Complex tasks requiring deep context | Run inline or delegated |
 
-**Defaults:** Loaded from `[implement]` section in `foundry-mcp.toml`. CLI flags override.
+### Decision Factors
 
-## Enabling Parallel Mode
-
-### Via Command Flag
-
-```bash
-foundry-implement --delegate --parallel                # Interactive parallel
-foundry-implement --auto --delegate --parallel         # Autonomous parallel
-foundry-implement --parallel                           # Implies --delegate
-```
-
-### Via TOML Defaults
-
-Set in `foundry-mcp.toml`:
-```toml
-[implement]
-auto = true       # Skip prompts
-delegate = true   # Use subagents
-parallel = true   # Run concurrently
-model = "small"   # Model size for subagents (small=haiku, medium=sonnet, large=opus)
-```
-
-### Via Interactive Selection
-
-When running `foundry-implement` without flags and no TOML defaults:
-```
-"Select execution mode:"
-- "Interactive, inline (default)"
-- "Autonomous, inline (--auto)"
-- "Interactive, delegated (--delegate)"
-- "Autonomous, delegated (--auto --delegate)"
-- "Autonomous, parallel (--auto --delegate --parallel)"
-```
+- **File conflicts**: Tasks sharing the same `file_path` metadata must run in separate batches
+- **Dependencies**: Tasks with blocking dependencies must run sequentially
+- **Complexity**: Simple, well-scoped tasks work best in batch. Complex tasks benefit from inline execution with full context
+- **Context pressure**: When main context is high, delegation (batch or sequential) preserves headroom
 
 ## Batch Operations API
 
-Parallel mode uses batch-specific MCP actions on the task router.
+Batch execution uses batch-specific MCP actions on the task router.
 
 ### prepare-batch
 
@@ -251,7 +216,7 @@ mcp__plugin_foundry_foundry-mcp__task action="reset-batch" \
 
 ## Subagent Delegation
 
-Parallel mode uses Claude Code's Task tool to spawn subagents for each task.
+Batch execution uses Claude Code's Task tool to spawn subagents for each task.
 
 ### Delegation Pattern
 
@@ -262,7 +227,7 @@ Main Agent (orchestrator)
     |
     +-- For each eligible task:
     |       |
-    |       +-- Task(subagent_type="general-purpose", model={model})
+    |       +-- Task(subagent_type="general-purpose", model=appropriate_model)
     |           - Receives: task context, file path, acceptance criteria
     |           - Returns: completion status, changes made, issues found
     |
@@ -275,7 +240,7 @@ Main Agent (orchestrator)
 # For each task in batch
 Task(
     subagent_type="general-purpose",
-    model="{model}",  # small (haiku, default), medium (sonnet), or large (opus)
+    model="{model}",  # Use smallest model appropriate for task complexity
     prompt=f"""
     Implement task {task_id} from spec {spec_id}.
 
@@ -317,7 +282,7 @@ for agent_id in subagent_ids:
 
 ## Conflict Detection
 
-Parallel mode prevents race conditions by detecting file-path conflicts before execution.
+Batch execution prevents race conditions by detecting file-path conflicts before execution.
 
 ### How Conflicts Are Detected
 
@@ -395,7 +360,7 @@ mcp__plugin_foundry_foundry-mcp__task action="query" \
 # Options:
 # 1. Fix and retry in next batch
 # 2. Block the task with reason
-# 3. Switch to interactive mode for debugging
+# 3. Switch to inline execution for debugging
 ```
 
 ### Error Aggregation
@@ -420,9 +385,9 @@ The `complete-batch` response includes error details:
 }
 ```
 
-## Auto-Commit in Parallel Mode
+## Auto-Commit in Batch Execution
 
-In parallel mode, commits happen at batch boundaries rather than per-task.
+Commits happen at batch boundaries rather than per-task.
 
 ### Commit Timing
 
@@ -515,24 +480,24 @@ After batch commit succeeds:
 
 ### Failure Handling
 
-Push failures are **non-blocking** in parallel mode:
+Push failures are **non-blocking** in batch execution:
 
 - Log warning message with failure reason
 - Continue to next batch
 - User can resolve push issues independently
 
-**Rationale:** Blocking on push failures would halt the entire parallel pipeline. Local progress is preserved regardless of push status.
+**Rationale:** Blocking on push failures would halt the entire batch pipeline. Local progress is preserved regardless of push status.
 
 ## Best Practices
 
-### Before Starting Parallel Mode
+### Before Starting Batch Execution
 
 1. **Review task file paths** - Ensure metadata includes `file_path`
 2. **Check for hidden dependencies** - Tasks may conflict via imports
 3. **Commit current work** - Clean git state for easy rollback
 4. **Set reasonable batch size** - 3-5 tasks typical, more for simple changes
 
-### During Parallel Execution
+### During Batch Execution
 
 1. **Monitor subagent output** - Use `TaskOutput` with `block=false` for progress
 2. **Watch for early failures** - May indicate systemic issues
@@ -551,6 +516,6 @@ Push failures are **non-blocking** in parallel mode:
 |--------------|---------|----------|
 | Ignoring conflicts | Race conditions, data loss | Respect prepare-batch exclusions |
 | Too large batches | Context exhaustion, failures | Limit to 5-7 tasks |
-| Parallel on dependencies | Incorrect ordering | Use autonomous mode instead |
+| Batch with dependencies | Incorrect ordering | Run dependent tasks sequentially |
 | No progress monitoring | Silent failures | Check TaskOutput periodically |
 | Skipping tests | Hidden integration bugs | Always test after batch |

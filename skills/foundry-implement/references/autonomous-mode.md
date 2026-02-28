@@ -1,12 +1,11 @@
-# Autonomous Behavior (`--auto`)
+# Unattended Posture Behavior
 
-Skip prompts between tasks for continuous execution. Combinable with `--delegate` and/or `--parallel`.
+Continuous task execution without user prompts, driven by the `unattended` autonomy posture.
 
 ## Contents
 
 - [Overview](#overview)
-- [Flag Combinations](#flag-combinations)
-- [Enabling Autonomous Mode](#enabling-autonomous-mode)
+- [Enabling Unattended Posture](#enabling-unattended-posture)
 - [Pause Triggers](#pause-triggers)
 - [Recovery Patterns](#recovery-patterns)
 - [Gate Comparison](#gate-comparison)
@@ -14,28 +13,28 @@ Skip prompts between tasks for continuous execution. Combinable with `--delegate
 
 ## Overview
 
-The `--auto` flag enables continuous task execution without requiring user approval between each task. The system automatically:
+When `autonomy.posture.profile` is `"unattended"`, the skill executes tasks continuously without requiring user approval between each task. The system automatically:
 
 1. Completes the current task
 2. Selects the next recommended task
 3. Executes it immediately
 4. Repeats until a pause trigger fires
 
-> **Note:** Autonomous mode skips *user prompts* between tasks, but still respects all safety limits (context >= 85%, error thresholds, blockers). These limits are mandatory, not optional.
+> **Note:** Unattended posture skips *user prompts* between tasks, but still respects all safety limits (context >= 85%, error thresholds, blockers). These limits are mandatory, not optional.
 
 ### When to Use
 
-| Scenario | Recommended Mode |
-|----------|------------------|
-| Implementing a well-defined spec | Autonomous |
-| Exploratory work or unclear requirements | Interactive |
-| Large batch of similar tasks | Autonomous |
-| Tasks requiring frequent decisions | Interactive |
-| Overnight/unattended execution | Autonomous |
+| Scenario | Recommended Posture |
+|----------|---------------------|
+| Implementing a well-defined spec | Unattended |
+| Exploratory work or unclear requirements | Supervised |
+| Large batch of similar tasks | Unattended |
+| Tasks requiring frequent decisions | Supervised |
+| Overnight/unattended execution | Unattended |
 
 ### Session Tracking
 
-Autonomous mode uses canonical session actions to track state:
+Unattended posture uses canonical session actions to track state:
 - `task action="session" command="start"` — begin session
 - `task action="session" command="status"` — check state
 - `task action="session" command="pause"` — pause execution
@@ -46,70 +45,54 @@ Progress persists across `/clear` boundaries. Session ends when spec completes o
 
 > See [session-management.md](./session-management.md) for full session and session-step MCP action details.
 
-## Flag Combinations
+## Enabling Unattended Posture
 
-`--auto` is orthogonal and combinable with `--delegate` and `--parallel`:
-
-| Flags | Behavior |
-|-------|----------|
-| `--auto` | Autonomous, inline (same context) |
-| `--auto --delegate` | Autonomous, sequential subagent per task |
-| `--auto --delegate --parallel` | Autonomous, concurrent subagents |
-
-**Defaults:** Loaded from `[implement]` section in `foundry-mcp.toml`. CLI flags override.
-
-## Enabling Autonomous Mode
-
-### Via Command Flag
-
-```bash
-foundry-implement --auto                         # Inline execution
-foundry-implement --auto --delegate              # Delegate to subagent
-foundry-implement --auto --delegate --parallel   # Concurrent subagents
-```
-
-### Via TOML Defaults
+### Via TOML Config
 
 Set in `foundry-mcp.toml`:
 ```toml
-[implement]
-auto = true       # Always skip prompts
-delegate = true   # Always use subagent
-parallel = false  # Sequential by default
+[autonomy_posture]
+profile = "unattended"
+
+# Optional session defaults (shown with defaults)
+# [autonomy_session_defaults]
+# max_tasks_per_session = 100
+# max_consecutive_errors = 3
+# stop_on_phase_completion = false
+# auto_retry_fidelity_gate = false
+# max_fidelity_review_cycles_per_phase = 3
 ```
 
-### Via Interactive Selection
+### How the Skill Reads Posture
 
-When running `foundry-implement` without flags and no TOML defaults:
+At entry, the skill calls:
+```bash
+mcp__plugin_foundry_foundry-mcp__environment action="get-config" sections='["autonomy", "git"]'
 ```
-"Select execution mode:"
-- "Interactive, inline (default)"
-- "Autonomous, inline (--auto)"
-- "Interactive, delegated (--delegate)"
-- "Autonomous, delegated (--auto --delegate)"
-- "Autonomous, parallel (--auto --delegate --parallel)"
-```
+
+The response includes `autonomy.posture.profile`. When set to `"unattended"`, all user gates are skipped.
 
 ### Resuming a Paused Session
 
 ```bash
-foundry-implement --auto
+foundry-implement
 # If session exists and is paused, you'll be prompted:
 # "Resume session?" / "Start fresh?"
 ```
 
 ## Pause Triggers
 
-Autonomous execution pauses when specific thresholds are reached.
+Unattended execution pauses when specific thresholds are reached. Thresholds are sourced from `autonomy.session_defaults`.
 
 ### Trigger Table
 
-| Trigger | Threshold | Detection | Auto-Resume |
-|---------|-----------|-----------|-------------|
+| Trigger | Threshold | Source | Auto-Resume |
+|---------|-----------|--------|-------------|
 | Context limit | >= 85% | Context monitor hook | No |
-| Error threshold | >= 3 consecutive | Task completion failures | No |
+| Error threshold | >= `max_consecutive_errors` | Task completion failures | No |
 | Blocked task | Any unresolved blocker | `can_start: false` | No |
-| Task limit | N tasks (configurable) | Session counter | No |
+| Task limit | `max_tasks_per_session` | Session counter | No |
+| Phase boundary | Phase completes | `stop_on_phase_completion` | No |
 | User interrupt | Ctrl+C or interrupt | Signal handler | No |
 | Spec complete | All tasks done | Progress check | N/A |
 
@@ -126,12 +109,12 @@ Autonomous execution pauses when specific thresholds are reached.
 ```
 Current task completed normally. Context at 87%. Session paused at task-3-2.
 Completed 5 tasks this session.
-Run `/clear` then `foundry-implement --auto` to resume.
+Run `/clear` then `foundry-implement` to resume.
 ```
 
-### Error Threshold (>= 3 Consecutive)
+### Error Threshold
 
-**Detection:** Task completion returns error or task marked blocked 3+ times in a row.
+**Detection:** Task completion returns error or task marked blocked N+ times in a row (threshold from `max_consecutive_errors`, default 3).
 
 **Behavior:**
 1. Pause session: `task action="session" command="pause" reason="error_threshold"`
@@ -145,7 +128,7 @@ Failed tasks:
 - task-2-1: ImportError in module X
 - task-2-2: Test assertion failed
 - task-2-3: Blocked by missing dependency
-Fix issues manually, then `foundry-implement --auto` to resume.
+Fix issues manually, then `foundry-implement` to resume.
 ```
 
 ### Blocked Task
@@ -166,18 +149,25 @@ Resolve blocker or mark task as skipped, then resume.
 
 ### Task Limit
 
-**Detection:** Session `completed_tasks` count reaches threshold.
+**Detection:** Session `completed_tasks` count reaches `max_tasks_per_session` (default 100).
 
 **Purpose:** Periodic checkpoint for user review.
 
-**Default:** 10 tasks (configurable via session).
-
 **Output:**
 ```
-Completed 10 tasks this session. Checkpoint pause.
-Progress: 10/25 tasks (40%)
-Review changes, then `foundry-implement --auto` to continue.
+Completed 100 tasks this session. Checkpoint pause.
+Progress: 100/250 tasks (40%)
+Review changes, then `foundry-implement` to continue.
 ```
+
+### Phase Boundary
+
+**Detection:** A phase completes and `stop_on_phase_completion` is `true`.
+
+**Behavior:**
+1. Pause session: `task action="session" command="pause" reason="phase_complete"`
+2. Summarize completed phase
+3. User reviews before starting next phase
 
 ### User Interrupt
 
@@ -253,7 +243,7 @@ Supports pagination via `cursor` and `limit` parameters. Returns chronological e
 Session state persists in MCP storage. Recovery flow:
 
 ```
-User runs: foundry-implement --auto
+User runs: foundry-implement
     │
     ├─ Check session status
     │
@@ -265,13 +255,13 @@ User runs: foundry-implement --auto
     │       │
     │       └─ No → Start new session
     │
-    └─ Begin autonomous execution
+    └─ Begin unattended execution
 ```
 
 ### After Context Limit
 
 1. Run `/clear` to reset context
-2. Run `foundry-implement --auto`
+2. Run `foundry-implement`
 3. Accept "Resume session" prompt
 4. Execution continues from paused task
 
@@ -279,7 +269,7 @@ User runs: foundry-implement --auto
 
 1. Review error output from pause message
 2. Fix underlying issues (imports, tests, dependencies)
-3. Run `foundry-implement --auto`
+3. Run `foundry-implement`
 4. Accept "Resume session" prompt
 5. Error counter resets on successful task completion
 
@@ -287,17 +277,17 @@ User runs: foundry-implement --auto
 
 **Option A: Resolve the blocker**
 1. Complete the blocking task manually
-2. Run `foundry-implement --auto` to resume
+2. Run `foundry-implement` to resume
 
 **Option B: Skip the blocked task**
 1. Mark task as blocked/skipped via MCP
-2. Run `foundry-implement --auto` to continue with next available
+2. Run `foundry-implement` to continue with next available
 
 ### Abandoning a Session
 
 To start completely fresh:
 ```bash
-foundry-implement --auto
+foundry-implement
 # When prompted "Resume session?", select "Start fresh"
 ```
 
@@ -308,10 +298,10 @@ mcp__plugin_foundry_foundry-mcp__task action="session" spec_id={spec-id} command
 
 ## Gate Comparison
 
-How decision points differ between modes:
+How decision points differ between postures:
 
-| Gate | Interactive Mode | Autonomous Mode |
-|------|------------------|-----------------|
+| Gate | Supervised Posture | Unattended Posture |
+|------|-------------------|-------------------|
 | **Task selection** | AskUserQuestion with options | Auto-select recommended task |
 | **Plan approval** | AskUserQuestion required | Skip (use recommended plan) |
 | **Implementation start** | Explicit "Approve & Start" | Auto-start after prepare |
@@ -323,7 +313,7 @@ How decision points differ between modes:
 
 ### Gates That Always Apply
 
-Even in autonomous mode, these gates require interaction:
+Even in unattended posture, these gates require interaction:
 
 | Gate | Reason |
 |------|--------|
@@ -331,9 +321,9 @@ Even in autonomous mode, these gates require interaction:
 | Error investigation | User must fix issues before continuing |
 | Spec activation | Initial spec selection is always interactive |
 
-### Gates That Are Skipped
+### Gates That Are Skipped (Unattended)
 
-| Gate | Autonomous Behavior |
+| Gate | Unattended Behavior |
 |------|---------------------|
 | Task selection | Use `task action="prepare"` recommendation |
 | Plan details | Accept generated plan |
@@ -436,14 +426,14 @@ After commit succeeds:
 
 ## Best Practices
 
-### Before Starting Autonomous Mode
+### Before Starting Unattended Execution
 
 1. **Review the spec** - Ensure tasks are well-defined
 2. **Check dependencies** - Verify external deps are available
 3. **Commit current work** - Clean git state recommended
-4. **Set reasonable task limit** - Prevent runaway execution
+4. **Review session defaults** - Ensure task/error limits are appropriate
 
-### During Autonomous Execution
+### During Unattended Execution
 
 1. **Monitor output** - Watch for warnings
 2. **Don't interrupt mid-task** - Wait for task boundaries
@@ -461,5 +451,5 @@ After commit succeeds:
 |--------------|---------|----------|
 | Ignoring context notifications | OOM or truncation | After finishing current task, pause and /clear |
 | Resuming without fixing errors | Immediate re-pause | Investigate root cause first |
-| Running on unclear specs | Poor quality output | Use interactive for exploration |
+| Running on unclear specs | Poor quality output | Use supervised posture for exploration |
 | Never reviewing progress | Drift from intent | Use task limits for checkpoints |

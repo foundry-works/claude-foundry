@@ -16,10 +16,8 @@ description: Task implementation skill for spec-driven workflows. Reads specific
 > `[x?]`=decision · `(GATE)`=user approval · `→`=sequence · `↻`=loop · `§`=section ref
 
 ```
-- **Entry** → LoadConfig → `environment action="get-config"` → Merge config → ModeDispatch
-  - [--parallel?] → §ParallelMode
-  - [--delegate?] → §DelegatedMode
-  - [--auto?] → Skip user gates
+- **Entry** → LoadConfig → `environment action="get-config" sections=["autonomy","git"]` → Merge config
+  - [unattended?] → Skip user gates
   - Task selection → [selection mode?]
     - [interactive?] → SelectTask
     - [recommend?] → `task action="prepare"` → ShowRecommendation
@@ -43,11 +41,12 @@ description: Task implementation skill for spec-driven workflows. Reads specific
         - [add-requirement?] → `task action="add-requirement"`
         - [resolve] → ↻ back to **Implement**
         - [skip] → SurfaceNext
+  - [batch execution?] → §BatchExecution (agent decides based on task characteristics)
 ```
 
 §VerifyWorkflow → see references/verification.md
 
-§ParallelMode flow:
+§BatchExecution flow:
 
 ```
 - **Entry** → `task action="prepare-batch"` → IdentifyEligible
@@ -86,85 +85,60 @@ This skill interacts solely with the Foundry MCP server (`foundry-mcp`). Tools u
 
 ---
 
-## Execution Modes
+## Autonomy-Driven Execution
 
-Four flags control execution behavior. Defaults loaded via `environment action="get-config"`, CLI flags override.
+Execution behavior is driven by the **autonomy posture** configured in `foundry-mcp.toml`, not by command flags. The posture determines how the skill interacts with users and makes decisions.
 
-**Config Loading:** At entry, call the environment tool to read configuration from `foundry-mcp.toml`. Returns both `implement` (mode flags + model) and `git` (commit cadence, auto_push) sections. If the config file is missing or section not found, use defaults (all false for implement, model=small, auto_push=false).
+**Config Loading:** At entry, call the environment tool to read configuration. Returns `autonomy` (posture, security, session defaults) and `git` (commit cadence, auto_push) sections. If no autonomy config is present, defaults to supervised posture with strict gates.
 
-| Flag | Effect |
-|------|--------|
-| `--auto` | Skip prompts between tasks (autonomous execution) |
-| `--delegate` | Use subagent(s) for implementation |
-| `--parallel` | Run subagents concurrently (implies `--delegate`) |
-| `--model <small\|medium\|large>` | Model size for delegated tasks (default: small) |
+### Posture-to-Behavior Mapping
 
-Model sizes map to Claude tiers: small = haiku, medium = sonnet, large = opus.
+| Posture | User Prompts | Task Selection | Plan Approval | Continue Gate |
+|---------|-------------|----------------|---------------|---------------|
+| `unattended` | Skipped | Auto (recommended) | Auto (use generated plan) | Auto-continue |
+| `supervised` (default) | AskUserQuestion | User chooses | User approves | User confirms |
+| `debug` | AskUserQuestion | User chooses | User approves | User confirms |
 
-**Resulting combinations:**
+### Session Defaults Govern Limits
 
-| Flags | Subagent | Concurrent | Prompts | Description |
-|-------|----------|------------|---------|-------------|
-| (none) | ❌ | ❌ | ✅ | Interactive, inline |
-| `--auto` | ❌ | ❌ | ❌ | Autonomous, inline |
-| `--delegate` | ✅ | ❌ | ✅ | Interactive, sequential subagent |
-| `--auto --delegate` | ✅ | ❌ | ❌ | Autonomous, sequential subagent |
-| `--delegate --parallel` | ✅ | ✅ | ✅ | Interactive, concurrent subagents |
-| `--auto --delegate --parallel` | ✅ | ✅ | ❌ | Autonomous, concurrent subagents |
+Limits are sourced from `autonomy.session_defaults` rather than hardcoded values:
 
-### Autonomous Behavior (`--auto`)
+| Setting | Effect | Default |
+|---------|--------|---------|
+| `max_tasks_per_session` | Task count before checkpoint pause | 100 |
+| `max_consecutive_errors` | Error threshold before pause | 3 |
+| `stop_on_phase_completion` | Pause at phase boundaries | false |
+| `auto_retry_fidelity_gate` | Auto-retry failed fidelity reviews | false |
+| `max_fidelity_review_cycles_per_phase` | Cap on fidelity retry loops | 3 |
 
-Executes tasks continuously without user prompts between each task. Session state persists across `/clear` boundaries.
+### Agent-Driven Delegation and Parallelism
+
+Use your best judgment on whether to delegate tasks to subagents and whether to parallelize. Consider:
+
+- **Task complexity**: Simple single-file tasks can run inline. Complex multi-file tasks benefit from delegation (fresh context).
+- **Batch characteristics**: Independent tasks with no file conflicts can run in parallel. Tasks with shared files or sequential dependencies should run serially.
+- **Context pressure**: When context usage is high, delegation to subagents preserves main context.
+- **Model selection**: Use the smallest model appropriate for the task complexity (haiku for simple, sonnet for moderate, opus for complex).
+
+The batch MCP actions (`prepare-batch`, `start-batch`, `complete-batch`, `reset-batch`) are available tools — use them when the task characteristics warrant it.
+
+> Batch execution details: [references/parallel-mode.md](./references/parallel-mode.md)
+> Subagent patterns: [references/subagent-patterns.md](./references/subagent-patterns.md)
+
+### Unattended Posture Behavior
+
+When `autonomy.posture.profile` is `"unattended"`, the skill executes tasks continuously without user prompts.
 
 **Key behaviors:**
 - Auto-selects recommended tasks via `task action="prepare"`
 - Skips plan approval gates (uses generated plan)
 - Auto-continues after task completion
-- Pauses on: context >= 85%, 3+ consecutive errors, blocked tasks, task limit
+- Pauses on: context >= 85%, consecutive error threshold, blocked tasks, task limit
 
 **Session tracking:** Uses canonical `task action="session"` with commands: `start`, `status`, `pause`, `resume`, `end`. Step orchestration via `task action="session-step"` with commands: `next`, `report`, `replay`, `heartbeat`.
 
 > Full documentation: [references/autonomous-mode.md](./references/autonomous-mode.md)
 > Session management: [references/session-management.md](./references/session-management.md)
-
-### Parallel Behavior (`--delegate --parallel`)
-
-Spawns multiple subagents to execute independent tasks concurrently. File-path conflicts are detected and excluded.
-
-**Key behaviors:**
-- Uses `task action="prepare-batch"` to identify eligible tasks
-- Excludes tasks with conflicting `file_path` metadata
-- Spawns `Task(general-purpose, run_in_background=true)` per task
-- Collects results via `TaskOutput` and aggregates with `complete-batch`
-- Handles partial failures (successful tasks complete, failed tasks remain in_progress)
-
-**Batch actions:** `prepare-batch`, `start-batch`, `complete-batch`, `reset-batch`
-
-**CRITICAL when using `--parallel`:** Read [references/parallel-mode.md](./references/parallel-mode.md) before proceeding. Contains required JSON formats for batch operations.
-
-### Delegation Behavior (`--delegate`)
-
-Uses subagent(s) for implementation. Fresh context per task while main agent handles orchestration.
-
-**Key behaviors:**
-- Spawns `Task(general-purpose, model={model})` for each task implementation
-- Model defaults to `small` (haiku); override with `--model medium` (sonnet) or `--model large` (opus)
-- Sequential by default; concurrent with `--parallel`
-- Main agent handles task lifecycle (status updates, journaling)
-- With `--auto`: skips user gates; without: preserves all gates
-
-**Subagent receives:**
-- Task details, file path, acceptance criteria
-- Context from main agent (LSP findings, explore results, previous sibling)
-- Verification scope guidance
-- Constraint: subagent does NOT update spec status or write journals
-
-**When to use:**
-- Large file changes where you want oversight
-- Complex tasks where fresh context helps
-- Long sessions to preserve main agent context
-
-> See also: [references/subagent-patterns.md](./references/subagent-patterns.md)
 
 ---
 
@@ -175,16 +149,16 @@ Uses subagent(s) for implementation. Fresh context per task while main agent han
 **At entry, IMMEDIATELY call the environment tool before any other action:**
 
 ```bash
-mcp__plugin_foundry_foundry-mcp__environment action="get-config"
+mcp__plugin_foundry_foundry-mcp__environment action="get-config" sections='["autonomy", "git"]'
 ```
 
 This returns:
-- `implement` section: mode flags (`auto`, `delegate`, `parallel`) + `model`
+- `autonomy` section: posture profile, security settings (role, lock bypass, gate waiver), session defaults (task limits, error thresholds, fidelity cycles)
 - `git` section: `commit_cadence`, `auto_push`
 
-**Merge with CLI flags:** CLI flags override config values. If config missing, use defaults (all flags false, model=small, auto_push=false).
+**Defaults when no autonomy config present:** posture profile = null (supervised behavior), role = "maintainer", gate_policy = "strict", safe limits (100 tasks, 3 errors, 3 fidelity cycles).
 
-**Why mandatory:** Without this call, the skill may use incorrect defaults for autonomous mode, delegation, and commit behavior.
+**Why mandatory:** Without this call, the skill cannot determine the correct posture for user interaction gates and session limits.
 
 ### Spec Reading Rules (NEVER VIOLATE)
 
@@ -198,7 +172,7 @@ Direct JSON access (`Read()`, `cat`, `jq`, `grep`, etc.) is prohibited.
 
 ### User Interaction Requirements
 
-**Gate key decisions with `AskUserQuestion` (MANDATORY):**
+**Gate key decisions with `AskUserQuestion` (when posture is `supervised` or `debug`):**
 - Spec selection (when multiple available)
 - Task selection (recommended vs alternatives)
 - Plan approval (before implementation)
@@ -206,7 +180,9 @@ Direct JSON access (`Read()`, `cat`, `jq`, `grep`, etc.) is prohibited.
 - Completion verification (for verify tasks)
 - **Continuation after task completion** (when context < 85% and more tasks remain)
 
-**Anti-Pattern:** Never use text-based numbered lists. Always use `AskUserQuestion` for structured choices.
+**When posture is `unattended`:** All gates above are skipped. The skill auto-selects recommended tasks, uses generated plans, and auto-continues. See [references/autonomous-mode.md](./references/autonomous-mode.md).
+
+**Anti-Pattern:** Never use text-based numbered lists. Always use `AskUserQuestion` for structured choices (in supervised/debug posture).
 
 ### Anti-Recursion Rule (NEVER VIOLATE)
 
@@ -292,7 +268,7 @@ Use the Explore agent (medium thoroughness) to find:
 - Returns focused results for detailed analysis
 - Keeps main context available for implementation
 
-> For more subagent patterns including autonomous mode usage, see `references/subagent-patterns.md`
+> For more subagent patterns including delegation guidance, see `references/subagent-patterns.md`
 
 ### LSP Dependency Analysis
 
@@ -369,12 +345,14 @@ mcp__plugin_foundry_foundry-mcp__task action="prepare" spec_id={spec-id}
 
 **MANDATORY: Continuation Gate**
 
-After surfacing the next task, you MUST prompt the user with `AskUserQuestion`:
-- **When context < 85%**: Ask "Continue to next task?" with options: "Yes, continue" / "No, exit"
-- **When context >= 85%**: Exit with guidance to `/clear` then `foundry-implement`
-- **When spec is complete**: Report completion status and exit (no prompt needed)
+After surfacing the next task:
+- **Unattended posture**: Auto-continue to next task (no prompt). Still respect pause triggers (context >= 85%, error threshold, task limit).
+- **Supervised/debug posture**: Prompt the user with `AskUserQuestion`:
+  - **When context < 85%**: Ask "Continue to next task?" with options: "Yes, continue" / "No, exit"
+  - **When context >= 85%**: Exit with guidance to `/clear` then `foundry-implement`
+  - **When spec is complete**: Report completion status and exit (no prompt needed)
 
-This gate ensures the user controls the workflow pace and prevents runaway execution.
+This gate ensures supervised users control the workflow pace while unattended execution proceeds autonomously within safety limits.
 
 > For post-implementation checklist, see `references/checklist.md`
 

@@ -112,7 +112,7 @@ mcp__plugin_foundry_foundry-mcp__task action="update-status" spec_id={spec-id} t
 
 ## Batch Task States
 
-Parallel mode (`--parallel`) manages multiple tasks as a batch with coordinated lifecycle.
+Batch execution manages multiple tasks as a batch with coordinated lifecycle.
 
 ### Batch State Model
 
@@ -212,10 +212,10 @@ When some tasks in a batch fail:
    mcp__plugin_foundry_foundry-mcp__task action="prepare-batch" spec_id={spec-id}
    ```
 
-2. **Switch to interactive mode:**
+2. **Switch to inline execution:**
    ```bash
-   # Debug the specific failed task
-   foundry-implement  # Without --parallel
+   # Debug the specific failed task inline
+   foundry-implement
    ```
 
 3. **Block the task:**
