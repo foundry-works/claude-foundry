@@ -166,6 +166,36 @@ Common issues and resolutions for research workflows.
 2. Resume research if `failed` state
 3. Accept partial findings or start new session with refined query
 
+### Clarification Pending
+**Symptom:** Research appears stalled in early phase.
+
+**Cause:** Workflow waiting for user clarification response during CLARIFICATION phase.
+
+**Resolution:**
+1. Check status for pending clarification question
+2. Present question to user
+3. Pass response via `deep_research_action="continue"`
+
+### Content Degradation
+**Symptom:** Report has fidelity warnings or missing sections.
+
+**Cause:** Context window pressure forced content truncation or compression.
+
+**Resolution:**
+1. Review `content_fidelity` in report for specific warnings
+2. Retry with narrower query if critical content was lost
+3. Reduce `max_sources_per_query` to lower context pressure
+
+### Supervision Not Converging
+**Symptom:** Research running much longer than expected, many supervision rounds.
+
+**Cause:** Broad query with many coverage gaps the supervisor keeps finding.
+
+**Resolution:**
+1. Check status for supervision round count (`supervision_round` / `max_supervision_rounds`)
+2. Narrow query scope to reduce topic surface area
+3. Accept current findings if sufficient coverage reached
+
 ## General Issues
 
 ### Context Bloat
@@ -217,3 +247,5 @@ Common issues and resolutions for research workflows.
 | `RESEARCH_TIMEOUT` | Deep research exceeded timeout | Increase timeout or narrow query |
 | `NO_SOURCES_FOUND` | No web sources found | Broaden or rephrase query |
 | `RATE_LIMITED` | Too many concurrent requests | Wait and retry |
+| `CONTEXT_OVERFLOW` | Context window exceeded, content truncated | Narrow query or reduce sources |
+| `CLARIFICATION_PENDING` | Awaiting user clarification response | Check status and respond via `continue` |

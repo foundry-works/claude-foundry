@@ -94,8 +94,8 @@ started → in_progress → completed
 
 | State | Description | Can Resume | Has Report |
 |-------|-------------|------------|------------|
-| `started` | Initialized, beginning decomposition | Yes | No |
-| `in_progress` | Actively researching | Yes | Partial |
+| `started` | Initialized, entering clarification gate | Yes | No |
+| `in_progress` | Actively researching (includes supervision rounds) | Yes | Partial |
 | `completed` | All iterations done | No | Yes |
 | `failed` | Error during research | Yes | Partial |
 

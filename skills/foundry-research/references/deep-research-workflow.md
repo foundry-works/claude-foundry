@@ -1,15 +1,16 @@
 # Deep Research Workflow
 
-Multi-phase iterative research with automatic query decomposition and web source synthesis.
+Multi-phase iterative research with supervisor-driven multi-agent web source synthesis.
 
 ## Contents
 
 - When to Use
 - Architecture
 - Execution Model
-- MCP Operations (start, status, report, list, delete)
+- MCP Operations (start, status, report, list, delete, evaluate)
 - Session States
-- Polling Strategy
+- Status Monitoring
+- Clarification Handling
 - User Gates
 - Output Format
 - Error Handling
@@ -25,22 +26,26 @@ Multi-phase iterative research with automatic query decomposition and web source
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Deep Research                         │
-├─────────────────────────────────────────────────────────┤
-│  Query → Decompose → Search → Extract → Synthesize      │
-│    │         │          │         │          │          │
-│    └─────────┴──────────┴─────────┴──────────┘          │
-│                    (iterates)                            │
-└─────────────────────────────────────────────────────────┘
+Query → Clarification → Brief → Supervision → Synthesis
+                                    ↑    ↓
+                                    └────┘ (iterative gap-fill, up to 6 rounds)
+                                       │
+                              [parallel topic researchers]
 ```
+
+### Phases
+
+- **CLARIFICATION**: Binary gate — request clarification from user OR confirm understanding and proceed
+- **BRIEF**: Enrich raw query into structured research brief with scope boundaries
+- **SUPERVISION**: Supervisor decomposes into topics, delegates to parallel researchers, assesses coverage, iterates to fill gaps
+- **SYNTHESIS**: Generate final report from compressed findings
 
 ## Execution Model
 
 Deep research runs **in the background** by default:
 
 1. **Start** - Initiate research session, returns `research_id`
-2. **Poll** - Check status periodically until complete
+2. **Poll** - Long-poll status until complete
 3. **Report** - Retrieve final synthesized report
 
 This allows long-running research without blocking the conversation.
@@ -62,8 +67,9 @@ mcp__plugin_foundry_foundry-mcp__research action="deep-research" deep_research_a
 | `max_sources_per_query` | No | 5 | Sources fetched per sub-query |
 | `follow_links` | No | true | Extract and follow links from sources |
 | `max_concurrent` | No | 3 | Parallel operations |
-| `timeout_per_operation` | No | 120 | Seconds per web fetch |
+| `timeout_per_operation` | No | 360 | Seconds per web fetch |
 | `task_timeout` | No | - | Overall task timeout (seconds) |
+| `provider_id` | No | - | Provider to use for research operations |
 
 ### Check Status
 
@@ -71,15 +77,24 @@ mcp__plugin_foundry_foundry-mcp__research action="deep-research" deep_research_a
 mcp__plugin_foundry_foundry-mcp__research action="deep-research-status" research_id="research-abc123"
 ```
 
+| Parameter | Required | Default | Description |
+|-----------|----------|---------|-------------|
+| `research_id` | Yes | - | Research session ID |
+| `wait` | No | false | Long-poll: block until state changes or timeout |
+| `wait_timeout` | No | - | Max seconds to block before returning |
+
 Returns:
 ```json
 {
   "research_id": "research-abc123",
   "status": "in_progress",
+  "changed": true,
   "progress": {
-    "iteration": 2,
-    "max_iterations": 3,
-    "queries_completed": 7,
+    "phase": "SUPERVISION",
+    "supervision_round": 2,
+    "max_supervision_rounds": 6,
+    "topics_completed": 3,
+    "topics_total": 5,
     "sources_processed": 28
   },
   "started_at": "2025-01-02T10:00:00Z"
@@ -111,6 +126,19 @@ mcp__plugin_foundry_foundry-mcp__research action="deep-research-list" limit=10 c
 mcp__plugin_foundry_foundry-mcp__research action="deep-research-delete" research_id="research-abc123"
 ```
 
+### Evaluate Research
+
+```bash
+mcp__plugin_foundry_foundry-mcp__research action="deep-research-evaluate" research_id="research-abc123"
+```
+
+Returns 5-dimension quality scores (1-5 scale) with rationales:
+- **Depth** — how thoroughly topics were explored
+- **Source Quality** — reliability and diversity of sources
+- **Analytical Rigor** — strength of reasoning and evidence use
+- **Completeness** — coverage of the research question
+- **Groundedness** — how well conclusions are supported by sources
+
 ## Session States
 
 ```
@@ -121,95 +149,66 @@ started → in_progress → completed
 
 | State | Description | Can Resume | Has Report |
 |-------|-------------|------------|------------|
-| `started` | Initialized, beginning decomposition | Yes | No |
-| `in_progress` | Actively researching | Yes | Partial |
+| `started` | Initialized, entering clarification gate | Yes | No |
+| `in_progress` | Actively researching (includes supervision rounds) | Yes | Partial |
 | `completed` | All iterations done | No | Yes |
 | `failed` | Error during research | Yes | Partial |
 
-## Polling Strategy
+## Status Monitoring
 
-**Critical:** Claude cannot implement timed delays between tool calls. Follow these patience rules instead.
+Use long-poll to monitor progress without rapid polling.
 
-### Polling Rules
+### Long-Poll Behavior
 
-1. **Maximum checks:** 5 status checks per research session
-2. **Progress tracking:** Track `sub_queries_completed` and `iteration` between checks
-3. **Stall detection:** Research is stalled only if:
-   - `elapsed_ms` > 300000 (5 minutes) AND
-   - No change in `sub_queries_completed` or `iteration` since last check
+Call `deep-research-status` with `wait=true`. The server blocks until a state change occurs or the wait timeout elapses, then returns the new state.
 
-### Polling Flow
+- `"changed": true` — progress occurred, report new state to user and poll again
+- `"changed": false` — timeout elapsed with no progress, tell user "still working" and poll again
 
-```
-1. Start research → notify user "This may take several minutes"
-2. Check #1: Record initial progress (iteration, sub_queries_completed)
-3. Check #2-4: Compare progress to previous check
-   - If progress changed → continue checking
-   - If no progress AND elapsed_ms > 300000 → stalled
-4. Check #5 (final): If still in_progress, offer user options
+### Stall Rule
 
-On completed: fetch and present report
-On failed: show error, offer retry
-On stall detected: offer retry or background options
-```
-
-### What to Say Between Checks
-
-Instead of silent rapid polling:
-- After check #1: "Research is underway. Currently in {phase} phase..."
-- After check #2-3: "Progress: {sub_queries_completed}/{sub_queries_total} queries completed..."
-- After check #4: "Still working. Research has been running for {elapsed_ms/60000:.1f} minutes..."
-- After check #5: Present user options if not complete
-
-### Stall Recovery
-
-When stall detected (>5 min with no progress), use AskUserQuestion:
+If **2 consecutive** responses return `"changed": false`, offer user options via AskUserQuestion:
 
 ```
-"Research appears stalled ({elapsed} minutes, no progress). Options:"
-- "Keep waiting (check 2 more times)"
-- "Run in background (check later with foundry-research research-{id})"
-- "Cancel and try different query"
+"Research is still running but hasn't made visible progress. Options:"
+- "Keep waiting"
+- "Cancel and try a different query"
+- "Narrow the query scope"
 ```
 
-### Anti-Patterns (DO NOT DO THIS)
+### Flow
 
-**BAD - Rapid polling:**
 ```
-[start deep-research]
-[deep-research-status]  <-- VIOLATION: no user text
-[deep-research-status]  <-- VIOLATION: consecutive calls
-```
-
-**GOOD - Paced polling:**
-```
-[start deep-research]
-"Research started, typically takes 3-5 minutes..."
-[deep-research-status]
-"Progress: 3 of 5 sub-queries complete, 12 sources analyzed..."
-[deep-research-status]
+1. Start research → notify user "Starting deep research, this may take a few minutes..."
+2. Call deep-research-status with wait=true
+3. On return:
+   - changed=true → report progress to user, go to step 2
+   - changed=false → tell user "still working", go to step 2
+   - 2 consecutive changed=false → AskUserQuestion with options
+   - status=completed → fetch and present report
+   - status=failed → show error, offer retry
 ```
 
-**BAD - Independent research while waiting:**
-```
-[start deep-research]
-[WebSearch query="same topic"]  <-- VIOLATION: redundant research
-[WebFetch url="..."]            <-- VIOLATION: deep research handles this
+## Clarification Handling
+
+The workflow may pause during the CLARIFICATION phase to request user input. When status shows `phase=CLARIFICATION` with a pending question:
+
+1. Present the clarification question to the user via AskUserQuestion
+2. Pass their response back to the workflow:
+
+```bash
+mcp__plugin_foundry_foundry-mcp__research action="deep-research" deep_research_action="continue" research_id="research-abc123" query="User's clarification response"
 ```
 
-**GOOD - Wait for deep research:**
-```
-[start deep-research]
-"Research started. The deep research workflow will gather and analyze sources..."
-[deep-research-status]
-```
+3. Resume status monitoring
 
 ## User Gates
 
 | Checkpoint | Prompt |
 |------------|--------|
 | Start | "Starting deep research on '{query}'. This may take a few minutes." |
-| Progress | "Research {progress}% complete. {n} sources analyzed so far." |
+| Progress | "Research {phase} phase. {topics_completed}/{topics_total} topics, {sources} sources analyzed." |
+| Clarification | Present clarification question from workflow to user |
 | Complete | Present report with source citations |
 | Failed | "Research encountered an error: {error}. Retry?" |
 
@@ -220,6 +219,7 @@ When stall detected (>5 min with no progress), use AskUserQuestion:
   "research_id": "research-abc123",
   "query": "Original research question",
   "status": "completed",
+  "phase": "SYNTHESIS",
   "report": {
     "summary": "Executive summary of findings",
     "findings": [
@@ -230,6 +230,21 @@ When stall detected (>5 min with no progress), use AskUserQuestion:
         "sources": ["url1", "url2"]
       }
     ],
+    "topic_research_results": [
+      {
+        "topic": "Topic name",
+        "summary": "Per-topic summary",
+        "sources_used": 8,
+        "confidence": "high"
+      }
+    ],
+    "contradictions": [
+      {
+        "claim_a": "Source A says X",
+        "claim_b": "Source B says Y",
+        "resolution": "Analysis of discrepancy"
+      }
+    ],
     "sources": [
       {
         "url": "https://...",
@@ -237,13 +252,25 @@ When stall detected (>5 min with no progress), use AskUserQuestion:
         "relevance": 0.85
       }
     ],
+    "content_fidelity": {
+      "degraded": false,
+      "warnings": []
+    },
     "follow_up_questions": [
       "Suggested follow-up question 1",
       "Suggested follow-up question 2"
     ]
   },
+  "evaluation": {
+    "depth": { "score": 4, "rationale": "..." },
+    "source_quality": { "score": 4, "rationale": "..." },
+    "analytical_rigor": { "score": 3, "rationale": "..." },
+    "completeness": { "score": 4, "rationale": "..." },
+    "groundedness": { "score": 5, "rationale": "..." }
+  },
   "metadata": {
-    "iterations": 3,
+    "supervision_rounds": 3,
+    "topics_researched": 5,
     "total_sources": 42,
     "duration_seconds": 180
   }
@@ -258,6 +285,8 @@ When stall detected (>5 min with no progress), use AskUserQuestion:
 | `RESEARCH_TIMEOUT` | Task exceeded timeout | Retry with higher `task_timeout` |
 | `NO_SOURCES_FOUND` | Query too narrow/obscure | Broaden query terms |
 | `RATE_LIMITED` | Too many concurrent requests | Wait and retry |
+| `CONTEXT_OVERFLOW` | Context window exceeded — content may be truncated | Narrow query or reduce sources; check `content_fidelity` in report |
+| `CLARIFICATION_PENDING` | Workflow paused for user clarification | Check status for pending question, respond via `continue` |
 
 ## Integration with Session Management
 

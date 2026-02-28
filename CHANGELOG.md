@@ -5,6 +5,19 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.6] - 2026-02-28
+
+### Changed
+
+- **Update research skill for deep research overhaul**: Rewrite deep research workflow docs to reflect new supervisor-driven multi-agent architecture (CLARIFICATION → BRIEF → SUPERVISION → SYNTHESIS)
+- **Replace polling protocol with long-poll**: Remove 5-check polling protocol, replace with server-side long-poll via `wait=true` on `deep-research-status`
+- **Add `deep-research-evaluate` action**: New action returning 5-dimension quality scores (Depth, Source Quality, Analytical Rigor, Completeness, Groundedness)
+- **Add clarification handling**: Document CLARIFICATION phase pause/resume flow for user input
+- **Update MCP contract**: Add missing params to `deep-research` (`max_sources_per_query`, `max_concurrent`, `timeout_per_operation`, `task_timeout`, `provider_id`), fix `timeout_per_operation` default from 120 to 360
+- **Expand output format**: Add `topic_research_results`, `contradictions`, `content_fidelity`, `evaluation` to report schema
+- **Add new error codes**: `CONTEXT_OVERFLOW`, `CLARIFICATION_PENDING`
+- **Add troubleshooting entries**: Clarification Pending, Content Degradation, Supervision Not Converging
+
 ## [1.7.5] - 2026-02-22
 
 ### Changed

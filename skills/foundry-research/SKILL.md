@@ -27,29 +27,21 @@ description: AI-powered research skill with five workflows - chat (single-model 
 
 **CRITICAL for `deep` workflow:** Read [references/deep-research-workflow.md](./references/deep-research-workflow.md) before execution. Contains required polling strategy and MCP parameters.
 
-### Deep Research Polling Protocol (MANDATORY)
+### Deep Research Status Monitoring
 
-**BEFORE EVERY status check, you MUST:**
-1. Generate user-facing text about current progress
-2. Do NOT call deep-research-status immediately after another MCP tool
-3. Track your check count (max 5)
+Call `deep-research-status` with long-poll (`wait=true`). The server blocks until progress occurs or timeout elapses.
 
-| Check # | What to Say |
-|---------|-------------|
-| 1 | "Research underway. Currently in {phase} phase..." |
-| 2-3 | "Progress: {queries_completed}/{total} queries done..." |
-| 4 | "Still working ({elapsed} minutes)..." |
-| 5 | Stop polling, use AskUserQuestion with options |
+1. Report progress to user when each call returns.
+2. Repeat until status is `completed` or `failed`.
+3. If 2 consecutive responses return `"changed": false`, offer user options via AskUserQuestion (keep waiting, cancel, narrow query).
 
-**Stall Detection**: Only after `elapsed_ms > 300000` AND no progress change.
-
-**NO INDEPENDENT RESEARCH**: While deep research is running, do NOT use WebSearch, WebFetch, or other research tools. The deep research workflow handles all web gathering - doing your own searches is redundant and wastes resources.
+Do NOT use WebSearch, WebFetch, or other research tools while deep research is running, unless the user explicitly asks.
 
 ## MCP Tooling
 
 | Router | Actions |
 |--------|---------|
-| `research` | `chat`, `consensus`, `thinkdeep`, `ideate`, `deep-research`, `deep-research-status`, `deep-research-report`, `deep-research-list`, `deep-research-delete`, `thread-list`, `thread-get`, `thread-delete`, `node-execute`, `node-record`, `node-status`, `node-findings` |
+| `research` | `chat`, `consensus`, `thinkdeep`, `ideate`, `deep-research`, `deep-research-status`, `deep-research-report`, `deep-research-list`, `deep-research-delete`, `deep-research-evaluate`, `thread-list`, `thread-get`, `thread-delete`, `node-execute`, `node-record`, `node-status`, `node-findings` |
 
 ## MCP Contract
 
@@ -59,11 +51,12 @@ description: AI-powered research skill with five workflows - chat (single-model 
 | `consensus` | `prompt` | `providers`, `strategy` | `NO_MODELS_AVAILABLE` |
 | `thinkdeep` | `prompt` | `thread_id`, `depth` | `MAX_DEPTH_EXCEEDED` |
 | `ideate` | `prompt` | `thread_id`, `phase` | `INVALID_PHASE` |
-| `deep-research` | `query` | `max_iterations`, `max_sub_queries`, `follow_links` | `RESEARCH_TIMEOUT` |
+| `deep-research` | `query` | `max_iterations`, `max_sub_queries`, `max_sources_per_query`, `max_concurrent`, `timeout_per_operation`, `task_timeout`, `follow_links`, `provider_id` | `RESEARCH_TIMEOUT` |
 | `deep-research-status` | `research_id` | - | `RESEARCH_NOT_FOUND` |
 | `deep-research-report` | `research_id` | - | `RESEARCH_NOT_FOUND` |
 | `deep-research-list` | - | `limit`, `completed_only` | - |
 | `deep-research-delete` | `research_id` | - | `RESEARCH_NOT_FOUND` |
+| `deep-research-evaluate` | `research_id` | - | `RESEARCH_NOT_FOUND` |
 | `thread-*` | `thread_id` | `limit` | `THREAD_NOT_FOUND` |
 | `node-status` | `spec_id`, `research_node_id` | - | `NODE_NOT_FOUND` |
 | `node-execute` | `spec_id`, `research_node_id` | `prompt` | `NODE_NOT_FOUND`, `INVALID_TYPE` |
@@ -96,7 +89,7 @@ description: AI-powered research skill with five workflows - chat (single-model 
 | `consensus` | `{responses[], synthesis, strategy}` |
 | `thinkdeep` | `{findings[], confidence, thread_id}` |
 | `ideate` | `{ideas[], phase, selected[]}` |
-| `deep` | `{research_id, status, report{summary, findings[], sources[]}}` |
+| `deep` | `{research_id, status, report{summary, findings[], sources[], topic_research_results[], contradictions[], content_fidelity, evaluation}}` |
 
 ## References
 
