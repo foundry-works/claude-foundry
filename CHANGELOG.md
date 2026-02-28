@@ -5,6 +5,15 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.7] - 2026-02-28
+
+### Changed
+
+- **Add deep research timing expectations**: Document typical phase durations (SUPERVISION 2-10min, total 3-12min) so agents understand slow supervision is normal behavior, not a failure
+- **Prohibit supplementing deep research with external searches**: Explicit CRITICAL instruction not to call WebSearch, WebFetch, tavily_search, or tavily_extract while deep research is running unless user explicitly requests it
+- **Strengthen stall rule threshold**: Clarify that a single `changed=false` during SUPERVISION is routine; alternative action only after 2 consecutive `changed=false`
+- **Add "Supervision Seems Slow" troubleshooting entry**: New entry distinguishing normal timing from actual stalls with "What NOT to do" and "What to do" guidance
+
 ## [1.7.6] - 2026-02-28
 
 ### Changed

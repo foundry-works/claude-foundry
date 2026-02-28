@@ -154,6 +154,29 @@ started → in_progress → completed
 | `completed` | All iterations done | No | Yes |
 | `failed` | Error during research | Yes | Partial |
 
+## Expected Timing
+
+Deep research is a multi-phase background process. Typical durations:
+
+| Phase | Typical Duration | Notes |
+|-------|-----------------|-------|
+| CLARIFICATION | 5-15s | Quick; may pause for user input |
+| BRIEF | 10-30s | Query enrichment |
+| SUPERVISION | 2-10 min | **Longest phase.** Runs up to 6 rounds of parallel topic research with iterative gap-filling. Each round decomposes topics, fetches sources, assesses coverage, then identifies remaining gaps. Multiple rounds with no visible `changed` events is normal during source fetching. |
+| SYNTHESIS | 15-60s | Compresses findings into final report |
+
+**Total end-to-end: typically 3-12 minutes** depending on query breadth, number of sub-queries, and source availability.
+
+The SUPERVISION phase is expected to be the longest. During this phase, parallel topic researchers are fetching and analyzing web sources. Status polls may return `"changed": false` multiple times — this does not mean the research is stuck. It means the long-poll timeout elapsed before a reportable state change occurred, while background work continues.
+
+## Do NOT Supplement with External Searches
+
+**While deep research is running, do NOT call WebSearch, WebFetch, tavily_search, tavily_extract, or any other web/research tools.** The deep research workflow handles all source gathering internally through its parallel topic researchers.
+
+Only use external search tools if the user **explicitly** asks you to search independently (e.g., "also search for X while we wait").
+
+When deep research seems slow, the correct response is to report the current status and keep polling — not to start your own parallel research. The deep research supervisor is designed to iteratively fill coverage gaps; doing your own searches duplicates effort and clutters the conversation.
+
 ## Status Monitoring
 
 Use long-poll to monitor progress without rapid polling.
@@ -176,6 +199,8 @@ If **2 consecutive** responses return `"changed": false`, offer user options via
 - "Narrow the query scope"
 ```
 
+**Important:** 2 consecutive `changed=false` is the threshold — do not take alternative action before reaching it. A single `changed=false` during the SUPERVISION phase is routine and expected.
+
 ### Flow
 
 ```
@@ -187,6 +212,7 @@ If **2 consecutive** responses return `"changed": false`, offer user options via
    - 2 consecutive changed=false → AskUserQuestion with options
    - status=completed → fetch and present report
    - status=failed → show error, offer retry
+4. NEVER start your own web searches as a "supplement" or "alternative approach"
 ```
 
 ## Clarification Handling

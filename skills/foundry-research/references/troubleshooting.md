@@ -196,6 +196,21 @@ Common issues and resolutions for research workflows.
 2. Narrow query scope to reduce topic surface area
 3. Accept current findings if sufficient coverage reached
 
+### Supervision Seems Slow (Normal Behavior)
+**Symptom:** SUPERVISION phase has been running for a few minutes, status polls return `"changed": false`.
+
+**This is NOT an error.** The supervision phase runs up to 6 rounds of parallel topic research with web fetching. Typical duration is 2-10 minutes. A single `changed=false` response means the long-poll timeout elapsed before a state change — background work is still running.
+
+**What NOT to do:**
+- Do NOT start your own WebSearch/tavily_search calls as a "supplement" or "alternative approach"
+- Do NOT tell the user the research is stuck after only 1-2 status checks
+- Do NOT abandon the deep research to do manual searching
+
+**What to do:**
+1. Report current progress to user: "Research is in supervision phase, round X of Y. Still working."
+2. Continue polling with `wait=true`
+3. Only offer user options after **2 consecutive** `changed=false` responses (the stall rule)
+
 ## General Issues
 
 ### Context Bloat

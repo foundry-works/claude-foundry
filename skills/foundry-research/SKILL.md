@@ -35,7 +35,7 @@ Call `deep-research-status` with long-poll (`wait=true`). The server blocks unti
 2. Repeat until status is `completed` or `failed`.
 3. If 2 consecutive responses return `"changed": false`, offer user options via AskUserQuestion (keep waiting, cancel, narrow query).
 
-Do NOT use WebSearch, WebFetch, or other research tools while deep research is running, unless the user explicitly asks.
+**CRITICAL — Do NOT supplement deep research with your own searches.** While deep research is running, do NOT call WebSearch, WebFetch, tavily_search, tavily_extract, or any other web/research tools. The deep research workflow handles all source gathering internally. Only use external search tools if the user **explicitly** asks you to search independently. When deep research is in the SUPERVISION phase and progress seems slow, this is normal — report status and keep polling. Do not interpret normal processing time as a failure that needs workaround.
 
 ## MCP Tooling
 
