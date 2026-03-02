@@ -51,7 +51,7 @@ Call `deep-research-status` with long-poll (`wait=true`). The server blocks unti
 | `consensus` | `prompt` | `providers`, `strategy` | `NO_MODELS_AVAILABLE` |
 | `thinkdeep` | `prompt` | `thread_id`, `depth` | `MAX_DEPTH_EXCEEDED` |
 | `ideate` | `prompt` | `thread_id`, `phase` | `INVALID_PHASE` |
-| `deep-research` | `query` | `max_iterations`, `max_sub_queries`, `max_sources_per_query`, `max_concurrent`, `timeout_per_operation`, `task_timeout`, `follow_links`, `provider_id` | `RESEARCH_TIMEOUT` |
+| `deep-research` | `query` | `max_iterations`, `max_sub_queries`, `max_sources_per_query`, `follow_links` | `RESEARCH_TIMEOUT` |
 | `deep-research-status` | `research_id` | - | `RESEARCH_NOT_FOUND` |
 | `deep-research-report` | `research_id` | - | `RESEARCH_NOT_FOUND` |
 | `deep-research-list` | - | `limit`, `completed_only` | - |

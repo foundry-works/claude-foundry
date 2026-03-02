@@ -5,6 +5,13 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.12] - 2026-03-02
+
+### Changed
+
+- **Remove server-managed params from skill-visible surfaces**: Remove `task_timeout`, `timeout_per_operation`, `max_concurrent`, and `provider_id` from SKILL.md MCP contract table and deep-research-workflow.md parameter table to prevent models from fabricating values
+- **Strengthen parameter discipline warning**: Rewrite as `PARAMETER DISCIPLINE (MANDATORY)` with stronger language, anchor to example call, remove anti-example that was priming the fabricated value
+
 ## [1.7.7] - 2026-02-28
 
 ### Changed

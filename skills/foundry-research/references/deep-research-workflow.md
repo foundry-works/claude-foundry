@@ -85,7 +85,7 @@ Options: "Looks good, start research (Recommended)", "I'd like to edit the query
 
 ## MCP Operations
 
-**Parameter discipline:** Only set optional parameters when the user explicitly requests them. Do NOT fabricate values for `task_timeout`, `timeout_per_operation`, `max_concurrent`, or `provider_id`. These have server-managed defaults that are tuned for typical research sessions. Setting `task_timeout` arbitrarily (e.g., 600s) can prematurely kill research that legitimately takes up to 30 minutes.
+**PARAMETER DISCIPLINE (MANDATORY):** The following parameters are **server-managed** and must NEVER be set unless the user explicitly provides a value: `task_timeout`, `timeout_per_operation`, `max_concurrent`, `provider_id`. These defaults are tuned for research sessions that can legitimately run up to 30 minutes. Fabricating any value for these parameters — even a plausible-sounding one — can prematurely kill research. If a parameter is not in the example call below, do not add it.
 
 ### Start Research
 
@@ -101,10 +101,6 @@ mcp__plugin_foundry_foundry-mcp__research action="deep-research" deep_research_a
 | `max_sub_queries` | No | 5 | Sub-queries generated per iteration |
 | `max_sources_per_query` | No | 5 | Sources fetched per sub-query |
 | `follow_links` | No | true | Extract and follow links from sources |
-| `max_concurrent` | No | - | Parallel operations (server-managed default) |
-| `timeout_per_operation` | No | - | Seconds per web fetch (server-managed default) |
-| `task_timeout` | No | - | Overall task timeout in seconds (server-managed default — do NOT set unless user requests it) |
-| `provider_id` | No | - | Provider to use for research operations |
 
 ### Check Status
 
