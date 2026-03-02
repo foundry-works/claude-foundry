@@ -65,19 +65,23 @@ Before starting a deep research session, **always** present the composed query a
 4. If user selects "Adjust parameters": ask which parameters to change, re-present
 5. Only call `deep-research` with `deep_research_action="start"` after explicit approval
 
+### Tone
+
+The gate should feel **conversational**, not like a one-way announcement. Present the query as a proposal and invite the user to shape it before launch. Avoid "I'll run..." or "I'm going to..." phrasing — use collaborative language like "Here's what I'd propose..." or "I've drafted this query based on your request..."
+
 ### Example Gate Prompt
 
 ```
-I'll run deep research with this query:
+Here's the research query I've drafted based on your request:
 
 > "{composed_query}"
 
 Parameters: {iterations} iterations, {sub_queries} sub-queries, {sources}/query sources, profile: {profile}
 
-This typically takes up to 30 minutes.
+This typically takes up to 30 minutes. Want to revise anything before I kick it off?
 ```
 
-Options: "Start research (Recommended)", "Edit query", "Adjust parameters"
+Options: "Looks good, start research (Recommended)", "I'd like to edit the query", "Adjust parameters"
 
 ## MCP Operations
 
