@@ -91,6 +91,10 @@ Use `journal` MCP tool with `action="add"` to capture notes (requires a `spec_id
 2. Run tests directly to validate functionality
 3. Create PR with `gh` CLI when ready
 
+## Versioning
+
+When making doc/skill changes that warrant a version bump, update the version in `.claude-plugin/plugin.json`. Commit messages should include the version tag (e.g., `v1.8.0`) and the plugin.json version must match.
+
 ## Codebase Exploration
 
 Launch the Explore tool before skill invocation when you need:
