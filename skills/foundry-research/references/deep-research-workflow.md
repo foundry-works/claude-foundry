@@ -50,6 +50,35 @@ Deep research runs **in the background** by default:
 
 This allows long-running research without blocking the conversation.
 
+## Pre-Launch Confirmation Gate
+
+Before starting a deep research session, **always** present the composed query and parameters to the user for approval. Deep research is the most resource-intensive workflow (up to 30 minutes), so the user must have a chance to review and refine before launch.
+
+### Flow
+
+1. Compose the research query from the user's request
+2. Present via AskUserQuestion:
+   - The **full query** that will be sent to the research engine
+   - **Key parameters** if non-default (iterations, sub-queries, sources, profile)
+   - Options: **"Start research" / "Edit query" / "Adjust parameters"**
+3. If user selects "Edit query": accept their revised text and re-present for confirmation
+4. If user selects "Adjust parameters": ask which parameters to change, re-present
+5. Only call `deep-research` with `deep_research_action="start"` after explicit approval
+
+### Example Gate Prompt
+
+```
+I'll run deep research with this query:
+
+> "{composed_query}"
+
+Parameters: {iterations} iterations, {sub_queries} sub-queries, {sources}/query sources, profile: {profile}
+
+This typically takes up to 30 minutes.
+```
+
+Options: "Start research (Recommended)", "Edit query", "Adjust parameters"
+
 ## MCP Operations
 
 ### Start Research
@@ -165,7 +194,7 @@ Deep research is a multi-phase background process. Typical durations:
 | SUPERVISION | 2-10 min | **Longest phase.** Runs up to 6 rounds of parallel topic research with iterative gap-filling. Each round decomposes topics, fetches sources, assesses coverage, then identifies remaining gaps. Multiple rounds with no visible `changed` events is normal during source fetching. |
 | SYNTHESIS | 15-60s | Compresses findings into final report |
 
-**Total end-to-end: typically 3-12 minutes** depending on query breadth, number of sub-queries, and source availability.
+**Total end-to-end: typically up to 30 minutes** depending on query breadth, number of sub-queries, and source availability.
 
 The SUPERVISION phase is expected to be the longest. During this phase, parallel topic researchers are fetching and analyzing web sources. Status polls may return `"changed": false` multiple times — this does not mean the research is stuck. It means the long-poll timeout elapsed before a reportable state change occurred, while background work continues.
 
@@ -204,15 +233,16 @@ If **2 consecutive** responses return `"changed": false`, offer user options via
 ### Flow
 
 ```
-1. Start research → notify user "Starting deep research, this may take a few minutes..."
-2. Call deep-research-status with wait=true
-3. On return:
-   - changed=true → report progress to user, go to step 2
-   - changed=false → tell user "still working", go to step 2
+1. Present composed query + params to user for approval (Pre-Launch Gate)
+2. On approval → start research → notify user "Starting deep research — this can take up to 30 minutes depending on query breadth."
+3. Call deep-research-status with wait=true
+4. On return:
+   - changed=true → report progress to user, go to step 3
+   - changed=false → tell user "still working", go to step 3
    - 2 consecutive changed=false → AskUserQuestion with options
    - status=completed → fetch and present report
    - status=failed → show error, offer retry
-4. NEVER start your own web searches as a "supplement" or "alternative approach"
+5. NEVER start your own web searches as a "supplement" or "alternative approach"
 ```
 
 ## Clarification Handling
@@ -232,7 +262,8 @@ mcp__plugin_foundry_foundry-mcp__research action="deep-research" deep_research_a
 
 | Checkpoint | Prompt |
 |------------|--------|
-| Start | "Starting deep research on '{query}'. This may take a few minutes." |
+| **Pre-launch** | **Present composed query + parameters for user approval before calling start** |
+| Start | "Starting deep research on '{query}'. This can take up to 30 minutes depending on query breadth." |
 | Progress | "Research {phase} phase. {topics_completed}/{topics_total} topics, {sources} sources analyzed." |
 | Clarification | Present clarification question from workflow to user |
 | Complete | Present report with source citations |

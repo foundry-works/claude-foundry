@@ -22,7 +22,7 @@ description: AI-powered research skill with five workflows - chat (single-model 
   - [research-id?] → SessionMgmt
   - [sessions?] → ListSessions
   - [no args?] → (GATE: choose workflow) → AutoRoute → Dispatch → Execute → Persist thread → Response + thread_id
-  - [deep?] → Start → Poll → Report (background execution)
+  - [deep?] → (GATE: confirm query + params) → Start → Poll → Report (background execution)
 ```
 
 **CRITICAL for `deep` workflow:** Read [references/deep-research-workflow.md](./references/deep-research-workflow.md) before execution. Contains required polling strategy and MCP parameters.
@@ -79,7 +79,7 @@ Call `deep-research-status` with long-poll (`wait=true`). The server blocks unti
 - Ambiguous: clarify before auto-route
 - Consensus: strategy selection
 - Ideate: phase transition
-- Deep: progress updates during background execution
+- Deep: **pre-launch query confirmation**, then progress updates during background execution
 
 ## Output Formats
 
