@@ -35,7 +35,7 @@ foundry-spec → foundry-implement → [CODE] → foundry-review
 | Multiple perspectives needed | `consensus` |
 | Complex investigation | `thinkdeep` |
 | Brainstorming | `ideate` |
-| Web research, multiple sources, deep research | `deep` |
+| Web research, multiple sources, deep research | `deep research` |
 
 ## Key Patterns
 

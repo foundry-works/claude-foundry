@@ -1,6 +1,15 @@
 ---
 name: foundry-research
-description: AI-powered research skill with five workflows - chat (single-model conversation), consensus (multi-model synthesis), thinkdeep (systematic investigation), ideate (creative brainstorming), and deep (multi-phase web research). Supports persistent threads and research sessions.
+description: >-
+  AI-powered research skill with five workflows - chat (single-model conversation),
+  consensus (multi-model synthesis), thinkdeep (systematic investigation), ideate
+  (creative brainstorming), and deep (multi-phase web research). Supports persistent
+  threads and research sessions.
+  TRIGGER when: user asks for research, consultation, brainstorming, investigation,
+  or deep research. Always route through this skill — never call
+  mcp__plugin_foundry_foundry-mcp__research directly.
+  DO NOT TRIGGER when: simple factual questions answerable from context, or codebase
+  exploration (use Explore agent instead).
 ---
 
 # Research Skill
@@ -22,10 +31,10 @@ description: AI-powered research skill with five workflows - chat (single-model 
   - [research-id?] → SessionMgmt
   - [sessions?] → ListSessions
   - [no args?] → (GATE: choose workflow) → AutoRoute → Dispatch → Execute → Persist thread → Response + thread_id
-  - [deep?] → (GATE: confirm query + params) → Start → Poll → Report (background execution)
+  - [deep research?] → (GATE: confirm query + params) → Start → Poll → Report (background execution)
 ```
 
-**CRITICAL for `deep` workflow:** Read [references/deep-research-workflow.md](./references/deep-research-workflow.md) before execution. Contains required polling strategy and MCP parameters.
+**CRITICAL for `deep research` workflow:** Read [references/deep-research-workflow.md](./references/deep-research-workflow.md) before execution. Contains required polling strategy and MCP parameters.
 
 ### Deep Research Status Monitoring
 
@@ -71,7 +80,7 @@ Call `deep-research-status` with long-poll (`wait=true`). The server blocks unti
 | Multiple perspectives | `consensus` |
 | Complex problem | `thinkdeep` |
 | Brainstorming | `ideate` |
-| Comprehensive research, multiple sources | `deep` |
+| Comprehensive research, multiple sources | `deep research` |
 
 ## User Gates
 
@@ -89,7 +98,7 @@ Call `deep-research-status` with long-poll (`wait=true`). The server blocks unti
 | `consensus` | `{responses[], synthesis, strategy}` |
 | `thinkdeep` | `{findings[], confidence, thread_id}` |
 | `ideate` | `{ideas[], phase, selected[]}` |
-| `deep` | `{research_id, status, report{summary, findings[], sources[], topic_research_results[], contradictions[], content_fidelity, evaluation}}` |
+| `deep research` | `{research_id, status, report{summary, findings[], sources[], topic_research_results[], contradictions[], content_fidelity, evaluation}}` |
 
 ## References
 
