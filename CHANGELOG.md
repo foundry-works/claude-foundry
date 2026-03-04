@@ -5,6 +5,15 @@ All notable changes to claude-foundry will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.14] - 2026-03-04
+
+### Changed
+
+- **Add trigger routing directives to all core skills**: Add TRIGGER/DO NOT TRIGGER directives to foundry-spec, foundry-implement, and foundry-research to prevent MCP tool bypass and enforce skill-layer orchestration
+- **Anti-recursion guards**: All three skills now include `<command-name>` tag detection and subagent exclusion to prevent recursive or nested skill invocation
+- **foundry-spec**: Model-detected triggers require user confirmation before invoking; explicit user requests go straight through
+- **foundry-implement**: User-explicit invocation only — model never auto-invokes
+
 ## [1.7.13] - 2026-03-03
 
 ### Changed

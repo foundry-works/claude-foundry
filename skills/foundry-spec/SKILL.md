@@ -1,6 +1,17 @@
 ---
 name: foundry-spec
-description: Spec-first development methodology that creates detailed specifications before coding. Creates structured specs with phases, file-level details, and verification steps. Includes automatic AI review, modification application, and validation.
+description: >-
+  Spec-first development methodology that creates detailed specifications before
+  coding. Creates structured specs with phases, file-level details, and verification
+  steps. Includes automatic AI review, modification application, and validation.
+  TRIGGER when: user explicitly asks to create a spec or plan, OR model detects
+  work that would benefit from a spec (new feature, multi-file refactor, API
+  integration, architecture change) — in the latter case, confirm with the user
+  before invoking. Never call mcp authoring/spec/plan tools directly for spec
+  creation workflows.
+  DO NOT TRIGGER when: a <command-name> tag is present in the current turn
+  (skill already loaded), called from a subagent, single-file edits, trivial
+  fixes, or exploratory spikes.
 ---
 
 # Spec-Driven Development: Specification Skill

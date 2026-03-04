@@ -1,6 +1,16 @@
 ---
 name: foundry-implement
-description: Task implementation skill for spec-driven workflows. Reads specifications, identifies next actionable tasks, and creates detailed execution plans. Use when ready to implement a task from an existing spec - bridges the gap between planning and coding.
+description: >-
+  Task implementation skill for spec-driven workflows. Reads specifications,
+  identifies next actionable tasks, and creates detailed execution plans. Use when
+  ready to implement a task from an existing spec - bridges the gap between planning
+  and coding.
+  TRIGGER when: user explicitly asks to implement, continue work, or pick up the
+  next task from a spec (e.g., "what's next", "continue", "implement"). Never call
+  mcp task/spec tools directly for task workflow operations.
+  DO NOT TRIGGER when: a <command-name> tag is present in the current turn
+  (skill already loaded), called from a subagent, or model decides on its own
+  that implementation should start.
 ---
 
 # SDD-Implement: Concise Playbook

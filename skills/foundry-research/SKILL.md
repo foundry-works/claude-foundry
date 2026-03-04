@@ -8,8 +8,9 @@ description: >-
   TRIGGER when: user asks for research, consultation, brainstorming, investigation,
   or deep research. Always route through this skill — never call
   mcp__plugin_foundry_foundry-mcp__research directly.
-  DO NOT TRIGGER when: simple factual questions answerable from context, or codebase
-  exploration (use Explore agent instead).
+  DO NOT TRIGGER when: a <command-name> tag is present in the current turn
+  (skill already loaded), called from a subagent, simple factual questions
+  answerable from context, or codebase exploration (use Explore agent instead).
 ---
 
 # Research Skill
